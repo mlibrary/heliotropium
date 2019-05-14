@@ -29,3 +29,12 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Ignore local configuration files
+config/settings.local.yml
+config/settings/test.local.yml
+config/settings/production.local.yml
+config/settings/development.local.yml
+config/environments/test.local.yml
+config/environments/production.local.yml
+config/environments/development.local.yml
