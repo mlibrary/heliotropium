@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -38,13 +40,14 @@ gem 'bootsnap', '>= 1.1.0', require: false
 
 # The best way to add settings in any ruby project.
 # https://github.com/mlibrary/ettin
-gem 'ettin', '~>1.2'
+gem 'ettin', '~> 1.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
-  gem 'rspec-rails', '~>3.8'
-  gem 'rubocop-rails_config', '~>0.5'
+  gem 'rspec-rails', '~> 3.8'
+  gem 'rubocop-rails_config', '~> 0.5'
+  gem 'rubocop-performance', '~> 1.2'
 end
 
 group :development do
