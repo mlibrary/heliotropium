@@ -1,4 +1,6 @@
 # frozen_string_literal: true
 
-class BoxService
+require "marc/marc"
+
+module Marc
 end

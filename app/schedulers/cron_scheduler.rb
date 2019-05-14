@@ -7,7 +7,7 @@ class CronScheduler
     # Daily at 4:30 AM
     # scheduler.cron '30 4 * * *' do
     scheduler.cron '18 * * * *' do
-      KbartToMarcRunner.new.run
+      # AssembleMarcFiles.new.run
     end
 
     scheduler.join
