@@ -1,0 +1,3 @@
+# rails runner 'AssembleMarcFiles.new.download'
+# rails runner 'AssembleMarcFiles.new.update(true)'
+rails runner 'AssembleMarcFiles.new.upload'

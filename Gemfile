@@ -46,6 +46,10 @@ gem 'ettin', '~> 1.2'
 # https://github.com/jmettraux/rufus-scheduler
 gem 'rufus-scheduler', '~> 3.6'
 
+# Wrapper around Box REST API
+# https://github.com/cburnette/boxr
+gem 'boxr', '~> 1.4'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
