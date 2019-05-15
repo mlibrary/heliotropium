@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class AssembleMarcFiles
+class AssembleMarcFiles # rubocop:disable Metrics/ClassLength
   BOX_KBART_FOLDER = '/My Box Notes/cronuts/download/kbart'
   BOX_MARC_FOLDER = '/My Box Notes/cronuts/download/marc'
   BOX_CATALOG_FOLDER = '/My Box Notes/cronuts/download/catalog'
@@ -25,7 +25,7 @@ class AssembleMarcFiles
     upload
   end
 
-  def download
+  def download # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     FileUtils.rm_rf(TMP_ASSEMBLE_MARC_FILES_ROOT) if Dir.exist?(TMP_ASSEMBLE_MARC_FILES_ROOT)
     Dir.mkdir(TMP_ASSEMBLE_MARC_FILES_ROOT)
     Dir.mkdir(TMP_DOWNLOAD_DIR)
@@ -86,16 +86,18 @@ class AssembleMarcFiles
     end
   end
 
-  def update(rebuild)
+  def update(rebuild) # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
     product_names = []
-    mm = "%02d" % [Time.now.month]
+    mm = format("%02d", Time.now.month)
 
-    Dir.chdir(TMP_KBART_DOWNLOAD_DIR) do
-      Dir.foreach('.') do |item|
+    Dir.chdir(TMP_KBART_DOWNLOAD_DIR) do # rubocop:disable Metrics/BlockLength
+      Dir.foreach('.') do |item| # rubocop:disable Metrics/BlockLength
         next unless File.file?(item)
+
         product = Kbart::Filename.new(item)
         product_names << product.name
         next unless rebuild || product.modified_today?
+
         new_mrc_file = File.open(File.join(TMP_MARC_UPLOAD_DIR, "#{product.base}.mrc"), "w")
         new_xml_file = File.open(File.join(TMP_MARC_UPLOAD_DIR, "#{product.base}.xml"), "w")
         if product.year?
@@ -107,26 +109,23 @@ class AssembleMarcFiles
         kbart.dois.each do |doi|
           marc = catalog.marc(doi)
           next unless marc
+
           new_mrc_file << marc.to_mrc
           new_xml_file << marc.to_xml
-          if product.year?
-            unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}.mrc"))
-              if File.exist?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.mrc"))
-                unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.mrc"))
-                  new_mrc_mm_file << marc.to_mrc
-                end
-              else
-                new_mrc_mm_file << marc.to_mrc
-              end
+          next unless product.year?
+
+          unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}.mrc"))
+            if File.exist?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.mrc"))
+              new_mrc_mm_file << marc.to_mrc unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.mrc"))
+            else
+              new_mrc_mm_file << marc.to_mrc
             end
-            unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}.xml"))
-              if File.exist?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.xml"))
-                unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.xml"))
-                  new_xml_mm_file << marc.to_xml
-                end
-              else
-                new_xml_mm_file << marc.to_xml
-              end
+          end
+          unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}.xml"))
+            if File.exist?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.xml"))
+              new_xml_mm_file << marc.to_xml unless marc.in_file?(File.join(TMP_MARC_DOWNLOAD_DIR, "#{product.base}_#{mm}.xml"))
+            else
+              new_xml_mm_file << marc.to_xml
             end
           end
         end
@@ -143,11 +142,13 @@ class AssembleMarcFiles
           complete_xml_file = File.open(File.join(TMP_MARC_UPLOAD_DIR, "#{name}_Complete.xml"), "w")
           Dir.foreach('.') do |item|
             next unless File.file?(item)
+
             product = Marc::Filename.new(item)
             next unless /^#{name}$/i.match?(product.name)
             next if product.open_access?
             next if product.monthly?
             next if product.complete?
+
             puts product.inspect
             if product.mrc?
               complete_mrc_file.write(File.read(item))
@@ -167,7 +168,11 @@ class AssembleMarcFiles
     Dir.chdir(TMP_MARC_UPLOAD_DIR) do
       Dir.foreach('.') do |item|
         next unless File.file?(item)
-        next if File.size?(item) == File.size?(File.join(TMP_MARC_DOWNLOAD_DIR, item)) if File.exist?(File.join(TMP_MARC_DOWNLOAD_DIR, item))
+
+        if File.exist?(File.join(TMP_MARC_DOWNLOAD_DIR, item))
+          next if File.size?(item) == File.size?(File.join(TMP_MARC_DOWNLOAD_DIR, item))
+        end
+
         box_upload_folder.upload(File.join(TMP_MARC_UPLOAD_DIR, item))
       end
     end
