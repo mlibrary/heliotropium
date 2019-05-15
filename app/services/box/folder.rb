@@ -9,13 +9,13 @@ module Box
     end
 
     def folders
-      client.folder_items(@folder, fields: [:id, :name]).folders.map { |item| Folder.new(item) }
-    rescue
+      client.folder_items(@folder, fields: %i[id name]).folders.map { |item| Folder.new(item) }
+    rescue StandardError => e
       Rails.logger.error("Box::Folder.folders raised #{e}")
     end
 
     def files
-      client.folder_items(@folder, fields: [:id, :name]).files.map { |item| File.new(item) }
+      client.folder_items(@folder, fields: %i[id name]).files.map { |item| File.new(item) }
     rescue StandardError => e
       Rails.logger.error("Box::Folder.files raised #{e}")
     end
@@ -28,8 +28,8 @@ module Box
 
     private
 
-      def client
-        @client ||= Boxr::Client.new # uses ENV['BOX_DEVELOPER_TOKEN']
-      end
+    def client
+      @client ||= Boxr::Client.new # uses ENV['BOX_DEVELOPER_TOKEN']
+    end
   end
 end

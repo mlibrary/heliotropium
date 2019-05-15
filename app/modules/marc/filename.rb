@@ -4,7 +4,7 @@ module Marc
   class Filename
     attr_reader :filename, :name, :year, :ext, :base
 
-    def initialize(filename)
+    def initialize(filename) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       @filename = filename
       match = /(^.+)_(Complete)\.(.+$)/.match(@filename)
       if match
@@ -23,11 +23,19 @@ module Marc
           @base = @name + '_' + @suffix
         else
           match = /(^.+)_(\d{4})(.*)?\.(.+$)/.match(@filename)
-          @name = match[1]
-          @year = match[2]
-          @suffix = match[3]
-          @ext = match[4]
-          @base = @name + '_' + @year + @suffix
+          if match
+            @name = match[1]
+            @year = match[2]
+            @suffix = match[3]
+            @ext = match[4]
+            @base = @name + '_' + @year + @suffix
+          else
+            @name = ''
+            @year = ''
+            @suffix = ''
+            @ext = ''
+            @base = ''
+          end
         end
       end
     end
@@ -54,19 +62,19 @@ module Marc
     end
 
     def year?
-      /#{@year}/.match?("%04d" % [Time.now.year])
+      /#{@year}/.match?(format("%04d", Time.now.year))
     end
 
     def modified_today?
-      modified_this_year? && modified_this_month? && /#{@dd}/.match?("%02d" % [Time.now.day])
+      modified_this_year? && modified_this_month? && /#{@dd}/.match?(format("%02d", Time.now.day))
     end
 
     def modified_this_month?
-      modified_this_year? && /#{@mm}/.match?("%02d" % [Time.now.month])
+      modified_this_year? && /#{@mm}/.match?(format("%02d", Time.now.month))
     end
 
     def modified_this_year?
-      /#{@yyyy}/.match?("%04d" % [Time.now.year])
+      /#{@yyyy}/.match?(format("%04d", Time.now.year))
     end
   end
 end

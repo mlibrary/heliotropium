@@ -2,9 +2,6 @@
 
 module Marc
   class Marc
-    def initialize
-    end
-
     def to_mrc
       "mrc\n"
     end
@@ -13,7 +10,7 @@ module Marc
       "xml\n"
     end
 
-    def in_file?(filename)
+    def in_file?(_filename)
       false
     end
   end

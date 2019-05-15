@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe BoxService do
+RSpec.describe Box do
   it { is_expected.not_to be_nil }
 end

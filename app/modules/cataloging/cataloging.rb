@@ -6,9 +6,8 @@ module Cataloging
       @product = product
     end
 
-    def marc(doi)
+    def marc(_doi)
       # Send Email Alert if Marc not found.
-
       Marc::Marc.new
     end
   end
