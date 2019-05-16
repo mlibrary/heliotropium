@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe Kbart do
+RSpec.describe LibPtgBox::Unmarshaller do
   it { is_expected.not_to be_nil }
 end

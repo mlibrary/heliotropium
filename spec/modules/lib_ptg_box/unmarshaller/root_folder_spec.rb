@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe Marc do
+RSpec.describe LibPtgBox::Unmarshaller::RootFolder do
   it { is_expected.not_to be_nil }
 end

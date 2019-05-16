@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe Cataloging do
+RSpec.describe LibPtgBox::Marshaller do
   it { is_expected.not_to be_nil }
 end

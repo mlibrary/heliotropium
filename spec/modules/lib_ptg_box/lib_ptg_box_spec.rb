@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe Marc::Marc do
+RSpec.describe LibPtgBox::LibPtgBox do
   it { is_expected.not_to be_nil }
 end

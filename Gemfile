@@ -42,13 +42,17 @@ gem 'bootsnap', '>= 1.1.0', require: false
 # https://github.com/mlibrary/ettin
 gem 'ettin', '~> 1.2'
 
-# scheduler for Ruby (at, in, cron and every jobs)
+# Scheduler for Ruby (at, in, cron and every jobs)
 # https://github.com/jmettraux/rufus-scheduler
 gem 'rufus-scheduler', '~> 3.6'
 
 # Wrapper around Box REST API
 # https://github.com/cburnette/boxr
 gem 'boxr', '~> 1.4'
+
+# A Ruby library to parse, create and manage MARC records
+# https://github.com/ruby-marc/ruby-marc
+gem 'marc', '~>1.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
