@@ -13,7 +13,15 @@
 # a separate helper file that requires the additional dependencies and performs
 # the additional setup, and require it from the spec files that actually need
 # it.
-#
+
+# Start code coverage. This must be before your application code is required.
+require "coveralls"
+Coveralls.wear!('rails')
+
+# Require any test helpers we've created in spec/support
+Dir[File.expand_path(File.join(File.dirname(__FILE__), "support", "**", "*.rb"))]
+  .each { |f| require f }
+
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

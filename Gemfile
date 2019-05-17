@@ -3,14 +3,29 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.2'
-
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.2.3'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
-# Use Puma as the app server
-gem 'puma', '~> 3.11'
+
+group :development, :test do
+  # Use Puma as the app server
+  gem 'puma', '~> 3.11'
+end
+
+# Post-install message from sass:
+#
+# Ruby Sass has reached end-of-life and should no longer be used.
+#
+# * If you use Sass as a command-line tool, we recommend using Dart Sass, the new
+#   primary implementation: https://sass-lang.com/install
+#
+# * If you use Sass as a plug-in for a Ruby web framework, we recommend using the
+#   assc gem: https://github.com/sass/sassc-ruby#readme
+#
+# * For more details, please refer to the Sass blog:
+#   https://sass-lang.com/blog/posts/7828841
+#
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -69,14 +84,22 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'yard', '~> 0.9'
 end
 
 group :test do
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '>= 2.15'
+  gem 'coveralls', '~> 0.8', require: false
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
-  gem 'chromedriver-helper'
+  # gem 'chromedriver-helper'
+  #
+  #  NOTICE: chromedriver-helper is deprecated after 2019-03-3.
+  #
+  #  Please update to use the 'webdrivers' gem instead.
+  #  See https://github.com/flavorjones/chromedriver-helper/issues/83
+  gem 'webdrivers', '~> 3.9'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
