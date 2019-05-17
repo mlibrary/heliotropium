@@ -30,6 +30,32 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Intellij/Rubymine
+/.idea/
+
+# rspec config
+/.rspec
+
+# test coverage
+/spec/reports/
+/coverage
+
+# Emacs backup files
+*~
+
+# Folder attributes file on Macs
+.DS_Store
+
+# Generated docs
+/_yardoc/
+/.yardoc/
+/doc/
+
+# vim
+tags
+*.swp
+*.swo
+
 # Ignore local configuration files
 config/settings.local.yml
 config/settings/test.local.yml
