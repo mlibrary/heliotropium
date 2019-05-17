@@ -22,18 +22,22 @@ module Box
       client.folder_items(@folder, fields: %i[id name]).folders.map { |item| Folder.new(item) }
     rescue StandardError => e
       Rails.logger.error("Box::Folder.folders raised #{e}")
+      []
     end
 
     def files
       client.folder_items(@folder, fields: %i[id name]).files.map { |item| File.new(item) }
     rescue StandardError => e
       Rails.logger.error("Box::Folder.files raised #{e}")
+      []
     end
 
     def upload(filepath)
       client.upload_file(filepath, @folder)
+      true
     rescue StandardError => e
       Rails.logger.error("Box::Folder.upload(#{filepath}) raised #{e}")
+      false
     end
 
     private
@@ -63,6 +67,7 @@ module Box
 
     def upload(filepath)
       Rails.logger.error("Box::NullFolder.upload(#{filepath})")
+      false
     end
   end
 end

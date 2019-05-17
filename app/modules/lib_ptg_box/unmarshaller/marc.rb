@@ -7,7 +7,7 @@ module LibPtgBox
         @entry = entry
       end
 
-      def doi
+      def doi # rubocop:disable Metrics/MethodLength
         @doi ||= begin
           @entry.fields.each do |field|
             next unless /^024$/i.match?(field.tag)
@@ -19,6 +19,7 @@ module LibPtgBox
               return subfield.value
             end
           end
+          "10.3998/mpub.00000000"
         end
       end
     end

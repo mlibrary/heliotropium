@@ -18,16 +18,18 @@ module Box
       @type = file[:type]
     end
 
-    def content
+    def content # rubocop:disable Metrics/MethodLength
       error = nil
       buffer = nil
       3.times do
         next if buffer
 
-        buffer = client.download_file(@file)
-      rescue StandardError => e
-        error = e
-        buffer = nil
+        begin
+          buffer = client.download_file(@file)
+        rescue StandardError => e
+          error = e.inspect.to_s
+          buffer = nil
+        end
       end
       buffer || error
     end

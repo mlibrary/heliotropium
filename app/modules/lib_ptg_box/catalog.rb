@@ -17,6 +17,7 @@ module LibPtgBox
 
         return marc
       end
+      nil
     end
   end
 end
