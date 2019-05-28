@@ -17,5 +17,18 @@ module Heliotropium
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
+
+    config.generators do |g|
+      g.stylesheets         false
+      g.assets              false
+      g.scaffold_stylesheet false
+      g.fixture             false
+      g.controller_specs    false
+      g.view_specs          false
+      g.routing_specs       false
+      g.helper              false
+      g.javascripts         false
+      g.pretend             true
+    end
   end
 end
