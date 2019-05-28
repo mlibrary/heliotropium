@@ -11,6 +11,9 @@ AllCops:
   Exclude:
     - 'db/**/*'
 
+Layout/IndentationConsistency:
+  EnforcedStyle: rails
+
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
@@ -19,6 +22,9 @@ Metrics/LineLength:
   Enabled: false
 
 Style/Documentation:
+  Enabled: false
+
+Style/EmptyMethod:
   Enabled: false
 
 Style/StringLiterals:

@@ -42,8 +42,8 @@ module MockBoxr
 
     private
 
-    def directory
-      @directory ||= Dir.new(@path)
-    end
+      def directory
+        @directory ||= Dir.new(@path)
+      end
   end
 end

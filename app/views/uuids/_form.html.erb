@@ -1,0 +1,27 @@
+<%= form_with(model: uuid, local: true) do |form| %>
+  <% if uuid.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(uuid.errors.count, "error") %> prohibited this uuid from being saved:</h2>
+
+      <ul>
+      <% uuid.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :packed %>
+    <%= form.text_field :packed %>
+  </div>
+
+  <div class="field">
+    <%= form.label :unpacked %>
+    <%= form.text_field :unpacked %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
