@@ -73,7 +73,16 @@ gem 'marc', '~>1.0'
 gem 'mysql2', '~> 0.5'
 
 # Pagination
+# https://github.com/kaminari/kaminari
 gem 'kaminari', '~> 1.1'
+
+# Bootstrap
+# https://github.com/twbs/bootstrap-rubygem
+gem 'bootstrap', '~> 4.3'
+
+# Bootstrap JavaScript depends on jQuery. If you're using Rails 5.1+,
+# add the jquery-rails gem to your Gemfile:
+gem 'jquery-rails', '~> 4.3'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

@@ -1,25 +1,41 @@
 <p id="notice"><%= notice %></p>
 <div id="maincontent">
-  <h1>Identifier</h1>
-  <div class="col-md-1"><em>ID</em></div>
-  <div class="col-md-11"><%= @identifier.id %>&nbsp;</div>
-  <div class="col-md-1"><em>Name</em></div>
-  <div class="col-md-11"><%= @identifier.name %>&nbsp;</div>
-  <div class="col-md-1"><em>UUID</em></div>
-  <div class="col-md-11"><%= @identifier.uuid.unpacked %>&nbsp;</div>
-  <div class="col-md-1"><em>Aliases</em></div>
-  <div class="col-md-11">
-    <% @aliases.each_with_index do |a, i| %>
-      <%= ", " unless i.zero? %>
-      <%= link_to a.name, identifier_path(a) %>
-    <% end %>
-    &nbsp;
+  <div class="container">
+    <div class="row">
+      <h1>Identifier</h1>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>ID</em></div>
+      <div class="col"><%= @identifier.id %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Name</em></div>
+      <div class="col"><%= @identifier.name %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>UUID</em></div>
+      <div class="col"><%= @identifier.uuid.unpacked %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Aliases</em></div>
+      <div class="col">
+        <% @aliases.each_with_index do |a, i| %>
+          <%= ", " unless i.zero? %>
+          <%= link_to a.name, identifier_path(a) %>
+        <% end %>
+        &nbsp;
+      </div>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+    <div class="row">
+        <%= link_to_if @identifier.update?, 'Edit', edit_identifier_path(@identifier) %>
+        <span> | </span>
+        <%= link_to 'Back', identifiers_path %>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
   </div>
-  <div class="col-md-12"><br/></div>
-  <div class="col-md-12">
-    <%= link_to_if @identifier.update?, 'Edit', edit_identifier_path(@identifier) %>
-    <span> | </span>
-    <%= link_to 'Back', identifiers_path %>
-  </div>
-  <div class="col-md-12"><br/></div>
 </div>

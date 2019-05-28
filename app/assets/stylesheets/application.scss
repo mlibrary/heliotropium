@@ -1,0 +1,41 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, or any plugin's
+ * vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ * Then, remove all the *= require and *= require_tree statements from the Sass file. Instead,
+ * use @import to import Sass files.
+ *
+ * Do not use *= require in Sass or your other stylesheets will not be able to access the
+ * Bootstrap mixins and variables.
+ */
+
+// Custom bootstrap variables must be set or imported *before* bootstrap.
+@import "bootstrap";
+
+/*
+ * Configuration
+ * Sass: Autoprefixer
+ * Bootstrap requires the use of Autoprefixer.
+ * Autoprefixer adds vendor prefixes to CSS rules using values from Can I Use.
+ *
+ * If you are using bootstrap with Rails, autoprefixer is set up for you automatically.
+ * Otherwise, please consult the Autoprefixer documentation.
+ *
+ * Sass: Individual components
+ * By default all of Bootstrap is imported.
+ *
+ * You can also import components explicitly. To start with a full list of modules
+ * copy _bootstrap.scss file into your assets as _bootstrap-custom.scss. Then
+ * comment out components you do not want from _bootstrap-custom. In the application Sass file,
+ * replace @import 'bootstrap' with:
+ *
+ * @import 'bootstrap-custom';
+*/
