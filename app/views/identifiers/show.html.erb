@@ -1,9 +1,25 @@
 <p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Name:</strong>
-  <%= @identifier.name %>
-</p>
-
-<%= link_to 'Edit', edit_identifier_path(@identifier) %> |
-<%= link_to 'Back', identifiers_path %>
+<div id="maincontent">
+  <h1>Identifier</h1>
+  <div class="col-md-1"><em>ID</em></div>
+  <div class="col-md-11"><%= @identifier.id %>&nbsp;</div>
+  <div class="col-md-1"><em>Name</em></div>
+  <div class="col-md-11"><%= @identifier.name %>&nbsp;</div>
+  <div class="col-md-1"><em>UUID</em></div>
+  <div class="col-md-11"><%= @identifier.uuid.unpacked %>&nbsp;</div>
+  <div class="col-md-1"><em>Aliases</em></div>
+  <div class="col-md-11">
+    <% @aliases.each_with_index do |a, i| %>
+      <%= ", " unless i.zero? %>
+      <%= link_to a.name, identifier_path(a) %>
+    <% end %>
+    &nbsp;
+  </div>
+  <div class="col-md-12"><br/></div>
+  <div class="col-md-12">
+    <%= link_to_if @identifier.update?, 'Edit', edit_identifier_path(@identifier) %>
+    <span> | </span>
+    <%= link_to 'Back', identifiers_path %>
+  </div>
+  <div class="col-md-12"><br/></div>
+</div>

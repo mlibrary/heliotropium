@@ -1,61 +1,94 @@
 # frozen_string_literal: true
 
+require 'open-uri'
+
 class IdentifiersController < ApplicationController
   before_action :set_identifier, only: %i[show edit update destroy]
 
-  # GET /identifiers
-  # GET /identifiers.json
   def index
-    @identifiers = Identifier.all
+    @identifiers = Identifier.filter(filtering_params(params)).order(name: :asc).page(params[:page])
   end
 
-  # GET /identifiers/1
-  # GET /identifiers/1.json
   def show
+    @aliases = @identifier.aliases
   end
 
-  # GET /identifiers/new
   def new
     @identifier = Identifier.new
+    @aliases = Identifier.all
+    @alias_id = 0
   end
 
-  # GET /identifiers/1/edit
   def edit
+    @aliases = Identifier.all
+    @alias_id = @identifier.id
   end
 
-  # POST /identifiers
-  # POST /identifiers.json
-  def create
-    @identifier = Identifier.new(identifier_params)
-
+  def create # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    create_identifier_params = identifier_params
+    create_identifier_params[:uuid] = if create_identifier_params[:uuid].present?
+                                        Identifier.find(create_identifier_params[:uuid]).uuid
+                                      else
+                                        Uuid.generator
+                                      end
+    @identifier = Identifier.new(create_identifier_params)
     respond_to do |format|
       if @identifier.save
-        format.html { redirect_to @identifier, notice: 'Identifier was successfully created.' }
+        format.html { redirect_to identifier_path(@identifier), notice: 'Identifier was successfully created.' }
         format.json { render :show, status: :created, location: @identifier }
       else
-        format.html { render :new }
+        format.html do
+          @aliases = Identifier.all
+          if @identifier.uuid.identifiers.count.positive?
+            @alias_id = identifier_params[:uuid]
+          else
+            @identifier.uuid.destroy
+            @identifier.uuid = nil
+            @aliases_id = 0
+          end
+          render :new
+        end
         format.json { render json: @identifier.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  # PATCH/PUT /identifiers/1
-  # PATCH/PUT /identifiers/1.json
-  def update
+  def update # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
+    update_identifier_params = identifier_params
+    update_identifier_params[:uuid] = if update_identifier_params[:uuid].present?
+                                        Identifier.find(update_identifier_params[:uuid]).uuid
+                                      else
+                                        Uuid.generator
+                                      end
+    unless @identifier.uuid == update_identifier_params[:uuid]
+      @identifier.uuid.identifiers.delete(@identifier)
+      @identifier.uuid = nil
+    end
     respond_to do |format|
-      if @identifier.update(identifier_params)
-        format.html { redirect_to @identifier, notice: 'Identifier was successfully updated.' }
+      if @identifier.update(update_identifier_params)
+        format.html { redirect_to identifier_path(@identifier), notice: 'Identifier was successfully updated.' }
         format.json { render :show, status: :ok, location: @identifier }
       else
-        format.html { render :edit }
+        format.html do
+          @aliases = Identifier.all
+          if @identifier.uuid.identifiers.count.positive?
+            @alias_id = identifier_params[:uuid]
+          else
+            @identifier.uuid.destroy
+            @identifier.uuid = nil
+            @aliases_id = 0
+          end
+          render :edit
+        end
         format.json { render json: @identifier.errors, status: :unprocessable_entity }
       end
     end
   end
 
-  # DELETE /identifiers/1
-  # DELETE /identifiers/1.json
-  def destroy
+  def destroy # rubocop:disable Metrics/AbcSize
+    @identifier.uuid.identifiers.delete(@identifier)
+    @identifier.uuid.destroy unless @identifier.uuid.identifiers.count.positive?
+    @identifier.uuid = nil
     @identifier.destroy
     respond_to do |format|
       format.html { redirect_to identifiers_url, notice: 'Identifier was successfully destroyed.' }
@@ -65,13 +98,15 @@ class IdentifiersController < ApplicationController
 
   private
 
-    # Use callbacks to share common setup or constraints between actions.
     def set_identifier
       @identifier = Identifier.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def identifier_params
-      params.require(:identifier).permit(:name)
+      params.require(:identifier).permit(:name, :uuid)
+    end
+
+    def filtering_params(params)
+      params.slice(:name_like)
     end
 end
