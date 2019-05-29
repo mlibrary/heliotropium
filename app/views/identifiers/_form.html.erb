@@ -16,6 +16,18 @@
     <%= form.text_field :name %>
   </div>
 
+  <div class="field">
+    <%= form.label :alias %>
+<!--    <select name="post[author_id]">-->
+    <% aliases = @aliases.map { |identifier| [identifier.name, identifier.id] } %>
+    <%= form.select(:uuid, options_for_select(aliases, @alias_id), include_blank: true) %>
+<!--    , selected: f.object.status-->
+
+<!--    <select name="uuid">-->
+      <%#= options_from_collection_for_select(Uuid.all, :id, :unpacked) %>
+<!--    </select>-->
+  </div>
+
   <div class="actions">
     <%= form.submit %>
   </div>

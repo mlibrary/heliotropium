@@ -32,7 +32,7 @@ class Resource
   protected
 
     def type
-      @type ||= /^Mighrax::(.+$)/.match(self.class.to_s)[1].to_sym
+      @type ||= :Resource
     end
 
   private

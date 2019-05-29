@@ -30,10 +30,12 @@ ActiveRecord::Schema.define(version: 2019_05_28_165428) do
   end
 
   create_table "uuids", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.binary "packed"
-    t.string "unpacked"
+    t.binary "packed", limit: 16, null: false
+    t.string "unpacked", limit: 36, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["packed"], name: "index_uuids_on_packed"
+    t.index ["unpacked"], name: "index_uuids_on_unpacked"
   end
 
   add_foreign_key "uuid_identifiers", "identifiers"

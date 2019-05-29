@@ -8,26 +8,24 @@ class Uuid < ApplicationRecord
   has_many :uuid_identifiers, dependent: :destroy
   has_many :identifiers, through: :uuid_identifiers
 
-  # has_many :course_students
-  # has_many :courses, :through => :course_students
-
   validates :packed, presence: true, allow_blank: false, uniqueness: true
   validates :unpacked, presence: true, allow_blank: false, uniqueness: true
 
   class << self
-    def factory(uuid) # rubocop:disable Metrics/MethodLength
-      unpacked_uuid = begin
-                        if uuid.is_a?(String)
-                          uuid_unpack(uuid_pack(uuid))
-                        else
-                          uuid_unpack(uuid)
-                        end
-                      rescue StandardError => _e
-                        uuid_null_unpacked
+    def factory(uuid)
+      unpacked_uuid = if uuid.is_a?(String)
+                        uuid_unpack(uuid_pack(uuid))
+                      else
+                        uuid_unpack(uuid)
                       end
       return Resource.null_resource(uuid) if /^00000000-0000-0000-0000-000000000000$/.match?(unpacked_uuid)
 
       Resource.send(:new, uuid)
+    end
+
+    def uuid_valid?(uuid)
+      # 8-4-4-4-12 for a total of 36 characters (32 hexadecimal characters and 4 hyphens)
+      /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.match?(uuid)
     end
 
     def uuid_null_packed
@@ -39,7 +37,7 @@ class Uuid < ApplicationRecord
     end
 
     def uuid_generator_packed
-      uuid_pack(open('http://www.famkruithof.net/uuid/uuidgen').read.scan(/([-[:alnum:]]+)\<\/h3\>/)[0][0])
+      uuid_pack(open('https://www.famkruithof.net/uuid/uuidgen').read.scan(/([-[:alnum:]]+)\<\/h3\>/)[0][0])
     end
 
     def uuid_generator_unpacked
@@ -113,6 +111,6 @@ class Uuid < ApplicationRecord
   protected
 
     def type
-      @type ||= self.class
+      @type ||= :Uuid
     end
 end

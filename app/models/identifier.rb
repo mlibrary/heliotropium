@@ -37,6 +37,6 @@ class Identifier < ApplicationRecord
   protected
 
     def type
-      @type ||= /^Mighrax::(.+$)/.match(self.class.to_s)[1].to_sym
+      @type ||= :Identifier
     end
 end
