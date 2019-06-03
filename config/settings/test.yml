@@ -1,0 +1,10 @@
+hostname: <%= ENV['APP_HOSTNAME'] || 'heliotropium-test.local' %>
+
+rails:
+  database:
+    # Warning: The database defined as "test" will be erased and
+    # re-generated from your development database when you run "rake".
+    # Do not set this db to the same as development or production.
+    database: heliotropium_test
+    timeout: 10000
+  secret_key_base: 7ecce1a2e07ee661ba71a5737cdf4a024aec8ef3d21d8cf5b23c2270d2a09487a7227179c5ac7185890fb2b00e14e97db756636498c5e8e5062e16f42f178df2

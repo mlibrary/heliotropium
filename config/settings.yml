@@ -1,0 +1,36 @@
+# Master configuration file. This holds the definitions and defaults that
+# can be set per environment in settings/, or settings.local.yml. Keys can
+# certainly be added in secondary files, but be sure to verify that the key
+# will be used. Most values are used individually, rather than passing
+# along a whole hash or array.
+
+# Application hostname, used for link, asset, and email generation.
+# More specific defaults are included in each enviroment.
+# The APP_HOSTNAME environment variable can override this.
+hostname: localhost
+
+# Relative URL segment at which the application resides, used to compute links
+# and assets. Used instead of RAILS_RELATIVE_URL_ROOT everywhere, because the
+# behavior with the environment variable has proven inconsistent.
+relative_url_root: /
+
+# These are keys used to bridge between settings and the standard Rails files.
+rails:
+  # Database settings as they will be mapped into database.yml for the running
+  # environment. The shell variable DATABASE_URL will always override values
+  # in the settings files.
+  database:
+    adapter: mysql2
+    encoding: utf8
+    pool: 5
+    #timeout: 5000
+    username: root
+    #password:
+    #shost: localhost
+    #port: 3306
+  # This value is nil here, to be set per environment and read in secrets.yml.
+  # The SECRET_KEY_BASE environment variable will always override this setting.
+  secret_key_base:
+  # Action Cable settings applied in cable.yml
+  cable:
+    adapter: async

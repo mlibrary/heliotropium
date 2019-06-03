@@ -1,6 +1,0 @@
-# Example configuration without using environment-aware configuration files.
-# This method is standard and recommended.
-
-upload_path: <%= Heliotropium.config.upload.upload_path %>
-rsync_point: <%= Heliotropium.config.upload.rsync_point %>
-storage_path: <%= Heliotropium.config.upload.storage_path %>

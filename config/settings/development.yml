@@ -1,0 +1,6 @@
+hostname: <%= ENV['APP_HOSTNAME'] || 'heliotropium-dev.local' %>
+
+rails:
+  database:
+    database: heliotropium_development
+  secret_key_base: 27fc74bd05cadc898d8dd37f4ecd39390db036f8cbe96a7f9f2e79fc05bb4eb0a7f687d388e7c18692833cfee6e129043dfd13ce41ca42e3416823ca5a46949e
