@@ -34,9 +34,9 @@ module Boxr
 
     private
 
-    def mock_client
-      @mock_client ||= MockBoxr::Client.new
-    end
+      def mock_client
+        @mock_client ||= MockBoxr::Client.new
+      end
   end
 end
 

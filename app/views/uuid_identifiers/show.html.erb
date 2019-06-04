@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Uuid:</strong>
+  <%= @uuid_identifier.uuid %>
+</p>
+
+<p>
+  <strong>Identifier:</strong>
+  <%= @uuid_identifier.identifier %>
+</p>
+
+<%= link_to 'Edit', edit_uuid_identifier_path(@uuid_identifier) %> |
+<%= link_to 'Back', uuid_identifiers_path %>

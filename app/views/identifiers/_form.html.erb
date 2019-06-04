@@ -1,0 +1,51 @@
+<%= form_with(model: identifier, local: true) do |form| %>
+  <% if identifier.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(identifier.errors.count, "error") %> prohibited this identifier from being saved:</h2>
+
+      <ul>
+      <% identifier.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :alias %>
+<!--    <select name="post[author_id]">-->
+    <% aliases = @aliases.map { |identifier| [identifier.name, identifier.id] } %>
+    <%= form.select(:uuid, options_for_select(aliases, @alias_id), include_blank: true) %>
+<!--    , selected: f.object.status-->
+
+<!--    <select name="uuid">-->
+      <%#= options_from_collection_for_select(Uuid.all, :id, :unpacked) %>
+<!--    </select>-->
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
+
+
+<%#= simple_form_for(@identifier, url: identifiers_path) do |f| %>
+  <%#= f.error_notification %>
+
+<!--  <div class="form-inputs">-->
+    <%#= f.input :name %>
+<!--  </div>-->
+
+<!--  <div class="form-inputs">-->
+    <%#= f.input :uuid, collection: @aliases, label_method: :name, value_method: :id, label: "Alias", selected: @alias_id, include_blank: true %>
+<!--  </div>-->
+
+<!--  <div class="form-actions">-->
+    <%#= f.button :submit %>
+<!--  </div>-->
+<%# end %>

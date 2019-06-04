@@ -72,9 +72,22 @@ gem 'marc', '~>1.0'
 # Use MySQL as the database for Active Record
 gem 'mysql2', '~> 0.5'
 
+# Pagination
+# https://github.com/kaminari/kaminari
+gem 'kaminari', '~> 1.1'
+
+# Bootstrap
+# https://github.com/twbs/bootstrap-rubygem
+gem 'bootstrap', '~> 4.3'
+
+# Bootstrap JavaScript depends on jQuery. If you're using Rails 5.1+,
+# add the jquery-rails gem to your Gemfile:
+gem 'jquery-rails', '~> 4.3'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'factory_bot_rails', '~> 5.0'
   gem 'rspec-rails', '~> 3.8'
   gem 'rubocop-performance', '~> 1.2'
   gem 'rubocop-rspec', '~> 1.32'

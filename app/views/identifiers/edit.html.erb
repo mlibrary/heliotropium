@@ -1,0 +1,13 @@
+<div id="maincontent">
+  <h1>Editing Identifier</h1>
+  <div class="col-md-12">
+    <%= render 'form', identifier: @identifier %>
+  </div>
+  <div class="col-md-12"><br/></div>
+  <div class="col-md-12">
+    <%= link_to 'Show', identifier_path(@identifier) %>
+    <span> | </span>
+    <%= link_to 'Back', identifiers_path %>
+  </div>
+  <div class="col-md-12"><br/></div>
+</div>

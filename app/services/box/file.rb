@@ -36,9 +36,9 @@ module Box
 
     private
 
-    def client
-      @client ||= Boxr::Client.new # uses ENV['BOX_DEVELOPER_TOKEN']
-    end
+      def client
+        @client ||= Boxr::Client.new # uses ENV['BOX_DEVELOPER_TOKEN']
+      end
   end
 
   class NullFile < File

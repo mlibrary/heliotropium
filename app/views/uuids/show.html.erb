@@ -1,0 +1,14 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Packed:</strong>
+  <%= @uuid.packed %>
+</p>
+
+<p>
+  <strong>Unpacked:</strong>
+  <%= @uuid.unpacked %>
+</p>
+
+<%= link_to 'Edit', edit_uuid_path(@uuid) %> |
+<%= link_to 'Back', uuids_path %>
