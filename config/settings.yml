@@ -34,3 +34,14 @@ rails:
   # Action Cable settings applied in cable.yml
   cable:
     adapter: async
+
+# These are keys used by application mailers
+mailers:
+  to:
+    administrators:
+      - administrator@heliotropium.com
+  from:
+    administrator:
+      - administrator@heliotropium.com
+    no_reply:
+      - no-reply@heliotropium.com
