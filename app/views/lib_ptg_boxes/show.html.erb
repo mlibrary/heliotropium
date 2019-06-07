@@ -1,0 +1,39 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>Lib Ptg Box</h1>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>ID</em></div>
+      <div class="col"><%= @lib_ptg_box.id %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Name</em></div>
+      <div class="col"><%= @lib_ptg_box.name %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Flavor</em></div>
+      <div class="col"><%= @lib_ptg_box.flavor %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Month</em></div>
+      <div class="col"><%= @lib_ptg_box.month %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Updated</em></div>
+      <div class="col"><%= @lib_ptg_box.updated %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+    <div class="row">
+      <%= link_to_if @lib_ptg_box.update?, 'Edit', edit_lib_ptg_box_path(@lib_ptg_box) %>
+      <span> | </span>
+      <%= link_to 'Back', lib_ptg_boxes_path %>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+  </div>
+</div>

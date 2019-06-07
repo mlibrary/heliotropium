@@ -1,0 +1,37 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>Lib Ptg Boxes</h1>
+    </div>
+    <div class="row">
+      <div class="col-1">ID</div>
+      <div class="col">Name</div>
+      <div class="col-1">Flavor</div>
+      <div class="col-1">Month</div>
+      <div class="col-2">Updated</div>
+      <div class="col-3">
+        <%= link_to 'New Lib Ptg Box', new_lib_ptg_box_path %>
+      </div>
+    </div>
+    <% @lib_ptg_boxes.each do |lib_ptg_box| %>
+      <div class="row">
+        <div class="col-1"><%= lib_ptg_box.id %></div>
+        <div class="col"><%= lib_ptg_box.name %></div>
+        <div class="col-1"><%= lib_ptg_box.flavor %></div>
+        <div class="col-1"><%= lib_ptg_box.month %></div>
+        <div class="col-2"><%= lib_ptg_box.updated %></div>
+        <div class="col-3">
+          <div class="row">
+            <div class="col"><%= link_to 'Show', lib_ptg_box %></div>
+            <div class="col"><%= link_to 'Edit', edit_lib_ptg_box_path(lib_ptg_box) %></div>
+            <div class="col"><%= link_to 'Destroy', lib_ptg_box, method: :delete, data: { confirm: 'Are you sure?' } %></div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="col">&nbsp<%= paginate @lib_ptg_boxes %></div>
+    </div>
+  </div>
+</div>

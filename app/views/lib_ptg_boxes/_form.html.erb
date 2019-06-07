@@ -1,0 +1,37 @@
+<%= form_with(model: lib_ptg_box, local: true) do |form| %>
+  <% if lib_ptg_box.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(lib_ptg_box.errors.count, "error") %> prohibited this lib_ptg_box from being saved:</h2>
+
+      <ul>
+      <% lib_ptg_box.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :flavor %>
+    <%= form.text_field :flavor %>
+  </div>
+
+  <div class="field">
+    <%= form.label :month %>
+    <%= form.number_field :month %>
+  </div>
+
+  <div class="field">
+    <%= form.label :updated %>
+    <%= form.date_select :updated %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
