@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @lib_ptg_folder.name %>
+</p>
+
+<p>
+  <strong>Flavor:</strong>
+  <%= @lib_ptg_folder.flavor %>
+</p>
+
+<p>
+  <strong>Month:</strong>
+  <%= @lib_ptg_folder.month %>
+</p>
+
+<p>
+  <strong>Update:</strong>
+  <%= @lib_ptg_folder.update %>
+</p>
+
+<%= link_to 'Edit', edit_lib_ptg_folder_path(@lib_ptg_folder) %> |
+<%= link_to 'Back', lib_ptg_folders_path %>
