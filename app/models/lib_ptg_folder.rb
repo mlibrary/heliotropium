@@ -5,6 +5,8 @@ class LibPtgFolder < ApplicationRecord
 
   scope :name_like, ->(like) { where("name like ?", "%#{like}%") }
 
+  validates :name, presence: true, allow_blank: false, uniqueness: true
+
   def update?
     true
   end
