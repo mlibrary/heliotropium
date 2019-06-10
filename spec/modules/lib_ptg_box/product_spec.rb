@@ -8,9 +8,13 @@ RSpec.describe LibPtgBox::Product do
   let(:product_family) { instance_double(LibPtgBox::ProductFamily, 'product_family') }
   let(:kbart_file) { object_double(LibPtgBox::Unmarshaller::KbartFile.new(kbart_box_file), 'kbart_file') }
   let(:kbart_box_file) { instance_double(Box::File, 'kbart_box_file', name: kbart_file_name) }
-  let(:kbart_file_name) { 'Product_0000_0000-00-00.csv' }
+  let(:kbart_file_name) { 'Prefix_1970_Suffix_1999-01-01.csv' }
 
   before { allow(kbart_file).to receive(:name).and_return(kbart_box_file.name) }
+
+  it { expect(selection.name).to eq('Prefix_1970_Suffix') }
+  it { expect(selection.year).to eq(1970) }
+  it { expect(selection.updated).to eq(Date.parse('1999-01-01')) }
 
   describe '#works' do
     subject { product.works }
@@ -24,56 +28,5 @@ RSpec.describe LibPtgBox::Product do
     end
 
     it { is_expected.to contain_exactly(work) }
-  end
-
-  describe '#year?' do
-    subject { product.year? }
-
-    it { is_expected.to be false }
-
-    context 'with year' do
-      let(:kbart_file_name) { "Product_#{format('%04d', Time.now.year)}_0000-00-00.csv" }
-
-      it { is_expected.to be true }
-    end
-  end
-
-  describe '#modified_today?' do
-    subject { product.modified_today? }
-
-    it { is_expected.to be false }
-
-    context 'with today' do
-      let(:today) { Time.now }
-      let(:kbart_file_name) { "Product_0000_#{format('%04d', today.year)}-#{format('%02d', today.month)}-#{format('%02d', today.day)}.csv" }
-
-      it { is_expected.to be true }
-    end
-  end
-
-  describe 'modified_this_month?' do
-    subject { product.modified_this_month? }
-
-    it { is_expected.to be false }
-
-    context 'with month' do
-      let(:today) { Time.now }
-      let(:kbart_file_name) { "Product_0000_#{format('%04d', today.year)}-#{format('%02d', today.month)}-00.csv" }
-
-      it { is_expected.to be true }
-    end
-  end
-
-  describe 'modified_this_year?' do
-    subject { product.modified_this_year? }
-
-    it { is_expected.to be false }
-
-    context 'with year' do
-      let(:today) { Time.now }
-      let(:kbart_file_name) { "Product_0000_#{format('%04d', today.year)}-00-00.csv" }
-
-      it { is_expected.to be true }
-    end
   end
 end
