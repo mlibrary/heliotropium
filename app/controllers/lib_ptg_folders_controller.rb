@@ -1,28 +1,22 @@
-class LibPtgFoldersController < ApplicationController
-  before_action :set_lib_ptg_folder, only: [:show, :edit, :update, :destroy]
+# frozen_string_literal: true
 
-  # GET /lib_ptg_folders
-  # GET /lib_ptg_folders.json
+class LibPtgFoldersController < ApplicationController
+  before_action :set_lib_ptg_folder, only: %i[show edit update destroy]
+
   def index
-    @lib_ptg_folders = LibPtgFolder.all
+    @lib_ptg_folders = LibPtgFolder.filter(filtering_params(params)).order(name: :asc).page(params[:page])
   end
 
-  # GET /lib_ptg_folders/1
-  # GET /lib_ptg_folders/1.json
   def show
   end
 
-  # GET /lib_ptg_folders/new
   def new
     @lib_ptg_folder = LibPtgFolder.new
   end
 
-  # GET /lib_ptg_folders/1/edit
   def edit
   end
 
-  # POST /lib_ptg_folders
-  # POST /lib_ptg_folders.json
   def create
     @lib_ptg_folder = LibPtgFolder.new(lib_ptg_folder_params)
 
@@ -37,8 +31,6 @@ class LibPtgFoldersController < ApplicationController
     end
   end
 
-  # PATCH/PUT /lib_ptg_folders/1
-  # PATCH/PUT /lib_ptg_folders/1.json
   def update
     respond_to do |format|
       if @lib_ptg_folder.update(lib_ptg_folder_params)
@@ -51,8 +43,6 @@ class LibPtgFoldersController < ApplicationController
     end
   end
 
-  # DELETE /lib_ptg_folders/1
-  # DELETE /lib_ptg_folders/1.json
   def destroy
     @lib_ptg_folder.destroy
     respond_to do |format|
@@ -62,13 +52,16 @@ class LibPtgFoldersController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
+
     def set_lib_ptg_folder
       @lib_ptg_folder = LibPtgFolder.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def lib_ptg_folder_params
-      params.require(:lib_ptg_folder).permit(:name, :flavor, :month, :update)
+      params.require(:lib_ptg_folder).permit(:name, :flavor, :month, :touched)
+    end
+
+    def filtering_params(params)
+      params.slice(:name_like)
     end
 end

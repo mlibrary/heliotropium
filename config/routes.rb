@@ -6,5 +6,5 @@ Rails.application.routes.draw do
   resources :identifiers
   resources :uuids
 
-  root to: 'identifiers#index'
+  root to: 'lib_ptg_folders#index'
 end
