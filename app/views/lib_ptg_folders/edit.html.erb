@@ -1,6 +1,17 @@
-<h1>Editing Lib Ptg Folder</h1>
-
-<%= render 'form', lib_ptg_folder: @lib_ptg_folder %>
-
-<%= link_to 'Show', @lib_ptg_folder %> |
-<%= link_to 'Back', lib_ptg_folders_path %>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>Editing Lib Ptg Folder</h1>
+    </div>
+    <div class="row"><br/></div>
+    <div class="row">
+      <%= render 'form', lib_ptg_folder: @lib_ptg_folder %>
+    </div>
+    <div class="row"><br/></div>
+    <div class="row">
+      <%= link_to 'Show', @lib_ptg_folder %>
+      <span> | </span>
+      <%= link_to 'Back', lib_ptg_folders_path %>
+    </div>
+  </div>
+</div>

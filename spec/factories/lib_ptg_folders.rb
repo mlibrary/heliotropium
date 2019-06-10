@@ -1,8 +1,10 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
   factory :lib_ptg_folder do
-    name { "MyString" }
-    flavor { "MyString" }
-    month { 1 }
-    update { "2019-06-10" }
+    name { "UMPEBC_1970_1970_01_01" }
+    flavor { "year" }
+    month { 0 }
+    touched { "1970-01-01" }
   end
 end
