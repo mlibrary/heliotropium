@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::Work do
-  subject(:work) { described_class.new(product, kbart) }
+  subject(:work) { described_class.new(selection, kbart) }
 
-  let(:product) { instance_double(LibPtgBox::Product, 'product', collection: collection) }
+  let(:selection) { instance_double(LibPtgBox::Selection, 'selection', collection: collection) }
   let(:collection) { instance_double(LibPtgBox::Collection, 'collection', catalog: catalog) }
   let(:catalog) { instance_double(LibPtgBox::Catalog, 'catalog') }
   let(:kbart) { instance_double(LibPtgBox::Unmarshaller::Kbart, 'kbart', doi: 'doi') }

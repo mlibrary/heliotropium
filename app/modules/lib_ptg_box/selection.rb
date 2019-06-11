@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LibPtgBox
-  class Product
+  class Selection
     attr_reader :collection, :name, :year, :yyyy, :mm, :dd
 
     def initialize(collection, kbart_file) # rubocop:disable Metrics/AbcSize

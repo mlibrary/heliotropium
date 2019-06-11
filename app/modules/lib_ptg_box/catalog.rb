@@ -4,8 +4,8 @@ require 'marc'
 
 module LibPtgBox
   class Catalog
-    def initialize(product, complete_marc_file)
-      @product = product
+    def initialize(selection, complete_marc_file)
+      @selection = selection
       @complete_marc_file = complete_marc_file
       @reader = MARC::XMLReader.new(StringIO.new(complete_marc_file.content))
       @marcs = @reader.entries.map { |entry| Unmarshaller::Marc.new(entry) }

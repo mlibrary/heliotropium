@@ -2,13 +2,13 @@
 
 class AssembleMarcFiles
   def run
-    modified_product = nil
-    umpebc_collection.products.each do |product|
-      next unless product.modified_today?
+    modified_selection = nil
+    umpebc_collection.selections.each do |selection|
+      next unless selection.modified_today?
 
-      modified_product = product
+      modified_selection = selection
     end
-    modified_product
+    modified_selection
   end
 
   private
@@ -23,7 +23,7 @@ class AssembleMarcFiles
                                      umpebc_family = family
                                      break
                                    end
-                                   raise 'umpebc product family not found' unless umpebc_family
+                                   raise 'umpebc selection family not found' unless umpebc_family
 
                                    umpebc_family
                                  end

@@ -9,8 +9,8 @@ module LibPtgBox
       @name = sub_folder.name
     end
 
-    def products
-      @products ||= @sub_folder.kbart_folder.kbart_files.map { |kbart_file| Product.new(self, kbart_file) }
+    def selections
+      @selections ||= @sub_folder.kbart_folder.kbart_files.map { |kbart_file| Selection.new(self, kbart_file) }
     end
 
     def catalog
