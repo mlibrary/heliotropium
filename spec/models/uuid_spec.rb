@@ -108,7 +108,7 @@ RSpec.describe Uuid, type: :model do
   describe '#null' do
     subject(:null) { described_class.null }
 
-    it 'is null' do # rubocop:disable RSpec/MultipleExpectations
+    it 'is null' do
       expect(null).to be_an_instance_of(described_class)
       expect(null.packed).to eq(described_class.uuid_null_packed)
       expect(null.unpacked).to eq(described_class.uuid_null_unpacked)
@@ -120,7 +120,7 @@ RSpec.describe Uuid, type: :model do
 
     before { allow(described_class).to receive(:uuid_generator_packed).and_return(Support.random_uuid_packed) }
 
-    it 'is non null' do # rubocop:disable RSpec/MultipleExpectations
+    it 'is non null' do
       expect(uuid).to be_an_instance_of(described_class)
       expect(uuid.packed).not_to eq(described_class.uuid_null_packed)
       expect(uuid.unpacked).not_to eq(described_class.uuid_null_unpacked)
@@ -130,7 +130,7 @@ RSpec.describe Uuid, type: :model do
   describe 'checkpoint resource' do
     subject(:uuid) { create(:uuid) }
 
-    it 'is a checkpoint resource' do # rubocop:disable RSpec/MultipleExpectations
+    it 'is a checkpoint resource' do
       expect(uuid.resource_type).to eq(:Uuid)
       expect(uuid.resource_id).to eq(uuid.id)
       expect(uuid.resource_token).to eq(uuid.resource_type.to_s + ':' + uuid.resource_id.to_s)
@@ -140,7 +140,7 @@ RSpec.describe Uuid, type: :model do
   context 'when exercised' do
     subject(:uuid) { create(:uuid) }
 
-    it do # rubocop:disable RSpec/MultipleExpectations, RSpec/ExampleLength
+    it 'is expected' do # rubocop:disable RSpec/ExampleLength
       expect(uuid).to be_valid
       expect(uuid.resource_type).to eq :Uuid
       expect(uuid.resource_id).to eq uuid.id

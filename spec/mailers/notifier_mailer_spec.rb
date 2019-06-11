@@ -8,7 +8,7 @@ RSpec.describe NotifierMailer, type: :mailer do
 
     let(:text) { "Message text." }
 
-    it 'is expected' do # rubocop:disable RSpec/MultipleExpectations
+    it 'is expected' do
       expect(mail.from).to eq(Settings.mailers.from.no_reply)
       expect(mail.to).to eq(Settings.mailers.to.administrators)
       expect(mail.subject).to eq("Administrators")
