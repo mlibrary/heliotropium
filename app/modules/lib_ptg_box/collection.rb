@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module LibPtgBox
-  class ProductFamily
+  class Collection
     attr_reader :name
 
     def initialize(sub_folder)

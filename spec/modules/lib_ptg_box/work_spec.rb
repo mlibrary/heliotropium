@@ -5,8 +5,8 @@ require 'rails_helper'
 RSpec.describe LibPtgBox::Work do
   subject(:work) { described_class.new(product, kbart) }
 
-  let(:product) { instance_double(LibPtgBox::Product, 'product', product_family: product_family) }
-  let(:product_family) { instance_double(LibPtgBox::ProductFamily, 'product_family', catalog: catalog) }
+  let(:product) { instance_double(LibPtgBox::Product, 'product', collection: collection) }
+  let(:collection) { instance_double(LibPtgBox::Collection, 'collection', catalog: catalog) }
   let(:catalog) { instance_double(LibPtgBox::Catalog, 'catalog') }
   let(:kbart) { instance_double(LibPtgBox::Unmarshaller::Kbart, 'kbart', doi: 'doi') }
   let(:marc) { nil }

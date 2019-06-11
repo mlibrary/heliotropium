@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::Product do
-  subject(:product) { described_class.new(product_family, kbart_file) }
+  subject(:product) { described_class.new(collection, kbart_file) }
 
-  let(:product_family) { instance_double(LibPtgBox::ProductFamily, 'product_family') }
+  let(:collection) { instance_double(LibPtgBox::Collection, 'collection') }
   let(:kbart_file) { object_double(LibPtgBox::Unmarshaller::KbartFile.new(kbart_box_file), 'kbart_file') }
   let(:kbart_box_file) { instance_double(Box::File, 'kbart_box_file', name: kbart_file_name) }
   let(:kbart_file_name) { 'Product_0000_0000-00-00.csv' }
