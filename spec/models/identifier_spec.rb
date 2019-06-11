@@ -5,13 +5,13 @@ require 'rails_helper'
 RSpec.describe Identifier, type: :model do
   subject(:identifier) { create(:identifier) }
 
-  it 'is a checkpoint resource' do # rubocop:disable RSpec/MultipleExpectations
+  it 'is a checkpoint resource' do
     expect(identifier.resource_type).to eq(:Identifier)
     expect(identifier.resource_id).to eq(identifier.id)
     expect(identifier.resource_token).to eq(identifier.resource_type.to_s + ':' + identifier.resource_id.to_s)
   end
 
-  it do # rubocop:disable RSpec/ExampleLength, RSpec/MultipleExpectations
+  it 'is expected' do # rubocop:disable RSpec/ExampleLength
     expect(identifier).to be_valid
     expect(identifier.resource_type).to eq :Identifier
     expect(identifier.resource_id).to eq identifier.id

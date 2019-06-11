@@ -2,18 +2,18 @@
 
 require 'rails_helper'
 
-RSpec.describe LibPtgBox::Unmarshaller::FamilyFolder do
-  subject(:family_folder) { described_class.new(family_box_folder) }
+RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
+  subject(:sub_folder) { described_class.new(sub_box_folder) }
 
-  let(:family_box_folder) { instance_double(Box::Folder, 'family_box_folder') }
+  let(:sub_box_folder) { instance_double(Box::Folder, 'sub_box_folder') }
   let(:box_folders) { [] }
 
   before do
-    allow(family_box_folder).to receive(:folders).and_return(box_folders)
+    allow(sub_box_folder).to receive(:folders).and_return(box_folders)
   end
 
   describe '#kbart_folder' do
-    subject(:kbart_folder) { family_folder.kbart_folder }
+    subject(:kbart_folder) { sub_folder.kbart_folder }
 
     it { expect(kbart_folder.name).to eq('NullFolder') }
 
@@ -26,7 +26,7 @@ RSpec.describe LibPtgBox::Unmarshaller::FamilyFolder do
   end
 
   describe '#marc_folder' do
-    subject(:marc_folder) { family_folder.marc_folder }
+    subject(:marc_folder) { sub_folder.marc_folder }
 
     it { expect(marc_folder.name).to eq('NullFolder') }
 
@@ -39,7 +39,7 @@ RSpec.describe LibPtgBox::Unmarshaller::FamilyFolder do
   end
 
   describe '#cataloging_marc_folder' do
-    subject(:cataloging_marc_folder) { family_folder.cataloging_marc_folder }
+    subject(:cataloging_marc_folder) { sub_folder.cataloging_marc_folder }
 
     it { expect(cataloging_marc_folder.name).to eq('NullFolder') }
 

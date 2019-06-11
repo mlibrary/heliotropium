@@ -3,19 +3,19 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::ProductFamily do
-  subject(:product_family) { described_class.new(family_folder) }
+  subject(:product_family) { described_class.new(sub_folder) }
 
-  let(:family_folder) { object_double(LibPtgBox::Unmarshaller::FamilyFolder.new(family_box_folder), 'family_folder') }
-  let(:family_box_folder) { instance_double(Box::Folder, 'family_box_folder', name: 'Product_Family') }
+  let(:sub_folder) { object_double(LibPtgBox::Unmarshaller::SubFolder.new(sub_box_folder), 'sub_folder') }
+  let(:sub_box_folder) { instance_double(Box::Folder, 'sub_box_folder', name: 'Product_Family') }
 
   before do
-    allow(family_folder).to receive(:name).and_return(family_box_folder.name)
+    allow(sub_folder).to receive(:name).and_return(sub_box_folder.name)
   end
 
   describe '#name' do
     subject { product_family.name }
 
-    it { is_expected.to eq(family_box_folder.name) }
+    it { is_expected.to eq(sub_box_folder.name) }
   end
 
   describe '#products' do
@@ -27,7 +27,7 @@ RSpec.describe LibPtgBox::ProductFamily do
     let(:product) { 'product' }
 
     before do
-      allow(family_folder).to receive(:kbart_folder).and_return(kbart_folder)
+      allow(sub_folder).to receive(:kbart_folder).and_return(kbart_folder)
       allow(kbart_folder).to receive(:kbart_files).and_return([kbart_file])
       allow(kbart_file).to receive(:name).and_return(kbart_box_file.name)
       allow(LibPtgBox::Product).to receive(:new).with(product_family, kbart_file).and_return(product)
@@ -49,7 +49,7 @@ RSpec.describe LibPtgBox::ProductFamily do
     let(:catalog) { 'catalog' }
 
     before do
-      allow(family_folder).to receive(:cataloging_marc_folder).and_return(marc_folder)
+      allow(sub_folder).to receive(:cataloging_marc_folder).and_return(marc_folder)
       allow(marc_folder).to receive(:marc_files).and_return([product_marc_file, complete_marc_file])
       allow(product_marc_file).to receive(:name).and_return(product_box_file.name)
       allow(complete_marc_file).to receive(:name).and_return(complete_box_file.name)
