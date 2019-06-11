@@ -15,7 +15,7 @@ module LibPtgBox
     end
 
     def marc
-      @marc ||= @product.product_family.catalog.marc(@doi)
+      @marc ||= @product.collection.catalog.marc(@doi)
     end
   end
 end

@@ -2,10 +2,10 @@
 
 module LibPtgBox
   class Product
-    attr_reader :product_family, :name, :year, :yyyy, :mm, :dd
+    attr_reader :collection, :name, :year, :yyyy, :mm, :dd
 
-    def initialize(product_family, kbart_file) # rubocop:disable Metrics/AbcSize
-      @product_family = product_family
+    def initialize(collection, kbart_file) # rubocop:disable Metrics/AbcSize
+      @collection = collection
       @kbart_file = kbart_file
       match = /(^.+)_(\d{4})(.*)?_(\d{4})-(\d{2})-(\d{2})\.(.+$)/.match(@kbart_file.name)
       @name = match[1] + '_' + match[2] + match[3]
