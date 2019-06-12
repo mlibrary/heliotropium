@@ -20,9 +20,9 @@ ActiveRecord::Schema.define(version: 2019_06_12_121048) do
   end
 
   create_table "umpebc_kbarts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name"
-    t.integer "year"
-    t.date "updated"
+    t.string "name", null: false
+    t.integer "year", default: 1970, null: false
+    t.date "updated", default: "1970-01-01", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["name"], name: "index_umpebc_kbarts_on_name", unique: true

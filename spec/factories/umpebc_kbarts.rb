@@ -2,8 +2,8 @@
 
 FactoryBot.define do
   factory :umpebc_kbart do
-    name { "MyString" }
-    year { 1 }
-    updated { "2019-06-12" }
+    name { "UMPEBC_1970" }
+    year { 1970 }
+    updated { "1970-01-01" }
   end
 end

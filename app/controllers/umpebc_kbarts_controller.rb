@@ -3,28 +3,20 @@
 class UmpebcKbartsController < ApplicationController
   before_action :set_umpebc_kbart, only: %i[show edit update destroy]
 
-  # GET /umpebc_kbarts
-  # GET /umpebc_kbarts.json
   def index
-    @umpebc_kbarts = UmpebcKbart.all
+    @umpebc_kbarts = UmpebcKbart.filter(filtering_params(params)).order(name: :asc).page(params[:page])
   end
 
-  # GET /umpebc_kbarts/1
-  # GET /umpebc_kbarts/1.json
   def show
   end
 
-  # GET /umpebc_kbarts/new
   def new
     @umpebc_kbart = UmpebcKbart.new
   end
 
-  # GET /umpebc_kbarts/1/edit
   def edit
   end
 
-  # POST /umpebc_kbarts
-  # POST /umpebc_kbarts.json
   def create
     @umpebc_kbart = UmpebcKbart.new(umpebc_kbart_params)
 
@@ -39,8 +31,6 @@ class UmpebcKbartsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /umpebc_kbarts/1
-  # PATCH/PUT /umpebc_kbarts/1.json
   def update
     respond_to do |format|
       if @umpebc_kbart.update(umpebc_kbart_params)
@@ -53,8 +43,6 @@ class UmpebcKbartsController < ApplicationController
     end
   end
 
-  # DELETE /umpebc_kbarts/1
-  # DELETE /umpebc_kbarts/1.json
   def destroy
     @umpebc_kbart.destroy
     respond_to do |format|
@@ -65,13 +53,15 @@ class UmpebcKbartsController < ApplicationController
 
   private
 
-    # Use callbacks to share common setup or constraints between actions.
     def set_umpebc_kbart
       @umpebc_kbart = UmpebcKbart.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def umpebc_kbart_params
       params.require(:umpebc_kbart).permit(:name, :year, :updated)
+    end
+
+    def filtering_params(params)
+      params.slice(:name_like)
     end
 end
