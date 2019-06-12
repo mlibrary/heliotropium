@@ -22,6 +22,14 @@ module LibPtgBox
           "10.3998/mpub.00000000"
         end
       end
+
+      def to_mrc
+        ''
+      end
+
+      def to_xml
+        ''
+      end
     end
   end
 end

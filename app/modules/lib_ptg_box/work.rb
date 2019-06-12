@@ -10,6 +10,14 @@ module LibPtgBox
       @doi = kbart.doi
     end
 
+    def name
+      @doi
+    end
+
+    def new?
+      marc? && !!!@selection.collection.marc(@doi) # rubocop:disable Style/DoubleNegation
+    end
+
     def marc?
       !!marc # rubocop:disable Style/DoubleNegation
     end
