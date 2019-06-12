@@ -4,8 +4,8 @@ module LibPtgBox
   class Work
     attr_reader :doi
 
-    def initialize(product, kbart)
-      @product = product
+    def initialize(selection, kbart)
+      @selection = selection
       @kbart = kbart
       @doi = kbart.doi
     end
@@ -15,7 +15,7 @@ module LibPtgBox
     end
 
     def marc
-      @marc ||= @product.product_family.catalog.marc(@doi)
+      @marc ||= @selection.collection.catalog.marc(@doi)
     end
   end
 end

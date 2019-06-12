@@ -22,7 +22,7 @@ module AssembleMarcFiles
         next unless /umpebc/i.match?(collection.name)
 
         collection.selections.each do |selection|
-          record = LibPtgFolder.find_or_create_by!(name: selection.name)
+          record = UmpebcKbart.find_or_create_by!(name: selection.name)
           log += record.id.to_s + " " + collection.name + " " + selection.name + "\n"
           puts record.inspect
         end

@@ -2,7 +2,7 @@
 
 module LibPtgBox
   module Unmarshaller
-    class FamilyFolder < SimpleDelegator
+    class SubFolder < SimpleDelegator
       def kbart_folder
         @kbart_folder ||= begin
           f = Box::Folder.null_folder

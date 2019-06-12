@@ -4,8 +4,8 @@ require_relative 'lib_ptg_box/marshaller'
 require_relative 'lib_ptg_box/unmarshaller'
 
 require_relative 'lib_ptg_box/work'
-require_relative 'lib_ptg_box/product'
-require_relative 'lib_ptg_box/product_family'
+require_relative 'lib_ptg_box/selection'
+require_relative 'lib_ptg_box/collection'
 require_relative 'lib_ptg_box/lib_ptg_box'
 
 module LibPtgBox
@@ -17,11 +17,11 @@ module LibPtgBox
   #
   # class << self
   #   def test
-  #     LibPtgBox.new.product_families.each do |product_family|
-  #       puts product_family.name
-  #       product_family.products.each do |product|
-  #         puts "--> " + product.name + " " + product.yyyy + '-' + product.mm + '-' + product.dd
-  #         product.works.each do |work|
+  #     LibPtgBox.new.collections.each do |collection|
+  #       puts collection.name
+  #       collection.selections.each do |selection|
+  #         puts "--> " + selection.name + " " + selection.year + " " + selection.updated
+  #         selection.works.each do |work|
   #           puts "----> #{work.doi}" unless work.marc?
   #         end
   #       end

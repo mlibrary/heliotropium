@@ -2,8 +2,8 @@
 
 module LibPtgBox
   class LibPtgBox
-    def product_families
-      @product_families ||= Unmarshaller::RootFolder.family_folders.map { |family_folder| ProductFamily.new(family_folder) }
+    def collections
+      @collections ||= Unmarshaller::RootFolder.sub_folders.map { |sub_folder| Collection.new(sub_folder) }
     end
   end
 end
