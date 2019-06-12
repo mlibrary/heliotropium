@@ -2,12 +2,12 @@
 
 <p>
   <strong>Uuid:</strong>
-  <%= @uuid_identifier.uuid %>
+  <%= @uuid_identifier.uuid.unpacked %>
 </p>
 
 <p>
   <strong>Identifier:</strong>
-  <%= @uuid_identifier.identifier %>
+  <%= @uuid_identifier.identifier.name %>
 </p>
 
 <%= link_to 'Edit', edit_uuid_identifier_path(@uuid_identifier) %> |

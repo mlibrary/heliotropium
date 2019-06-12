@@ -21,6 +21,9 @@ Metrics/BlockLength:
 Metrics/LineLength:
   Enabled: false
 
+RSpec/MultipleExpectations:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 

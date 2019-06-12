@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe UmpebcKbart, type: :model do
   subject(:umpebc_kbart) { create(:umpebc_kbart) }
 
-  it do # rubocop:disable  RSpec/ExampleLength, RSpec/MultipleExpectations
+  it do # rubocop:disable RSpec/ExampleLength
     expect(umpebc_kbart).to be_valid
     expect(umpebc_kbart.update?).to be true
     expect(umpebc_kbart.destroy?).to be true

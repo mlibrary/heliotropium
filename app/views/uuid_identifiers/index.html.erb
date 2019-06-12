@@ -14,8 +14,8 @@
   <tbody>
     <% @uuid_identifiers.each do |uuid_identifier| %>
       <tr>
-        <td><%= uuid_identifier.uuid %></td>
-        <td><%= uuid_identifier.identifier %></td>
+        <td><%= uuid_identifier.uuid.unpacked %></td>
+        <td><%= uuid_identifier.identifier.name %></td>
         <td><%= link_to 'Show', uuid_identifier %></td>
         <td><%= link_to 'Edit', edit_uuid_identifier_path(uuid_identifier) %></td>
         <td><%= link_to 'Destroy', uuid_identifier, method: :delete, data: { confirm: 'Are you sure?' } %></td>
