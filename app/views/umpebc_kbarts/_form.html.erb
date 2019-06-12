@@ -1,0 +1,32 @@
+<%= form_with(model: umpebc_kbart, local: true) do |form| %>
+  <% if umpebc_kbart.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(umpebc_kbart.errors.count, "error") %> prohibited this umpebc_kbart from being saved:</h2>
+
+      <ul>
+      <% umpebc_kbart.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :year %>
+    <%= form.number_field :year %>
+  </div>
+
+  <div class="field">
+    <%= form.label :updated %>
+    <%= form.date_select :updated %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
