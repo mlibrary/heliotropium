@@ -1,5 +1,7 @@
+# frozen_string_literal: true
+
 class UmpebcKbartsController < ApplicationController
-  before_action :set_umpebc_kbart, only: [:show, :edit, :update, :destroy]
+  before_action :set_umpebc_kbart, only: %i[show edit update destroy]
 
   # GET /umpebc_kbarts
   # GET /umpebc_kbarts.json
@@ -62,6 +64,7 @@ class UmpebcKbartsController < ApplicationController
   end
 
   private
+
     # Use callbacks to share common setup or constraints between actions.
     def set_umpebc_kbart
       @umpebc_kbart = UmpebcKbart.find(params[:id])
