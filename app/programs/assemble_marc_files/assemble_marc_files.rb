@@ -24,7 +24,6 @@ module AssembleMarcFiles
         collection.selections.each do |selection|
           record = UmpebcKbart.find_or_create_by!(name: selection.name)
           log += record.id.to_s + " " + collection.name + " " + selection.name + "\n"
-          puts record.inspect
         end
       end
       log

@@ -66,7 +66,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     # let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box') }
     let(:lib_ptg_box) { LibPtgBox::LibPtgBox.new }
 
-    it { is_expected.to eq("synchronize\n") }
+    it { is_expected.not_to be_empty }
   end
 
   describe '#assemble_marc_files' do

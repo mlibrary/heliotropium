@@ -5,7 +5,7 @@
 <table>
   <thead>
     <tr>
-      <th>Packed</th>
+      <th>ID</th>
       <th>Unpacked</th>
       <th colspan="3"></th>
     </tr>
@@ -14,7 +14,7 @@
   <tbody>
     <% @uuids.each do |uuid| %>
       <tr>
-        <td><%= uuid.packed %></td>
+        <td><%= uuid.id %></td>
         <td><%= uuid.unpacked %></td>
         <td><%= link_to 'Show', uuid %></td>
         <td><%= link_to 'Edit', edit_uuid_path(uuid) %></td>

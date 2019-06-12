@@ -5,6 +5,4 @@ Rails.application.routes.draw do
   resources :uuid_identifiers
   resources :identifiers
   resources :uuids
-
-  root to: 'umpebc_kbarts#index'
 end
