@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Umpebc Kbarts</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Year</th>
+      <th>Updated</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @umpebc_kbarts.each do |umpebc_kbart| %>
+      <tr>
+        <td><%= umpebc_kbart.name %></td>
+        <td><%= umpebc_kbart.year %></td>
+        <td><%= umpebc_kbart.updated %></td>
+        <td><%= link_to 'Show', umpebc_kbart %></td>
+        <td><%= link_to 'Edit', edit_umpebc_kbart_path(umpebc_kbart) %></td>
+        <td><%= link_to 'Destroy', umpebc_kbart, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Umpebc Kbart', new_umpebc_kbart_path %>
