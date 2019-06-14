@@ -5,7 +5,7 @@ require 'rufus-scheduler'
 # Do not schedule when Rails is run from its console, for a test/spec, or from a Rake task
 # return if defined?(Rails::Console) || Rails.env.test? || File.split($0).last == 'rake'
 # Do not schedule unless Rails is run in production mode.
-return unless Rails.env.production?
+return unless Rails.env.production? && Settings.scheduler.enabled
 
 Rails.logger.info "Schedule Task #{Time.now}"
 
