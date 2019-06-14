@@ -1,0 +1,5 @@
+sphinx
+sphinx-autobuild
+sphinxcontrib-plantuml
+sphinxcontrib-httpdomain
+guzzle_sphinx_theme
