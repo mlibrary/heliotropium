@@ -21,4 +21,16 @@ RSpec.describe LibPtgBox::Unmarshaller::Marc do
       it { is_expected.to eq('doi') }
     end
   end
+
+  describe '#to_mrc' do
+    subject { marc.to_mrc }
+
+    it { is_expected.to eq('') }
+  end
+
+  describe '#to_xml' do
+    subject { marc.to_xml }
+
+    it { is_expected.to eq('') }
+  end
 end

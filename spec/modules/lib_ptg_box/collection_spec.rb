@@ -36,6 +36,22 @@ RSpec.describe LibPtgBox::Collection do
     it { is_expected.to contain_exactly(selection) }
   end
 
+  describe '#upload_marc_file' do
+    subject { collection.upload_marc_file(filename) }
+
+    let(:filename) { '' }
+
+    it { is_expected.to be_empty }
+  end
+
+  describe '#marc' do
+    subject { collection.marc(doi) }
+
+    let(:doi) { '' }
+
+    it { is_expected.to be_nil }
+  end
+
   describe '#catalog' do
     subject { collection.catalog }
 
