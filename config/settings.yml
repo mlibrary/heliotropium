@@ -35,6 +35,11 @@ rails:
   cable:
     adapter: async
 
+# These are keys used rufus scheduler (see: config/initializers/scheduler.rb)
+scheduler:
+  enabled:
+    false
+
 # These are keys used by application mailers
 mailers:
   to:
