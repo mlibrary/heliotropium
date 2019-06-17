@@ -6,7 +6,18 @@ RSpec.describe LibPtgBox::Unmarshaller::MarcFile do
   subject(:marc_file) { described_class.new(box_file) }
 
   let(:box_file) { instance_double(Box::File, 'box_file', content: content) }
-  let(:content) { '' }
+  let(:content) { instance_double(String, 'content', encoding: 'encoding', valid_encoding?: true) }
+  let(:string_io) { instance_double(StringIO, 'string_io') }
+  let(:reader) { instance_double(MARC::XMLReader, 'reader') }
+  let(:entries) { [] }
+
+  before do
+    allow(content).to receive(:force_encoding).with('UTF-8').and_return(content)
+    allow(content).to receive(:encode).with('UTF-8').and_return(content)
+    allow(StringIO).to receive(:new).with(content).and_return(string_io)
+    allow(MARC::XMLReader).to receive(:new).with(string_io).and_return(reader)
+    allow(reader).to receive(:entries).and_return(entries)
+  end
 
   describe '#marcs' do
     subject { marc_file.marcs }
@@ -14,20 +25,15 @@ RSpec.describe LibPtgBox::Unmarshaller::MarcFile do
     it { is_expected.to be_empty }
 
     context 'with marcs' do
-      let(:content) do
-        <<~LINES
-          marc xml record
-        LINES
-      end
-
+      let(:entries) { [entry] }
+      let(:entry) { instance_double(String, 'entry') }
       let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
 
       before do
-        allow(LibPtgBox::Unmarshaller::Marc).to receive(:new).with("marc xml record\n").and_return(marc)
+        allow(LibPtgBox::Unmarshaller::Marc).to receive(:new).with(entry).and_return(marc)
       end
 
-      it { is_expected.to be_empty }
-      xit { is_expected.to contain_exactly(marc) }
+      it { is_expected.to contain_exactly(marc) }
     end
   end
 end

@@ -4,20 +4,22 @@ require 'marc'
 
 module LibPtgBox
   class Catalog
-    def initialize(product, complete_marc_file)
-      @product = product
+    def initialize(collection, complete_marc_file)
+      @collection = collection
       @complete_marc_file = complete_marc_file
-      @reader = MARC::XMLReader.new(StringIO.new(complete_marc_file.content))
-      @marcs = @reader.entries.map { |entry| Unmarshaller::Marc.new(entry) }
     end
 
     def marc(doi)
-      @marcs.each do |marc|
+      marcs.each do |marc|
         next unless /#{doi}/i.match?(marc.doi)
 
         return marc
       end
       nil
+    end
+
+    def marcs
+      @marcs ||= @complete_marc_file.marcs
     end
   end
 end

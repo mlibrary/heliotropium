@@ -17,8 +17,26 @@ module LibPtgBox
       ''
     end
 
-    def marc(_doi)
+    def marc(doi)
+      marcs.each do |marc|
+        next unless /#{doi}/i.match?(marc.doi)
+
+        return marc
+      end
       nil
+    end
+
+    def marcs
+      @marcs ||= begin
+        complete_marc_file = nil
+        @sub_folder.marc_folder.marc_files.each do |marc_file|
+          next unless /complete\.xml/i.match?(marc_file.name)
+
+          complete_marc_file = marc_file
+          break
+        end
+        complete_marc_file.marcs
+      end
     end
 
     def catalog

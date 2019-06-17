@@ -15,7 +15,11 @@ module LibPtgBox
     end
 
     def new?
-      marc? && !!!@selection.collection.marc(@doi) # rubocop:disable Style/DoubleNegation
+      if marc?
+        !!!@selection.collection.marc(@doi) # rubocop:disable Style/DoubleNegation
+      else
+        false
+      end
     end
 
     def marc?

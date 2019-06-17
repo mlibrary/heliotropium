@@ -5,9 +5,10 @@ require 'rails_helper'
 RSpec.describe LibPtgBox::Unmarshaller::Kbart do
   subject(:kbart) { described_class.new(line) }
 
-  let(:line) { instance_double(String, 'line') }
+  let(:line) { instance_double(String, 'line', encoding: 'encoding', valid_encoding?: true) }
 
   before do
+    allow(line).to receive(:force_encoding).with('Windows-1252').and_return(line)
     allow(line).to receive(:force_encoding).with('UTF-16BE').and_return(line)
     allow(line).to receive(:encode).with('UTF-8').and_return(line)
   end
