@@ -23,12 +23,12 @@ module LibPtgBox
         end
       end
 
-      def to_mrc
-        ''
+      def to_marc
+        @entry.to_marc
       end
 
       def to_xml
-        ''
+        @entry.to_xml
       end
     end
   end

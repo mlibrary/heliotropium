@@ -6,6 +6,7 @@ module AssembleMarcFiles
       log = +''
       chdir_lib_ptg_box_dir
       lib_ptg_box = LibPtgBox::LibPtgBox.new
+      log += reset
       log += synchronize(lib_ptg_box)
       lib_ptg_box.collections.each do |collection|
         # Only process UMPEBC Metadata folder.
@@ -13,6 +14,12 @@ module AssembleMarcFiles
 
         log += assemble_marc_files(collection)
       end
+      log
+    end
+
+    def reset
+      log = +''
+      UmpebcKbart.destroy_all
       log
     end
 
@@ -36,8 +43,9 @@ module AssembleMarcFiles
         next unless work.new?
 
         if work.marc?
-          mrc_file << work.marc.to_mrc
+          mrc_file << work.marc.to_marc
           xml_file << work.marc.to_xml
+          xml_file << "\n"
           log += "Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{selection.collection.name}' is new!\n"
         else
           log += "Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{selection.collection.name}' is missing!\n"
@@ -55,8 +63,9 @@ module AssembleMarcFiles
       xml_file = File.open(filename + '.xml', 'w')
       selection.works.each do |work|
         if work.marc?
-          mrc_file << work.marc.to_mrc
+          mrc_file << work.marc.to_marc
           xml_file << work.marc.to_xml
+          xml_file << "\n"
         else
           log += "Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{selection.collection.name}' is missing!\n"
         end
@@ -109,6 +118,7 @@ module AssembleMarcFiles
         collection.selections.each do |selection|
           record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
           next unless record.updated < selection.updated
+          next unless selection.year == 2019
 
           log += append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
           log += recreate_selection_marc_files(selection)

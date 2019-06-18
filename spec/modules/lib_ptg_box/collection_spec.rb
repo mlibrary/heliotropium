@@ -36,7 +36,7 @@ RSpec.describe LibPtgBox::Collection do
     it { is_expected.to contain_exactly(selection) }
   end
 
-  describe '#upload_marc_file' do
+  xdescribe '#upload_marc_file' do
     subject { collection.upload_marc_file(filename) }
 
     let(:filename) { '' }
@@ -47,9 +47,55 @@ RSpec.describe LibPtgBox::Collection do
   describe '#marc' do
     subject { collection.marc(doi) }
 
-    let(:doi) { '' }
+    let(:doi) { 'doi' }
+    let(:marcs) { [] }
+
+    before { allow(collection).to receive(:marcs).and_return(marcs) }
 
     it { is_expected.to be_nil }
+
+    context 'when marc' do
+      let(:marcs) { [marc] }
+      let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: marc_doi) }
+      let(:marc_doi) { 'marc' }
+
+      it { is_expected.to be_nil }
+
+      context 'when marc with doi' do # rubocop:disable RSpec/NestedGroups
+        let(:marc_doi) { 'doi' }
+
+        it { is_expected.to be marc }
+      end
+    end
+  end
+
+  describe '#marcs' do
+    subject { collection.marcs }
+
+    let(:marc_folder) { object_double(LibPtgBox::Unmarshaller::MarcFolder.new(marc_box_folder), 'marc_folder') }
+    let(:marc_box_folder) { instance_double(Box::Folder, 'marc_box_folder', name: 'name') }
+    let(:collection_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(collection_box_file), 'collection_marc_file') }
+    let(:collection_box_file) { instance_double(Box::File, 'collection_box_file', name: 'Collection_Year.xml') }
+    let(:complete_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(complete_box_file), 'complete_marc_file', marcs: marcs) }
+    let(:complete_box_file) { instance_double(Box::File, 'complete_box_file', name: 'Collection_Complete.xml') }
+    let(:marcs) { [] }
+    let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: marc_doi) }
+    let(:marc_doi) { 'marc' }
+
+    before do
+      allow(sub_folder).to receive(:marc_folder).and_return(marc_folder)
+      allow(marc_folder).to receive(:marc_files).and_return([collection_marc_file, complete_marc_file])
+      allow(collection_marc_file).to receive(:name).and_return(collection_box_file.name)
+      allow(complete_marc_file).to receive(:name).and_return(complete_box_file.name)
+    end
+
+    it { is_expected.to be_empty }
+
+    context 'when marc' do
+      let(:marcs) { [marc] }
+
+      it { is_expected.to contain_exactly(marc) }
+    end
   end
 
   describe '#catalog' do
@@ -57,17 +103,17 @@ RSpec.describe LibPtgBox::Collection do
 
     let(:marc_folder) { object_double(LibPtgBox::Unmarshaller::MarcFolder.new(marc_box_folder), 'marc_folder') }
     let(:marc_box_folder) { instance_double(Box::Folder, 'marc_box_folder', name: 'name') }
-    let(:product_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(product_box_file), 'product_marc_file') }
-    let(:product_box_file) { instance_double(Box::File, 'product_box_file', name: 'Product_Year.xml') }
+    let(:collection_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(collection_box_file), 'collection_marc_file') }
+    let(:collection_box_file) { instance_double(Box::File, 'collection_box_file', name: 'Collection_Year.xml') }
     let(:complete_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(complete_box_file), 'complete_marc_file') }
-    let(:complete_box_file) { instance_double(Box::File, 'complete_box_file', name: 'Product_Complete.xml', content: content) }
+    let(:complete_box_file) { instance_double(Box::File, 'complete_box_file', name: 'Collection_Complete.xml', content: content) }
     let(:content) { '' }
     let(:catalog) { 'catalog' }
 
     before do
       allow(sub_folder).to receive(:cataloging_marc_folder).and_return(marc_folder)
-      allow(marc_folder).to receive(:marc_files).and_return([product_marc_file, complete_marc_file])
-      allow(product_marc_file).to receive(:name).and_return(product_box_file.name)
+      allow(marc_folder).to receive(:marc_files).and_return([collection_marc_file, complete_marc_file])
+      allow(collection_marc_file).to receive(:name).and_return(collection_box_file.name)
       allow(complete_marc_file).to receive(:name).and_return(complete_box_file.name)
       allow(complete_marc_file).to receive(:content).and_return(complete_box_file.content)
       allow(LibPtgBox::Catalog).to receive(:new).with(collection, complete_marc_file).and_return(catalog)

@@ -22,15 +22,19 @@ RSpec.describe LibPtgBox::Unmarshaller::Marc do
     end
   end
 
-  describe '#to_mrc' do
-    subject { marc.to_mrc }
+  describe '#to_marc' do
+    subject { marc.to_marc }
 
-    it { is_expected.to eq('') }
+    before { allow(entry).to receive(:to_marc).and_return('marc') }
+
+    it { is_expected.to eq('marc') }
   end
 
   describe '#to_xml' do
     subject { marc.to_xml }
 
-    it { is_expected.to eq('') }
+    before { allow(entry).to receive(:to_xml).and_return('xml') }
+
+    it { is_expected.to eq('xml') }
   end
 end
