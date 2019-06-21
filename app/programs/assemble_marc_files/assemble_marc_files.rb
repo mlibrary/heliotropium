@@ -23,13 +23,23 @@ module AssembleMarcFiles
       log
     end
 
-    def synchronize(lib_ptg_box)
+    def synchronize(lib_ptg_box) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       log = +''
       lib_ptg_box.collections.each do |collection|
         # Only process UMPEBC Metadata folder.
         next unless /umpebc/i.match?(collection.name)
 
-        collection.selections.each { |selection| UmpebcKbart.find_or_create_by!(name: selection.name, year: selection.year) }
+        umpebc_kbarts = []
+        UmpebcKbart.all.each do |umpebc_kbart|
+          umpebc_kbarts << umpebc_kbart
+        end
+
+        collection.selections.each do |selection|
+          umpebc_kbart = UmpebcKbart.find_or_create_by!(name: selection.name, year: selection.year)
+          umpebc_kbarts.delete(umpebc_kbart) if umpebc_kbarts.include?(umpebc_kbart)
+        end
+
+        umpebc_kbarts.each(&:destroy!)
       end
       log
     end
@@ -96,7 +106,7 @@ module AssembleMarcFiles
       log
     end
 
-    def replace_collection_marc_files(collection)
+    def upload_marc_files(collection)
       log = +''
       Dir.entries(Dir.pwd).each do |filename|
         next unless /^.+\.(mrc|xml)$/.match?(filename)
@@ -111,25 +121,32 @@ module AssembleMarcFiles
       # Only process UMPEBC Metadata folder.
       return log unless /umpebc/i.match?(collection.name)
 
+      update_selection = false
+      collection.selections.each do |selection|
+        record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
+        next unless record.updated < selection.updated
+
+        update_selection = true
+        break
+      end
+      return log unless update_selection
+
       FileUtils.rm_rf('umpebc')
       Dir.mkdir('umpebc')
       Dir.chdir('umpebc') do
-        selection_updated = false
         collection.selections.each do |selection|
           record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
-          next unless record.updated < selection.updated
-          next unless selection.year == 2019
-
-          log += append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
-          log += recreate_selection_marc_files(selection)
-          record.updated = selection.updated
-          record.save
-          selection_updated = true
+          if record.updated < selection.updated
+            log += append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
+            log += recreate_selection_marc_files(selection)
+            record.updated = selection.updated
+            record.save
+          else
+            log += recreate_selection_marc_files(selection)
+          end
         end
-        if selection_updated
-          log += recreate_collection_marc_files(collection)
-          log += replace_collection_marc_files(collection)
-        end
+        log += recreate_collection_marc_files(collection)
+        log += upload_marc_files(collection)
       end
       log
     end

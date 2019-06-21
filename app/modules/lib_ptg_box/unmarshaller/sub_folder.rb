@@ -5,7 +5,7 @@ module LibPtgBox
     class SubFolder < SimpleDelegator
       def kbart_folder
         @kbart_folder ||= begin
-          f = Box::Folder.null_folder
+          f = Ftp::Folder.null_folder
           folders.each do |folder|
             next unless /kbart/i.match?(folder.name)
 
@@ -18,7 +18,7 @@ module LibPtgBox
 
       def marc_folder
         @marc_folder ||= begin
-          f = Box::Folder.null_folder
+          f = Ftp::Folder.null_folder
           folders.each do |folder|
             next if /kbart/i.match?(folder.name)
             next if /cataloging/i.match?(folder.name)
@@ -32,7 +32,7 @@ module LibPtgBox
 
       def cataloging_marc_folder
         @cataloging_marc_folder ||= begin
-          f = Box::Folder.null_folder
+          f = Ftp::Folder.null_folder
           folders.each do |folder|
             next unless /cataloging/i.match?(folder.name)
 

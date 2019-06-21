@@ -3,13 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::Unmarshaller::MarcFolder do
-  subject(:marc_folder) { described_class.new(box_folder) }
+  subject(:marc_folder) { described_class.new(ftp_folder) }
 
-  let(:box_folder) { instance_double(Box::Folder, 'box_folder') }
-  let(:box_files) { [] }
+  let(:ftp_folder) { instance_double(Ftp::Folder, 'ftp_folder') }
+  let(:ftp_files) { [] }
 
   before do
-    allow(box_folder).to receive(:files).and_return(box_files)
+    allow(ftp_folder).to receive(:files).and_return(ftp_files)
   end
 
   describe '#marc_files' do
@@ -18,12 +18,12 @@ RSpec.describe LibPtgBox::Unmarshaller::MarcFolder do
     it { is_expected.to be_empty }
 
     context 'with files' do
-      let(:box_files) { [box_file] }
-      let(:box_file) { instance_double(Box::File, 'box_file') }
+      let(:ftp_files) { [ftp_file] }
+      let(:ftp_file) { instance_double(Ftp::File, 'ftp_file') }
       let(:marc_file) { instance_double(LibPtgBox::Unmarshaller::MarcFile, 'marc_file') }
 
       before do
-        allow(LibPtgBox::Unmarshaller::MarcFile).to receive(:new).with(box_file).and_return(marc_file)
+        allow(LibPtgBox::Unmarshaller::MarcFile).to receive(:new).with(ftp_file).and_return(marc_file)
       end
 
       it { is_expected.to contain_exactly(marc_file) }

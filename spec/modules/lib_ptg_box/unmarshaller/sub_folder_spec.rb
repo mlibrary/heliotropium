@@ -3,13 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
-  subject(:sub_folder) { described_class.new(sub_box_folder) }
+  subject(:sub_folder) { described_class.new(sub_ftp_folder) }
 
-  let(:sub_box_folder) { instance_double(Box::Folder, 'sub_box_folder') }
-  let(:box_folders) { [] }
+  let(:sub_ftp_folder) { instance_double(Ftp::Folder, 'sub_ftp_folder') }
+  let(:ftp_folders) { [] }
 
   before do
-    allow(sub_box_folder).to receive(:folders).and_return(box_folders)
+    allow(sub_ftp_folder).to receive(:folders).and_return(ftp_folders)
   end
 
   describe '#kbart_folder' do
@@ -18,8 +18,8 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
     it { expect(kbart_folder.name).to eq('NullFolder') }
 
     context 'with kbart folder' do
-      let(:box_folders) { [kbart_box_folder] }
-      let(:kbart_box_folder) { instance_double(Box::Folder, 'kbart_box_folder', name: 'kbart') }
+      let(:ftp_folders) { [kbart_ftp_folder] }
+      let(:kbart_ftp_folder) { instance_double(Ftp::Folder, 'kbart_ftp_folder', name: 'kbart') }
 
       it { expect(kbart_folder.name).to eq('kbart') }
     end
@@ -31,8 +31,8 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
     it { expect(marc_folder.name).to eq('NullFolder') }
 
     context 'with marc folder' do
-      let(:box_folders) { [marc_box_folder] }
-      let(:marc_box_folder) { instance_double(Box::Folder, 'marc_box_folder', name: 'name') }
+      let(:ftp_folders) { [marc_ftp_folder] }
+      let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'name') }
 
       it { expect(marc_folder.name).to eq('name') }
     end
@@ -44,8 +44,8 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
     it { expect(cataloging_marc_folder.name).to eq('NullFolder') }
 
     context 'with cataloging marc folder' do
-      let(:box_folders) { [cataloging_marc_box_folder] }
-      let(:cataloging_marc_box_folder) { instance_double(Box::Folder, 'cataloging_marc_box_folder', name: 'cataloging') }
+      let(:ftp_folders) { [cataloging_marc_ftp_folder] }
+      let(:cataloging_marc_ftp_folder) { instance_double(Ftp::Folder, 'cataloging_marc_ftp_folder', name: 'cataloging') }
 
       it { expect(cataloging_marc_folder.name).to eq('cataloging') }
     end

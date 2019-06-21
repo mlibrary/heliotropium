@@ -13,8 +13,8 @@ module LibPtgBox
       @selections ||= @sub_folder.kbart_folder.kbart_files.map { |kbart_file| Selection.new(self, kbart_file) }
     end
 
-    def upload_marc_file(_filename)
-      ''
+    def upload_marc_file(filename)
+      @sub_folder.marc_folder.upload(filename)
     end
 
     def marc(doi)

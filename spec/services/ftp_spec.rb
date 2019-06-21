@@ -2,6 +2,6 @@
 
 require 'rails_helper'
 
-RSpec.describe LibPtgBox::Marshaller do
+RSpec.describe Ftp do
   it { is_expected.not_to be_nil }
 end
