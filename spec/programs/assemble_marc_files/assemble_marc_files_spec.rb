@@ -2,44 +2,6 @@
 
 require 'rails_helper'
 
-require 'support/mock_boxr'
-
-module Boxr
-  MOCK_ROOT = Rails.root.join('spec', 'fixtures')
-
-  class Client
-    def initialize
-      @init = true
-    end
-
-    def file_from_path(path)
-      mock_client.file_from_path(File.join(MOCK_ROOT, path))
-    end
-
-    def folder_from_path(path)
-      mock_client.folder_from_path(File.join(MOCK_ROOT, path))
-    end
-
-    def folder_items(folder, options)
-      mock_client.folder_items(folder, options)
-    end
-
-    def download_file(file)
-      mock_client.download_file(file)
-    end
-
-    def upload_file(path, folder)
-      mock_client.upload_file(path, folder)
-    end
-
-    private
-
-      def mock_client
-        @mock_client ||= MockBoxr::Client.new
-      end
-  end
-end
-
 RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   subject(:program) { described_class.new }
 
@@ -57,18 +19,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', to_marc: 'marc', to_xml: 'xml') }
   let(:umpebc_metadata) { 'UMPEBC Metadata' }
 
-  # before(:all) do
-  #   tmp_dir = Rails.root.join('tmp')
-  #   Dir.mkdir(tmp_dir) unless Dir.exist?(tmp_dir)
-  #   Dir.chdir(tmp_dir)
-  #   Dir.mkdir('lib_ptg_box_spec') unless Dir.exist?('lib_ptg_box_spec')
-  #   Dir.chdir('lib_ptg_box_spec')
-  # end
-
   before do
-    # tmp_dir = Rails.root.join('tmp')
-    # Dir.chdir(tmp_dir)
-    # Dir.chdir('lib_ptg_box_spec')
     program
     allow(LibPtgBox::LibPtgBox).to receive(:new).and_return(lib_ptg_box)
     allow(selection).to receive(:collection).and_return(collection)
@@ -78,16 +29,30 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     subject { program.execute }
 
     before do
+      allow(program).to receive(:reset).and_return("reset\n")
       allow(program).to receive(:synchronize).with(lib_ptg_box).and_return("synchronize\n")
       allow(program).to receive(:assemble_marc_files).with(collection).and_return("collection\n")
     end
 
-    it { is_expected.to eq("synchronize\n") }
+    it { is_expected.to eq("reset\nsynchronize\n") }
 
     context 'when UMPEBC Metadata folder' do
       let(:collection_name) { umpebc_metadata }
 
-      it { is_expected.to eq("synchronize\ncollection\n") }
+      it { is_expected.to eq("reset\nsynchronize\ncollection\n") }
+    end
+  end
+
+  describe '#reset' do
+    subject { program.reset }
+
+    before { allow(UmpebcKbart).to receive(:destroy_all) }
+
+    it { is_expected.to be_empty }
+
+    it do
+      program.reset
+      expect(UmpebcKbart).to have_received(:destroy_all)
     end
   end
 
@@ -98,11 +63,20 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
     context 'when UMPEBC Metadata folder' do
       let(:collection_name) { umpebc_metadata }
+      let(:defunct_record) { instance_double(UmpebcKbart, 'defunct_record') }
       let(:record) { instance_double(UmpebcKbart, 'record') }
 
-      before { allow(UmpebcKbart).to receive(:find_or_create_by!).with(name: selection.name, year: selection.year).and_return(record) }
+      before do
+        allow(UmpebcKbart).to receive(:all).and_return([defunct_record, record])
+        allow(defunct_record).to receive(:destroy!)
+        allow(UmpebcKbart).to receive(:find_or_create_by!).with(name: selection.name, year: selection.year).and_return(record)
+      end
 
       it { is_expected.to be_empty }
+      it do
+        program.synchronize(lib_ptg_box)
+        expect(defunct_record).to have_received(:destroy!)
+      end
     end
   end
 
@@ -219,8 +193,8 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
   end
 
-  describe '#replace_collection_marc_files' do
-    subject { program.replace_collection_marc_files(collection) }
+  describe '#upload_marc_files' do
+    subject { program.upload_marc_files(collection) }
 
     let(:entries) { ['.', '..'] }
 
@@ -264,7 +238,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
   end
 
-  xdescribe '#assemble_marc_files' do
+  describe '#assemble_marc_files' do
     subject { program.assemble_marc_files(collection) }
 
     it { is_expected.to be_empty }
@@ -287,17 +261,17 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
           allow(program).to receive(:append_selection_month_marc_file).with(selection, month).and_return("month\n")
           allow(program).to receive(:recreate_selection_marc_files).with(selection).and_return("select\n")
           allow(program).to receive(:recreate_collection_marc_files).with(collection).and_return("collect\n")
-          allow(program).to receive(:replace_collection_marc_files).with(collection).and_return("replace\n")
+          allow(program).to receive(:upload_marc_files).with(collection).and_return("upload\n")
           allow(record).to receive(:updated=).with(selection_updated)
           allow(record).to receive(:save).with(no_args)
         end
 
-        it { is_expected.to eq("select\ncollect\nreplace\n") }
+        it { is_expected.to eq("select\ncollect\nupload\n") }
 
         context 'when selection year updated' do # rubocop:disable RSpec/NestedGroups
           let(:selection_year) { Date.today.year }
 
-          it { is_expected.to eq("month\nselect\ncollect\nreplace\n") }
+          it { is_expected.to eq("month\nselect\ncollect\nupload\n") }
         end
       end
     end

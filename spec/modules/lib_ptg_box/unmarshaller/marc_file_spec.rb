@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::Unmarshaller::MarcFile do
-  subject(:marc_file) { described_class.new(box_file) }
+  subject(:marc_file) { described_class.new(ftp_file) }
 
-  let(:box_file) { instance_double(Box::File, 'box_file', content: content) }
+  let(:ftp_file) { instance_double(Ftp::File, 'ftp_file', content: content) }
   let(:content) { instance_double(String, 'content', encoding: 'encoding', valid_encoding?: true) }
   let(:string_io) { instance_double(StringIO, 'string_io') }
   let(:reader) { instance_double(MARC::XMLReader, 'reader') }

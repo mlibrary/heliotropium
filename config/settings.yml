@@ -35,12 +35,12 @@ rails:
   cable:
     adapter: async
 
-# These are keys used rufus scheduler (see: config/initializers/scheduler.rb)
+# Keys used by rufus scheduler (see: config/initializers/scheduler.rb)
 scheduler:
   enabled:
     false
 
-# These are keys used by application mailers
+# Keys used by application mailers
 mailers:
   to:
     administrators:
@@ -50,3 +50,10 @@ mailers:
       - administrator@heliotropium.com
     no_reply:
       - no-reply@heliotropium.com
+
+# Keys used by LibPtgBox module
+lib_ptg_box:
+  ftp: ftp.box.com
+  user: lib.ptg.box@umich.edu
+  password: password
+  root: "Library PTG Box"

@@ -3,9 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::Unmarshaller::KbartFile do
-  subject(:kbart_file) { described_class.new(box_file) }
+  subject(:kbart_file) { described_class.new(ftp_file) }
 
-  let(:box_file) { instance_double(Box::File, 'box_file', content: content) }
+  let(:ftp_file) { instance_double(Ftp::File, 'ftp_file', content: content) }
   let(:content) { '' }
 
   describe '#kbarts' do

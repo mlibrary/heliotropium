@@ -6,11 +6,11 @@ RSpec.describe LibPtgBox::Selection do
   subject(:selection) { described_class.new(collection, kbart_file) }
 
   let(:collection) { instance_double(LibPtgBox::Collection, 'collection') }
-  let(:kbart_file) { object_double(LibPtgBox::Unmarshaller::KbartFile.new(kbart_box_file), 'kbart_file') }
-  let(:kbart_box_file) { instance_double(Box::File, 'kbart_box_file', name: kbart_file_name) }
+  let(:kbart_file) { object_double(LibPtgBox::Unmarshaller::KbartFile.new(kbart_ftp_file), 'kbart_file') }
+  let(:kbart_ftp_file) { instance_double(Ftp::File, 'kbart_ftp_file', name: kbart_file_name) }
   let(:kbart_file_name) { 'Prefix_1970_Suffix_1999-01-01.csv' }
 
-  before { allow(kbart_file).to receive(:name).and_return(kbart_box_file.name) }
+  before { allow(kbart_file).to receive(:name).and_return(kbart_ftp_file.name) }
 
   it { expect(selection.name).to eq('Prefix_1970_Suffix') }
   it { expect(selection.year).to eq(1970) }

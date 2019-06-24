@@ -6,8 +6,8 @@ RSpec.describe LibPtgBox::Catalog do
   subject(:catalog) { described_class.new(selection, complete_marc_file) }
 
   let(:selection) { instance_double(LibPtgBox::Selection, 'selection') }
-  let(:complete_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(marc_box_file), 'complete_marc_file', marcs: marcs) }
-  let(:marc_box_file) { instance_double(Box::File, 'marc_box_file') }
+  let(:complete_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(marc_ftp_file), 'complete_marc_file', marcs: marcs) }
+  let(:marc_ftp_file) { instance_double(Ftp::File, 'marc_ftp_file') }
   let(:marcs) { [] }
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: marc_doi) }
   let(:marc_doi) { 'marc' }
