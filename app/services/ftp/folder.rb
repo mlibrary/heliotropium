@@ -57,7 +57,7 @@ module Ftp
           ftp.chdir(dirname)
         end
         ::File.open(filename) do |file|
-          ftp.putbinaryfile(file)
+          ftp.putbinaryfile(file, "fulcimen_" + ::File.basename(filename))
         end
         rvalue = true
       rescue StandardError => e
@@ -84,8 +84,8 @@ module Ftp
       []
     end
 
-    def upload(_filename)
-      # Rails.logger.error("Ftp::NullFolder.upload(#{filepath})")
+    def upload(filename)
+      Rails.logger.error("Ftp::NullFolder.upload(#{filename})")
       false
     end
   end

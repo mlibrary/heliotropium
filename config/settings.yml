@@ -53,7 +53,7 @@ mailers:
 
 # Keys used by LibPtgBox module
 lib_ptg_box:
-  ftp: ftp.box.com
-  user: lib.ptg.box@umich.edu
-  password: password
-  root: "Library PTG Box"
+  ftp: <host>
+  user: <user>
+  password: <password>
+  root: <folder>
