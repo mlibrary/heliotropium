@@ -20,8 +20,21 @@ module LibPtgBox
         @marc_folder ||= begin
           f = Ftp::Folder.null_folder
           folders.each do |folder|
-            next if /kbart/i.match?(folder.name)
             next if /cataloging/i.match?(folder.name)
+            next unless /marc/i.match?(folder.name)
+
+            f = folder
+            break
+          end
+          MarcFolder.new(f)
+        end
+      end
+
+      def upload_folder
+        @upload_folder ||= begin
+          f = Ftp::Folder.null_folder
+          folders.each do |folder|
+            next unless /upload/i.match?(folder.name)
 
             f = folder
             break

@@ -6,7 +6,8 @@ module LibPtgBox
 
     def initialize(sub_folder)
       @sub_folder = sub_folder
-      @name = sub_folder.name
+      match = /(^.+)(\sMetadata$)/i.match(sub_folder.name)
+      @name = match.present? ? match[1] : sub_folder.name
     end
 
     def selections
@@ -14,7 +15,7 @@ module LibPtgBox
     end
 
     def upload_marc_file(filename)
-      @sub_folder.marc_folder.upload(filename)
+      @sub_folder.upload_folder.upload(filename)
     end
 
     def marc(doi)

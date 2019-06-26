@@ -6,7 +6,7 @@ RSpec.describe LibPtgBox::Collection do
   subject(:collection) { described_class.new(sub_folder) }
 
   let(:sub_folder) { object_double(LibPtgBox::Unmarshaller::SubFolder.new(sub_ftp_folder), 'sub_folder') }
-  let(:sub_ftp_folder) { instance_double(Ftp::Folder, 'sub_ftp_folder', name: 'Collection') }
+  let(:sub_ftp_folder) { instance_double(Ftp::Folder, 'sub_ftp_folder', name: 'Collection Metadata') }
 
   before do
     allow(sub_folder).to receive(:name).and_return(sub_ftp_folder.name)
@@ -15,7 +15,7 @@ RSpec.describe LibPtgBox::Collection do
   describe '#name' do
     subject { collection.name }
 
-    it { is_expected.to eq(sub_ftp_folder.name) }
+    it { is_expected.to eq(/(^.+)(\sMetadata$)/i.match(sub_folder.name)[1]) }
   end
 
   describe '#selections' do
@@ -44,7 +44,7 @@ RSpec.describe LibPtgBox::Collection do
     let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', upload: 'upload') }
 
     before do
-      allow(sub_folder).to receive(:marc_folder).and_return(marc_folder)
+      allow(sub_folder).to receive(:upload_folder).and_return(marc_folder)
       allow(marc_folder).to receive(:upload).with(filename)
     end
 

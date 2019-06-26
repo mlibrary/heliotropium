@@ -32,9 +32,22 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
 
     context 'with marc folder' do
       let(:ftp_folders) { [marc_ftp_folder] }
-      let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'name') }
+      let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'marc') }
 
-      it { expect(marc_folder.name).to eq('name') }
+      it { expect(marc_folder.name).to eq('marc') }
+    end
+  end
+
+  describe '#upload_folder' do
+    subject(:upload_folder) { sub_folder.upload_folder }
+
+    it { expect(upload_folder.name).to eq('NullFolder') }
+
+    context 'with upload folder' do
+      let(:ftp_folders) { [upload_ftp_folder] }
+      let(:upload_ftp_folder) { instance_double(Ftp::Folder, 'upload_ftp_folder', name: 'upload') }
+
+      it { expect(upload_folder.name).to eq('upload') }
     end
   end
 
