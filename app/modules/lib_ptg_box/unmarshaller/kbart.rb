@@ -26,7 +26,7 @@ module LibPtgBox
         def encode_line(line)
           _content_encoding = line.encoding
           _content_valid_encoding = line.valid_encoding?
-          line.force_encoding('Windows-1252').encode('UTF-8')
+          line.force_encoding('UTF-8').encode('UTF-8')
         end
     end
   end
