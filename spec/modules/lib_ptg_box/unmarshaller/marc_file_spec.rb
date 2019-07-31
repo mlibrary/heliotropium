@@ -15,7 +15,7 @@ RSpec.describe LibPtgBox::Unmarshaller::MarcFile do
     allow(content).to receive(:force_encoding).with('UTF-8').and_return(content)
     allow(content).to receive(:encode).with('UTF-8').and_return(content)
     allow(StringIO).to receive(:new).with(content).and_return(string_io)
-    allow(MARC::XMLReader).to receive(:new).with(string_io).and_return(reader)
+    allow(MARC::Reader).to receive(:new).with(string_io).and_return(reader)
     allow(reader).to receive(:entries).and_return(entries)
   end
 

@@ -28,7 +28,7 @@ module Ftp
           rvalue << Ftp::Folder.new(@service, ::File.join(@pathname, entry.pathname))
         end
       rescue StandardError => e
-        Rails.logger.error e
+        Rails.logger.error "Ftp::Folder#folders #{e}"
       end
       rvalue
     end
@@ -45,7 +45,7 @@ module Ftp
           rvalue << Ftp::File.new(@service, ::File.join(@pathname, entry.pathname))
         end
       rescue StandardError => e
-        Rails.logger.error e
+        Rails.logger.error "Ftp::Folder#files #{e}"
       end
       rvalue
     end
@@ -57,11 +57,11 @@ module Ftp
           ftp.chdir(dirname)
         end
         ::File.open(filename) do |file|
-          ftp.putbinaryfile(file, "fulcimen_" + ::File.basename(filename))
+          ftp.putbinaryfile(file, ::File.basename(filename))
         end
         rvalue = true
       rescue StandardError => e
-        Rails.logger.error e
+        Rails.logger.error "Ftp::Folder#upload(#{filename}) #{e}"
       end
       rvalue
     end
@@ -85,7 +85,7 @@ module Ftp
     end
 
     def upload(filename)
-      Rails.logger.error("Ftp::NullFolder.upload(#{filename})")
+      Rails.logger.error "Ftp::NullFolder#upload(#{filename})"
       false
     end
   end

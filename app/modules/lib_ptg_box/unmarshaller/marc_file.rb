@@ -5,16 +5,15 @@ module LibPtgBox
     class MarcFile < SimpleDelegator
       def marcs # rubocop:disable Metrics/MethodLength
         @marcs ||= begin
-          # reader_entries.map { |entry| Unmarshaller::Marc.new(entry) }
           marc_entries = []
           begin
             reader_entries.each do |entry|
               marc_entries << Unmarshaller::Marc.new(entry)
             rescue StandardError => e
-              Rails.logger.error e.to_s
+              Rails.logger.error "LibPtgBox::Unmarshaller::MarcFile#marcs(#{entry}) #{e}"
             end
           rescue StandardError => e
-            Rails.logger.error e.to_s
+            Rails.logger.error "LibPtgBox::Unmarshaller::MarcFile#marcs #{e}"
           end
           marc_entries
         end
@@ -23,8 +22,6 @@ module LibPtgBox
       private
 
         def encode_content
-          # content.force_encoding('UTF-8').encode('UTF-8')
-
           # utf_16_content = content.force_encoding('UTF-16')
           # utf_16_content_encoding = utf_16_content.encoding
           # utf_16_content_valid_encoding = utf_16_content.valid_encoding?
@@ -56,7 +53,7 @@ module LibPtgBox
         end
 
         def reader_entries
-          reader = MARC::XMLReader.new(string_io_content)
+          reader = MARC::Reader.new(string_io_content)
           reader.entries
         end
     end

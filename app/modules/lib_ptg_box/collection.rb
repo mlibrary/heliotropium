@@ -41,16 +41,7 @@ module LibPtgBox
     end
 
     def catalog
-      @catalog ||= begin
-        complete_marc_file = nil
-        @sub_folder.cataloging_marc_folder.marc_files.each do |marc_file|
-          next unless /complete\.xml/i.match?(marc_file.name)
-
-          complete_marc_file = marc_file
-          break
-        end
-        Catalog.new(self, complete_marc_file)
-      end
+      @catalog ||= Catalog.new(self, @sub_folder.cataloging_marc_folder)
     end
   end
 end

@@ -113,20 +113,11 @@ RSpec.describe LibPtgBox::Collection do
 
     let(:marc_folder) { object_double(LibPtgBox::Unmarshaller::MarcFolder.new(marc_ftp_folder), 'marc_folder') }
     let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'name') }
-    let(:collection_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(collection_ftp_file), 'collection_marc_file') }
-    let(:collection_ftp_file) { instance_double(Ftp::File, 'collection_ftp_file', name: 'Collection_Year.xml') }
-    let(:complete_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(complete_ftp_file), 'complete_marc_file') }
-    let(:complete_ftp_file) { instance_double(Ftp::File, 'complete_ftp_file', name: 'Collection_Complete.xml', content: content) }
-    let(:content) { '' }
     let(:catalog) { 'catalog' }
 
     before do
       allow(sub_folder).to receive(:cataloging_marc_folder).and_return(marc_folder)
-      allow(marc_folder).to receive(:marc_files).and_return([collection_marc_file, complete_marc_file])
-      allow(collection_marc_file).to receive(:name).and_return(collection_ftp_file.name)
-      allow(complete_marc_file).to receive(:name).and_return(complete_ftp_file.name)
-      allow(complete_marc_file).to receive(:content).and_return(complete_ftp_file.content)
-      allow(LibPtgBox::Catalog).to receive(:new).with(collection, complete_marc_file).and_return(catalog)
+      allow(LibPtgBox::Catalog).to receive(:new).with(collection, marc_folder).and_return(catalog)
     end
 
     it { is_expected.to eq(catalog) }

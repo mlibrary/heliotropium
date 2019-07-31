@@ -12,7 +12,8 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   let(:selection_name) { "Selection_#{selection_year}" }
   let(:selection_year) { '1984' }
   let(:selection_updated) { Date.today }
-  let(:work) { instance_double(LibPtgBox::Work, 'work', name: work_name, new?: work_new, marc?: work_marc, marc: marc) }
+  let(:work) { instance_double(LibPtgBox::Work, 'work', doi: work_doi, name: work_name, new?: work_new, marc?: work_marc, marc: marc) }
+  let(:work_doi) { '10.3998/mpub.123456789' }
   let(:work_name) { 'Star Wars' }
   let(:work_new) { false }
   let(:work_marc) { false }
@@ -103,12 +104,12 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     context 'when new work' do
       let(:work_new) { true }
 
-      it { is_expected.to eq("Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{collection.name}' is missing!\n") }
+      it { is_expected.to eq("Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{filename}' in collection '#{collection.name}' is missing!\n") }
 
       context 'when catalog marc record' do # rubocop:disable RSpec/NestedGroups
         let(:work_marc) { true }
 
-        it { is_expected.to eq("Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{collection.name}' is new!\n") }
+        it { is_expected.to be_empty }
       end
     end
   end
@@ -130,7 +131,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       allow(xml_file).to receive(:close)
     end
 
-    it { is_expected.to eq("Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{collection.name}' is missing!\n") }
+    it { is_expected.to eq("Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{selection.name}' in collection '#{collection.name}' is missing!\n") }
 
     context 'when catalog marc record' do
       let(:work_marc) { true }

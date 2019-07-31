@@ -4,9 +4,9 @@ require 'marc'
 
 module LibPtgBox
   class Catalog
-    def initialize(collection, complete_marc_file)
+    def initialize(collection, marc_folder)
       @collection = collection
-      @complete_marc_file = complete_marc_file
+      @marc_folder = marc_folder
     end
 
     def marc(doi)
@@ -19,7 +19,16 @@ module LibPtgBox
     end
 
     def marcs
-      @marcs ||= @complete_marc_file.marcs
+      @marcs ||= begin
+        marcs = []
+        @marc_folder.marc_files.each do |marc_file|
+          next if /ump_ebc/i.match?(marc_file.name)
+          next unless /.+\.mrc$/i.match?(marc_file.name)
+
+          marcs |= marc_file.marcs
+        end
+        marcs
+      end
     end
   end
 end

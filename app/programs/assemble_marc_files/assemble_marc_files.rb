@@ -4,14 +4,20 @@ module AssembleMarcFiles
   class AssembleMarcFiles # rubocop:disable Metrics/ClassLength
     def execute
       log = +''
+      # Create/Change tmp working directory
       chdir_lib_ptg_box_dir
+      # Object wrapper for M | box - All Files > Library PTG Box
       lib_ptg_box = LibPtgBox::LibPtgBox.new
+      # TODO: Remove hard reset of UmpebcKbart table
       log += reset
+      # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
       log += synchronize(lib_ptg_box)
+      # Loop through collections a.k.a. M | box - All Files > Library PTG Box folders e.g. UMPEBC Metadata, Lever Press Metadata
       lib_ptg_box.collections.each do |collection|
         # Only process UMPEBC Metadata folder.
         next unless /umpebc/i.match?(collection.name)
 
+        # Assemble MARC Files for UMPEBC collection
         log += assemble_marc_files(collection)
       end
       log
@@ -19,6 +25,7 @@ module AssembleMarcFiles
 
     def reset
       log = +''
+      # Destroy all previous records
       UmpebcKbart.destroy_all
       log
     end
@@ -29,16 +36,20 @@ module AssembleMarcFiles
         # Only process UMPEBC Metadata folder.
         next unless /umpebc/i.match?(collection.name)
 
+        # Previous records list
         umpebc_kbarts = []
         UmpebcKbart.all.each do |umpebc_kbart|
           umpebc_kbarts << umpebc_kbart
         end
 
+        # Find or create a record for each KBART csv file
         collection.selections.each do |selection|
           umpebc_kbart = UmpebcKbart.find_or_create_by!(name: selection.name, year: selection.year)
+          # Remove record from the previous records list
           umpebc_kbarts.delete(umpebc_kbart) if umpebc_kbarts.include?(umpebc_kbart)
         end
 
+        # Destroy orphan records a.k.a. previous records that no longer have a matching KBART csv file
         umpebc_kbarts.each(&:destroy!)
       end
       log
@@ -56,9 +67,8 @@ module AssembleMarcFiles
           mrc_file << work.marc.to_marc
           xml_file << work.marc.to_xml
           xml_file << "\n"
-          log += "Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{selection.collection.name}' is new!\n"
         else
-          log += "Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{selection.collection.name}' is missing!\n"
+          log += "Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{filename}' in collection '#{selection.collection.name}' is missing!\n"
         end
       end
       mrc_file.close
@@ -77,7 +87,7 @@ module AssembleMarcFiles
           xml_file << work.marc.to_xml
           xml_file << "\n"
         else
-          log += "Catalog MARC record for work '#{work.name}' in selection '#{selection.name}' in collection '#{selection.collection.name}' is missing!\n"
+          log += "Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{selection.name}' in collection '#{selection.collection.name}' is missing!\n"
         end
       end
       mrc_file.close
@@ -121,6 +131,7 @@ module AssembleMarcFiles
       # Only process UMPEBC Metadata folder.
       return log unless /umpebc/i.match?(collection.name)
 
+      # Update selection if KBART csv file was updated since last time marc files where assembled
       update_selection = false
       collection.selections.each do |selection|
         record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
@@ -129,11 +140,17 @@ module AssembleMarcFiles
         update_selection = true
         break
       end
+
+      # Return unless at least one KBART csv file has been updated since last time
       return log unless update_selection
 
+      # Recursive remove tmp folder from last time
       FileUtils.rm_rf('umpebc')
+      # Create tmp folder
       Dir.mkdir('umpebc')
+      # Change working directory to tmp folder
       Dir.chdir('umpebc') do
+        # NOTE: Just recreate all MARC files so we pickup the latest changes and any missing records.
         collection.selections.each do |selection|
           record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
           if record.updated < selection.updated
@@ -142,6 +159,7 @@ module AssembleMarcFiles
             record.updated = selection.updated
             record.save
           else
+            # NOTE: In theory this is redundant but in practice we'll pickup the latest changes and any missing records.
             log += recreate_selection_marc_files(selection)
           end
         end

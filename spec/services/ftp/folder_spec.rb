@@ -95,13 +95,13 @@ RSpec.describe Ftp::Folder do
     before do
       allow(::File).to receive(:open).with(filename).and_yield(file)
       allow(::File).to receive(:basename).with(filename).and_return('basename')
-      allow(ftp).to receive(:putbinaryfile).with(file, "fulcimen_basename")
+      allow(ftp).to receive(:putbinaryfile).with(file, "basename")
     end
 
     it { is_expected.to be true }
 
     context 'with error' do
-      before { allow(ftp).to receive(:putbinaryfile).with(file, "fulcimen_basename").and_raise }
+      before { allow(ftp).to receive(:putbinaryfile).with(file, "basename").and_raise }
 
       it { is_expected.to be false }
     end

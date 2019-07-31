@@ -12,7 +12,7 @@ module LibPtgBox
             @row = row
           end
         rescue StandardError => e
-          Rails.logger.error("LibPtgBox::Unmarshaller::Kbart.initialize(#{@line}) error " + e.to_s)
+          Rails.logger.error "LibPtgBox::Unmarshaller::Kbart.initialize(#{@line}) error #{e}"
           @row = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, "10.3998/mpub.00000000"]
         end
       end
