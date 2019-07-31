@@ -15,6 +15,7 @@ module LibPtgBox
     end
 
     def upload_marc_file(filename)
+      @sub_folder.upload_folder.delete(filename)
       @sub_folder.upload_folder.upload(filename)
     end
 

@@ -86,6 +86,26 @@ RSpec.describe Ftp::Folder do
     end
   end
 
+  describe '#delete' do
+    subject { folder.delete(filename) }
+
+    let(:filename) { instance_double(String, 'filename') }
+    let(:file) { instance_double(File, 'file') }
+
+    before do
+      allow(::File).to receive(:basename).with(filename).and_return('basename')
+      allow(ftp).to receive(:delete).with('basename')
+    end
+
+    it { is_expected.to be true }
+
+    context 'with error' do
+      before { allow(ftp).to receive(:delete).with('basename').and_raise }
+
+      it { is_expected.to be false }
+    end
+  end
+
   describe '#upload' do
     subject { folder.upload(filename) }
 
@@ -95,7 +115,7 @@ RSpec.describe Ftp::Folder do
     before do
       allow(::File).to receive(:open).with(filename).and_yield(file)
       allow(::File).to receive(:basename).with(filename).and_return('basename')
-      allow(ftp).to receive(:putbinaryfile).with(file, "basename")
+      allow(ftp).to receive(:putbinaryfile).with(file, 'basename')
     end
 
     it { is_expected.to be true }

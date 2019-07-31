@@ -41,15 +41,17 @@ RSpec.describe LibPtgBox::Collection do
 
     let(:filename) { instance_double(String, 'filename') }
     let(:marc_folder) { object_double(LibPtgBox::Unmarshaller::MarcFolder.new(marc_ftp_folder), 'marc_folder') }
-    let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', upload: 'upload') }
+    let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', delete: 'delete', upload: 'upload') }
 
     before do
       allow(sub_folder).to receive(:upload_folder).and_return(marc_folder)
+      allow(marc_folder).to receive(:delete).with(filename)
       allow(marc_folder).to receive(:upload).with(filename)
     end
 
     it do
       collection.upload_marc_file(filename)
+      expect(marc_folder).to have_received(:delete).with(filename)
       expect(marc_folder).to have_received(:upload).with(filename)
     end
   end

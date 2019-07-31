@@ -26,6 +26,8 @@ module LibPtgBox
           next unless /.+\.mrc$/i.match?(marc_file.name)
 
           marcs |= marc_file.marcs
+
+          Rails.logger.error("LibPtgBox::Catalog(#{@marc_folder.name})#marcs(#{marc_file.name}) empty!!!") if marc_file.marcs.empty?
         end
         marcs
       end

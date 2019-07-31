@@ -50,6 +50,20 @@ module Ftp
       rvalue
     end
 
+    def delete(filename) # rubocop:disable Metrics/MethodLength
+      rvalue = false
+      Net::FTP.open(@service.host, username: @service.user, password: @service.password, ssl: true) do |ftp|
+        @pathname.split(::File::SEPARATOR).each do |dirname|
+          ftp.chdir(dirname)
+        end
+        ftp.delete(::File.basename(filename))
+        rvalue = true
+      rescue StandardError => e
+        Rails.logger.error "Ftp::Folder#delete(#{filename}) #{e}"
+      end
+      rvalue
+    end
+
     def upload(filename) # rubocop:disable Metrics/MethodLength
       rvalue = false
       Net::FTP.open(@service.host, username: @service.user, password: @service.password, ssl: true) do |ftp|

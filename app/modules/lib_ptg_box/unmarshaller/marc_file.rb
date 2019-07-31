@@ -10,10 +10,10 @@ module LibPtgBox
             reader_entries.each do |entry|
               marc_entries << Unmarshaller::Marc.new(entry)
             rescue StandardError => e
-              Rails.logger.error "LibPtgBox::Unmarshaller::MarcFile#marcs(#{entry}) #{e}"
+              Rails.logger.error "LibPtgBox::Unmarshaller::MarcFile(#{name})#marcs(#{entry}) #{e}"
             end
           rescue StandardError => e
-            Rails.logger.error "LibPtgBox::Unmarshaller::MarcFile#marcs #{e}"
+            Rails.logger.error "LibPtgBox::Unmarshaller::MarcFile(#{name})#marcs #{e}"
           end
           marc_entries
         end
