@@ -1,0 +1,41 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <p>
+      <strong>Folder:</strong>
+      <%= @catalog_marc.folder %>
+    </p>
+
+    <p>
+      <strong>File:</strong>
+      <%= @catalog_marc.file %>
+    </p>
+
+    <p>
+      <strong>Isbn:</strong>
+      <%= @catalog_marc.isbn %>
+    </p>
+
+    <p>
+      <strong>Doi:</strong>
+      <%= link_to @catalog_marc.doi, "https://doi.org/#{@catalog_marc.doi}" %>
+    </p>
+
+    <p>
+      <strong>Mrc:</strong>
+      <%= @catalog_marc.mrc %>
+    </p>
+
+    <p>
+      <strong>Updated:</strong>
+      <%= @catalog_marc.updated %>
+    </p>
+
+    <p>
+      <strong>Parsed:</strong>
+      <%= @catalog_marc.parsed %>
+    </p>
+
+    <%= link_to 'Back', catalog_marcs_path %>
+  </div>
+</div>

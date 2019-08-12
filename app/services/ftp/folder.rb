@@ -6,9 +6,10 @@ module Ftp
       NullFolder.new
     end
 
-    def initialize(service, pathname)
+    def initialize(service, pathname, facts)
       @service = service
       @pathname = pathname
+      @facts = facts
     end
 
     def name
@@ -25,7 +26,7 @@ module Ftp
           next if /^\./.match?(entry.pathname)
           next if /file/i.match?(entry.facts['type'])
 
-          rvalue << Ftp::Folder.new(@service, ::File.join(@pathname, entry.pathname))
+          rvalue << Ftp::Folder.new(@service, ::File.join(@pathname, entry.pathname), entry.facts)
         end
       rescue StandardError => e
         Rails.logger.error "Ftp::Folder#folders #{e}"
@@ -42,7 +43,7 @@ module Ftp
         ftp.mlsd.each do |entry|
           next unless /file/i.match?(entry.facts['type'])
 
-          rvalue << Ftp::File.new(@service, ::File.join(@pathname, entry.pathname))
+          rvalue << Ftp::File.new(@service, ::File.join(@pathname, entry.pathname), entry.facts)
         end
       rescue StandardError => e
         Rails.logger.error "Ftp::Folder#files #{e}"
@@ -83,7 +84,7 @@ module Ftp
 
   class NullFolder < Folder
     def initialize
-      super(nil, nil)
+      super(nil, nil, {})
     end
 
     def name

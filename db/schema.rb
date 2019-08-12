@@ -10,7 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_06_12_121048) do
+ActiveRecord::Schema.define(version: 2019_08_01_172518) do
+
+  create_table "catalog_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "folder", null: false
+    t.string "file", null: false
+    t.string "isbn"
+    t.string "doi"
+    t.binary "mrc"
+    t.datetime "updated", default: "1970-01-01 05:00:00", null: false
+    t.boolean "parsed", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["folder", "file"], name: "index_catalog_marcs_on_folder_and_file", unique: true
+  end
 
   create_table "identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false

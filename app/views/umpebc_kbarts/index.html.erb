@@ -5,24 +5,19 @@
       <h1>Umpebc Kbarts</h1>
     </div>
     <div class="row">
-      <div class="col-1">ID</div>
       <div class="col">Name</div>
       <div class="col-1">Year</div>
       <div class="col-2">Updated</div>
-      <div class="col-3">
-        <%= link_to 'New Umpebc Kbart', new_umpebc_kbart_path %>
-      </div>
+      <div class="col-3">&nbsp;</div>
     </div>
+    <div class="row">&nbsp;</div>
     <% @umpebc_kbarts.each do |umpebc_kbart| %>
     <div class="row">
-      <div class="col-1"><%= umpebc_kbart.id %></div>
       <div class="col"><%= umpebc_kbart.name %></div>
       <div class="col-1"><%= umpebc_kbart.year %></div>
       <div class="col-2"><%= umpebc_kbart.updated %></div>
       <div class="col-3">
         <div class="row">
-          <div class="col"><%= link_to 'Show', umpebc_kbart %></div>
-          <div class="col"><%= link_to 'Edit', edit_umpebc_kbart_path(umpebc_kbart) %></div>
           <div class="col"><%= link_to 'Destroy', umpebc_kbart, method: :delete, data: { confirm: 'Are you sure?' } %></div>
         </div>
       </div>

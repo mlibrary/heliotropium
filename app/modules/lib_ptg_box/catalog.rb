@@ -25,9 +25,23 @@ module LibPtgBox
           next if /ump_ebc/i.match?(marc_file.name)
           next unless /.+\.mrc$/i.match?(marc_file.name)
 
-          marcs |= marc_file.marcs
+          record = CatalogMarc.find_or_create_by!(folder: @marc_folder.name, file: marc_file.name)
 
-          Rails.logger.error("LibPtgBox::Catalog(#{@marc_folder.name})#marcs(#{marc_file.name}) empty!!!") if marc_file.marcs.empty?
+          if record.updated < marc_file.updated || !record.parsed
+            record.updated = marc_file.updated
+            record.isbn = /(^\d+)(.*$)/.match(marc_file.name)[1]
+            if marc_file.marcs.count.positive?
+              Rails.logger.error("LibPtgBox::Catalog(#{@marc_folder.name})#marcs(#{marc_file.name}) #{marc_file.marcs.count} records!!!") if marc_file.marcs.count > 1
+              record.mrc = marc_file.marcs.first.to_marc
+              record.doi = marc_file.marcs.first.doi
+              record.parsed = true
+            else
+              Rails.logger.error("LibPtgBox::Catalog(#{@marc_folder.name})#marcs(#{marc_file.name}) empty!!!") if marc_file.marcs.empty?
+            end
+            record.save!
+          end
+
+          marcs << Unmarshaller::Marc.new(MARC::Reader.new(StringIO.new(record.mrc)).entries.first) if record.parsed
         end
         marcs
       end

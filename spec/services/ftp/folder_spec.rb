@@ -3,12 +3,13 @@
 require 'rails_helper'
 
 RSpec.describe Ftp::Folder do
-  subject(:folder) { described_class.new(service, pathname) }
+  subject(:folder) { described_class.new(service, pathname, facts) }
 
   let(:service) { instance_double(Ftp::Service, 'service', host: 'host', user: 'user', password: 'password') }
   let(:pathname) { File.join(parent, child) }
   let(:parent) { 'parent' }
   let(:child) { 'child' }
+  let(:facts) { { 'type' => 'dir' } }
   let(:ftp) { instance_double(Net::FTP, 'ftp') }
   let(:entries) { [] }
 

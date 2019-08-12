@@ -6,13 +6,18 @@ module Ftp
       NullFile.new
     end
 
-    def initialize(service, pathname)
+    def initialize(service, pathname, facts)
       @service = service
       @pathname = pathname
+      @facts = facts
     end
 
     def name
       ::File.basename(@pathname)
+    end
+
+    def updated
+      Date.parse(@facts['modify'].to_s)
     end
 
     def content
@@ -31,7 +36,7 @@ module Ftp
 
   class NullFile < File
     def initialize
-      super(nil, nil)
+      super(nil, nil, {})
     end
 
     def name

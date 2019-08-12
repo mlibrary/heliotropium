@@ -6,6 +6,7 @@ Rails.application.routes.draw do
       get :run
     end
   end
+  resources :catalog_marcs
   resources :umpebc_kbarts
   resources :identifiers
   resources :uuid_identifiers

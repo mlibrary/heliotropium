@@ -1,0 +1,50 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>Catalog Marcs</h1>
+    </div>
+    <form name="filter" method="get" action="<%= catalog_marcs_path %>">
+      <% size = 12 %>
+      <div class="row">
+        <div class="col-1"><label for="isbn_like">ISBN</label></div>
+        <div class="col-2"><input type="text" name="isbn_like" value="<%= params[:isbn_like] %>" size="<%= size %>" aria-label="isbn_like"></div>
+        <div class="col-4">File</div>
+        <div class="col-1"><label for="parsed_like">ERROR</label></div>
+        <div class="col-2"><input type="checkbox" name="parsed_like" value=0 <%= params[:parsed_like] == '0' ? 'checked' : '' %> aria-label="parsed_like"></div>
+        <div class="col-2">&nbsp;</div>
+      </div>
+      <div class="row">
+        <div class="col-1"><label for="doi_like">DOI</label></div>
+        <div class="col-2"><input type="text" name="isbn_like" value="<%= params[:isbn_like] %>" size="<%= size %>" aria-label="isbn_like"></div>
+        <div class="col-4">Updated</div>
+        <div class="col-5">
+          <button name="submit" type="submit" value="filter">Filter</button>
+        </div>
+      </div>
+    </form>
+    <div class="row">&nbsp;</div>
+    <% @catalog_marcs.each do |catalog_marc| %>
+      <div class="row">
+        <div class="col-3"><%= catalog_marc.isbn %></div>
+        <div class="col-4"><%= catalog_marc.file %></div>
+        <div class="col-5">&nbsp;</div>
+      </div>
+      <div class="row">
+        <div class="col-3"><%= catalog_marc.doi %></div>
+        <div class="col-4"><%= catalog_marc.updated %></div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col"><%= catalog_marc.parsed ? '' : 'X' %>&nbsp;</div>
+            <div class="col"><%= link_to 'Show', catalog_marc %></div>
+            <div class="col"><%= link_to 'Destroy', catalog_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
+          </div>
+        </div>
+      </div>
+      <div class="row">&nbsp;</div>
+    <% end %>
+    <div class="row">
+      <div class="col">&nbsp<%= paginate @catalog_marcs %></div>
+    </div>
+  </div>
+</div>

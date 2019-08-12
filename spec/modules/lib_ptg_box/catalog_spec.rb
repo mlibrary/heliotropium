@@ -7,15 +7,24 @@ RSpec.describe LibPtgBox::Catalog do
 
   let(:selection) { instance_double(LibPtgBox::Selection, 'selection') }
   let(:marc_folder) { object_double(LibPtgBox::Unmarshaller::MarcFolder.new(marc_ftp_folder), 'marc_folder', marc_files: marc_files) }
-  let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder') }
+  let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'folder') }
   let(:marc_files) { [] }
   let(:marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(marc_ftp_file), 'marc_file', marcs: marcs) }
-  let(:marc_ftp_file) { instance_double(Ftp::File, 'marc_ftp_file', name: 'file.mrc') }
+  let(:marc_ftp_file) { instance_double(Ftp::File, 'marc_ftp_file', name: '0123456789.mrc', updated: Time.now) }
   let(:marcs) { [] }
-  let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: marc_doi) }
+  let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', to_marc: 'to_marc', doi: marc_doi) }
   let(:marc_doi) { 'marc' }
+  let(:string_io) { instance_double(StringIO, 'string_io') }
+  let(:reader) { instance_double(MARC::Reader, 'reader', entries: ['entry']) }
 
-  before { allow(marc_file).to receive(:name).and_return(marc_ftp_file.name) }
+  before do
+    allow(marc_folder).to receive(:name).and_return(marc_ftp_folder.name)
+    allow(marc_file).to receive(:name).and_return(marc_ftp_file.name)
+    allow(marc_file).to receive(:updated).and_return(marc_ftp_file.updated)
+    allow(StringIO).to receive(:new).with('to_marc').and_return(string_io)
+    allow(MARC::Reader).to receive(:new).with(string_io).and_return(reader)
+    allow(LibPtgBox::Unmarshaller::Marc).to receive(:new).with('entry').and_return(marc)
+  end
 
   describe '#marc' do
     subject { catalog.marc(doi) }
