@@ -22,28 +22,15 @@ module LibPtgBox
       private
 
         def encode_content
-          # utf_16_content = content.force_encoding('UTF-16')
-          # utf_16_content_encoding = utf_16_content.encoding
-          # utf_16_content_valid_encoding = utf_16_content.valid_encoding?
-          #
-          # utf_16be_content = content.force_encoding('UTF-16BE')
-          # utf_16be_content_encoding = utf_16be_content.encoding
-          # utf_16be_content_valid_encoding = utf_16be_content.valid_encoding?
-          #
-          # utf_16le_content = content.force_encoding('UTF-16LE')
-          # utf_16le_content_encoding = utf_16le_content.encoding
-          # utf_16le_content_valid_encoding = utf_16le_content.valid_encoding?
-          #
-          # utf_32_content = content.force_encoding('UTF-32')
-          # utf_32_content_encoding = utf_32_content.encoding
-          # utf_32_content_valid_encoding = utf_32_content.valid_encoding?
+          _utf_8_content = content.force_encoding('UTF-8')
+          _utf_8_content_encoding = _utf_8_content.encoding
+          _utf_8_content_valid_encoding = _utf_8_content.valid_encoding?
 
-          utf_8_content = content.force_encoding('UTF-8')
-          _utf_8_content_encoding = utf_8_content.encoding
-          _utf_8_content_valid_encoding = utf_8_content.valid_encoding?
+          utf_content = _utf_8_content
 
-          utf_content = utf_8_content
           return utf_content.encode('UTF-8') if utf_content.valid_encoding?
+
+          Rails.logger.error("LibPtgBox::Unmarshaller::MarcFile(#{name})#marcs invalid UTF-8 encoding!!!")
 
           utf_content.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
         end

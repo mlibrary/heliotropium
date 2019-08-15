@@ -27,7 +27,8 @@ module LibPtgBox
 
           record = CatalogMarc.find_or_create_by!(folder: @marc_folder.name, file: marc_file.name)
 
-          if record.updated < marc_file.updated || !record.parsed
+          if record.updated < marc_file.updated || !record.parsed || true
+            record.parsed = false
             record.updated = marc_file.updated
             record.isbn = /(^\d+)(.*$)/.match(marc_file.name)[1]
             if marc_file.marcs.count.positive?

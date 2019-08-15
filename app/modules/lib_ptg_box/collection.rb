@@ -32,7 +32,7 @@ module LibPtgBox
       @marcs ||= begin
         complete_marc_file = nil
         @sub_folder.marc_folder.marc_files.each do |marc_file|
-          next unless /complete\.xml/i.match?(marc_file.name)
+          next unless /complete\.mrc/i.match?(marc_file.name)
 
           complete_marc_file = marc_file
           break

@@ -89,7 +89,7 @@ RSpec.describe LibPtgBox::Collection do
     let(:collection_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(collection_ftp_file), 'collection_marc_file') }
     let(:collection_ftp_file) { instance_double(Ftp::File, 'collection_ftp_file', name: 'Collection_Year.xml') }
     let(:complete_marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(complete_ftp_file), 'complete_marc_file', marcs: marcs) }
-    let(:complete_ftp_file) { instance_double(Ftp::File, 'complete_ftp_file', name: 'Collection_Complete.xml') }
+    let(:complete_ftp_file) { instance_double(Ftp::File, 'complete_ftp_file', name: 'Collection_Complete.mrc') }
     let(:marcs) { [] }
     let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: marc_doi) }
     let(:marc_doi) { 'marc' }
