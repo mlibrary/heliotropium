@@ -21,16 +21,15 @@ module Ftp
     end
 
     def content
-      buffer = +''
       Net::FTP.open(@service.host, username: @service.user, password: @service.password, ssl: true) do |ftp|
         ::File.dirname(@pathname).split(::File::SEPARATOR).each do |dirname|
           ftp.chdir(dirname)
         end
-        buffer = ftp.getbinaryfile(name, nil)
-      rescue StandardError => e
-        Rails.logger.error "Ftp::File#content(#{@pathname}) #{e}"
+        ftp.getbinaryfile(name, nil)
       end
-      buffer
+    rescue StandardError => e
+      Rails.logger.error "Ftp::File#content(#{@pathname}) #{e}"
+      ''
     end
   end
 

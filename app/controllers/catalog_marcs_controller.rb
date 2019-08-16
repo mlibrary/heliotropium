@@ -58,10 +58,10 @@ class CatalogMarcsController < ApplicationController
     end
 
     def catalog_marc_params
-      params.require(:catalog_marc).permit(:folder, :file, :isbn, :doi, :mrc, :updated, :parsed)
+      params.require(:catalog_marc).permit(:folder, :file, :isbn, :doi, :mrc, :updated, :parsed, :replaced)
     end
 
     def filtering_params(params)
-      params.slice(:folder_like, :file_like, :isbn_like, :doi_like, :parsed_like)
+      params.slice(:folder_like, :file_like, :isbn_like, :doi_like, :parsed_like, :replaced_like)
     end
 end

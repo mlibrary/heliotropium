@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_01_172518) do
+ActiveRecord::Schema.define(version: 2019_08_17_202446) do
 
   create_table "catalog_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "folder", null: false
@@ -22,6 +22,10 @@ ActiveRecord::Schema.define(version: 2019_08_01_172518) do
     t.boolean "parsed", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.binary "content"
+    t.boolean "replaced", default: false, null: false
+    t.integer "count", default: 0
+    t.binary "raw"
     t.index ["folder", "file"], name: "index_catalog_marcs_on_folder_and_file", unique: true
   end
 
@@ -38,6 +42,7 @@ ActiveRecord::Schema.define(version: 2019_08_01_172518) do
     t.date "updated", default: "1970-01-01", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "verified", default: false
     t.index ["name"], name: "index_umpebc_kbarts_on_name", unique: true
   end
 

@@ -12,18 +12,8 @@
     </p>
 
     <p>
-      <strong>Isbn:</strong>
+      <strong>ISBN:</strong>
       <%= @catalog_marc.isbn %>
-    </p>
-
-    <p>
-      <strong>Doi:</strong>
-      <%= link_to @catalog_marc.doi, "https://doi.org/#{@catalog_marc.doi}" %>
-    </p>
-
-    <p>
-      <strong>Mrc:</strong>
-      <%= @catalog_marc.mrc %>
     </p>
 
     <p>
@@ -32,8 +22,38 @@
     </p>
 
     <p>
+      <strong>Content:</strong>
+      <%= @catalog_marc.content %>
+    </p>
+
+    <p>
+      <strong>Raw:</strong>
+      <%= @catalog_marc.raw %>
+    </p>
+
+    <p>
+      <strong>Count:</strong>
+      <%= @catalog_marc.count %>
+    </p>
+
+    <p>
+      <strong>MRC:</strong>
+      <%= @catalog_marc.mrc %>
+    </p>
+
+    <p>
       <strong>Parsed:</strong>
       <%= @catalog_marc.parsed %>
+    </p>
+
+    <p>
+      <strong>Replaced:</strong>
+      <%= @catalog_marc.replaced %>
+    </p>
+
+    <p>
+      <strong>DOI:</strong>
+      <%= link_to @catalog_marc.doi, "https://doi.org/#{@catalog_marc.doi}" %>
     </p>
 
     <%= link_to 'Back', catalog_marcs_path %>

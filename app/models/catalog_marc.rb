@@ -8,6 +8,7 @@ class CatalogMarc < ApplicationRecord
   scope :isbn_like, ->(like) { where("isbn like ?", "%#{like}%") }
   scope :doi_like, ->(like) { where("doi like ?", "%#{like}%") }
   scope :parsed_like, ->(like) { where("parsed like ?", "%#{like}%") }
+  scope :replaced_like, ->(like) { where("replaced like ?", "%#{like}%") }
 
   validates :folder, presence: true, allow_blank: false
   validates :file, presence: true, allow_blank: false

@@ -26,11 +26,11 @@ module LibPtgBox
       def to_marc
         content = @entry.to_marc.to_s
 
-        _utf_8_content = content.force_encoding('UTF-8')
-        _utf_8_content_encoding = _utf_8_content.encoding
-        _utf_8_content_valid_encoding = _utf_8_content.valid_encoding?
+        utf_8_content = content.force_encoding('UTF-8')
+        _utf_8_content_encoding = utf_8_content.encoding
+        _utf_8_content_valid_encoding = utf_8_content.valid_encoding?
 
-        utf_content = _utf_8_content
+        utf_content = utf_8_content
 
         return utf_content.encode('UTF-8') if utf_content.valid_encoding?
 
@@ -42,11 +42,11 @@ module LibPtgBox
       def to_xml
         content = @entry.to_xml.to_s
 
-        _utf_8_content = content.force_encoding('UTF-8')
-        _utf_8_content_encoding = _utf_8_content.encoding
-        _utf_8_content_valid_encoding = _utf_8_content.valid_encoding?
+        utf_8_content = content.force_encoding('UTF-8')
+        _utf_8_content_encoding = utf_8_content.encoding
+        _utf_8_content_valid_encoding = utf_8_content.valid_encoding?
 
-        utf_content = _utf_8_content
+        utf_content = utf_8_content
 
         return utf_content.encode('UTF-8') if utf_content.valid_encoding?
 

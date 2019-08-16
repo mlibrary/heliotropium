@@ -22,11 +22,11 @@ module LibPtgBox
       private
 
         def encode_content
-          _utf_8_content = content.force_encoding('UTF-8')
-          _utf_8_content_encoding = _utf_8_content.encoding
-          _utf_8_content_valid_encoding = _utf_8_content.valid_encoding?
+          utf_8_content = content.force_encoding('UTF-8')
+          _utf_8_content_encoding = utf_8_content.encoding
+          _utf_8_content_valid_encoding = utf_8_content.valid_encoding?
 
-          utf_content = _utf_8_content
+          utf_content = utf_8_content
 
           return utf_content.encode('UTF-8') if utf_content.valid_encoding?
 
