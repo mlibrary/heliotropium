@@ -115,13 +115,15 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   end
 
   describe '#recreate_selection_marc_files' do
-    subject { program.recreate_selection_marc_files(selection) }
+    subject { program.recreate_selection_marc_files(record, selection) }
 
+    let(:record) { instance_double(UmpebcKbart, 'record') }
     let(:filename) { selection.name }
     let(:mrc_file) { instance_double(File, 'mrc_file') }
     let(:xml_file) { instance_double(File, 'xml_file') }
 
     before do
+      allow(record).to receive(:verified=).with(false)
       allow(File).to receive(:open).with(filename + '.mrc', 'w').and_return(mrc_file)
       allow(mrc_file).to receive(:<<).with(marc.to_marc)
       allow(mrc_file).to receive(:close)
@@ -259,12 +261,13 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         let(:updated) { 'updated' }
 
         before do
+          allow(record).to receive(:verified=).with(true)
           allow(program).to receive(:append_selection_month_marc_file).with(selection, month).and_return("month\n")
-          allow(program).to receive(:recreate_selection_marc_files).with(selection).and_return("select\n")
+          allow(program).to receive(:recreate_selection_marc_files).with(record, selection).and_return("select\n")
           allow(program).to receive(:recreate_collection_marc_files).with(collection).and_return("collect\n")
           allow(program).to receive(:upload_marc_files).with(collection).and_return("upload\n")
           allow(record).to receive(:updated=).with(selection_updated)
-          allow(record).to receive(:save).with(no_args)
+          allow(record).to receive(:save!).with(no_args)
         end
 
         it { is_expected.to eq("select\ncollect\nupload\n") }

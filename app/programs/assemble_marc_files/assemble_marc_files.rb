@@ -76,7 +76,7 @@ module AssembleMarcFiles
       log
     end
 
-    def recreate_selection_marc_files(selection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def recreate_selection_marc_files(record, selection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       log = +''
       filename = selection.name
       mrc_file = File.open(filename + '.mrc', 'w')
@@ -87,6 +87,7 @@ module AssembleMarcFiles
           xml_file << work.marc.to_xml
           xml_file << "\n"
         else
+          record.verified = false
           log += "Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{selection.name}' in collection '#{selection.collection.name}' is missing!\n"
         end
       end
@@ -126,7 +127,7 @@ module AssembleMarcFiles
       log
     end
 
-    def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
       log = +''
       # Only process UMPEBC Metadata folder.
       return log unless /umpebc/i.match?(collection.name)
@@ -153,15 +154,13 @@ module AssembleMarcFiles
         # NOTE: Just recreate all MARC files so we pickup the latest changes and any missing records.
         collection.selections.each do |selection|
           record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
-          if record.updated < selection.updated
-            log += append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
-            log += recreate_selection_marc_files(selection)
-            record.updated = selection.updated
-            record.save
-          else
-            # NOTE: In theory this is redundant but in practice we'll pickup the latest changes and any missing records.
-            log += recreate_selection_marc_files(selection)
-          end
+          next unless record.updated < selection.updated || !record.verified
+
+          record.updated = selection.updated
+          record.verified = true
+          log += append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
+          log += recreate_selection_marc_files(record, selection)
+          record.save!
         end
         log += recreate_collection_marc_files(collection)
         log += upload_marc_files(collection)

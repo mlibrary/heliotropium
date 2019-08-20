@@ -24,35 +24,11 @@ module LibPtgBox
       end
 
       def to_marc
-        content = @entry.to_marc.to_s
-
-        utf_8_content = content.force_encoding('UTF-8')
-        _utf_8_content_encoding = utf_8_content.encoding
-        _utf_8_content_valid_encoding = utf_8_content.valid_encoding?
-
-        utf_content = utf_8_content
-
-        return utf_content.encode('UTF-8') if utf_content.valid_encoding?
-
-        Rails.logger.error("LibPtgBox::Unmarshaller::Marc(#{doi})#to_marc invalid UTF-8 encoding!!!")
-
-        utf_content.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        @entry.to_marc.to_s
       end
 
       def to_xml
-        content = @entry.to_xml.to_s
-
-        utf_8_content = content.force_encoding('UTF-8')
-        _utf_8_content_encoding = utf_8_content.encoding
-        _utf_8_content_valid_encoding = utf_8_content.valid_encoding?
-
-        utf_content = utf_8_content
-
-        return utf_content.encode('UTF-8') if utf_content.valid_encoding?
-
-        Rails.logger.error("LibPtgBox::Unmarshaller::Marc(#{doi})#to_xml invalid UTF-8 encoding!!!")
-
-        utf_content.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        @entry.to_xml.to_s
       end
     end
   end

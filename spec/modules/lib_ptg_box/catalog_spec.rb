@@ -10,20 +10,23 @@ RSpec.describe LibPtgBox::Catalog do
   let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'folder') }
   let(:marc_files) { [] }
   let(:marc_file) { object_double(LibPtgBox::Unmarshaller::MarcFile.new(marc_ftp_file), 'marc_file', marcs: marcs) }
-  let(:marc_ftp_file) { instance_double(Ftp::File, 'marc_ftp_file', name: '0123456789.mrc', updated: Time.now) }
+  let(:marc_ftp_file) { instance_double(Ftp::File, 'marc_ftp_file', name: '0123456789.mrc', updated: Time.now, content: 'content') }
   let(:marcs) { [] }
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', to_marc: 'to_marc', doi: marc_doi) }
   let(:marc_doi) { 'marc' }
   let(:string_io) { instance_double(StringIO, 'string_io') }
-  let(:reader) { instance_double(MARC::Reader, 'reader', entries: ['entry']) }
+  let(:reader) { instance_double(MARC::Reader, 'reader') }
 
   before do
     allow(marc_folder).to receive(:name).and_return(marc_ftp_folder.name)
     allow(marc_file).to receive(:name).and_return(marc_ftp_file.name)
     allow(marc_file).to receive(:updated).and_return(marc_ftp_file.updated)
-    allow(StringIO).to receive(:new).with('to_marc').and_return(string_io)
-    allow(MARC::Reader).to receive(:new).with(string_io).and_return(reader)
-    allow(LibPtgBox::Unmarshaller::Marc).to receive(:new).with('entry').and_return(marc)
+    allow(marc_file).to receive(:content).and_return(marc_ftp_file.content)
+    allow(StringIO).to receive(:new).with('content').and_return(string_io)
+    allow(MARC::Reader).to receive(:new).with(string_io, external_encoding: 'UTF-8', validate_encoding: true).and_return(reader)
+    allow(reader).to receive(:each_raw).and_yield('raw')
+    allow(reader).to receive(:decode).with('raw').and_return('marc')
+    allow(LibPtgBox::Unmarshaller::Marc).to receive(:new).with('marc').and_return(marc)
   end
 
   describe '#marc' do
