@@ -2,41 +2,43 @@
 
 module AssembleMarcFiles
   class AssembleMarcFiles # rubocop:disable Metrics/ClassLength
-    def execute
-      log = +''
+    attr_accessor :errors
+
+    def initialize
+      @errors = []
+    end
+
+    def execute # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       # Create/Change tmp working directory
       chdir_lib_ptg_box_dir
       # Object wrapper for M | box - All Files > Library PTG Box
       lib_ptg_box = LibPtgBox::LibPtgBox.new
       # TODO: Remove hard reset of UmpebcKbart table
-      log += reset
+      UmpebcKbart.destroy_all
       # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
-      log += synchronize(lib_ptg_box)
+      synchronize(lib_ptg_box)
+
       # Loop through collections a.k.a. M | box - All Files > Library PTG Box folders e.g. UMPEBC Metadata, Lever Press Metadata
       lib_ptg_box.collections.each do |collection|
         # Only process UMPEBC Metadata folder.
         next unless /umpebc/i.match?(collection.name)
 
         # Assemble MARC Files for UMPEBC collection
-        log += assemble_marc_files(collection)
+        assemble_marc_files(collection)
       end
-      log
-    end
 
-    def reset
-      log = +''
-      # Destroy all previous records
-      UmpebcKbart.destroy_all
-      log
+      # Cataloging Errors
+      CatalogMarc.where(replaced: true).each do |record|
+        errors << "INVALID UTF-8 encoding for #{record.folder} > #{record.file} https://doi.org/#{record.doi}"
+      end
     end
 
     def synchronize(lib_ptg_box) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      log = +''
       lib_ptg_box.collections.each do |collection|
         # Only process UMPEBC Metadata folder.
         next unless /umpebc/i.match?(collection.name)
 
-        # Previous records list
+        # Previous KBART records list
         umpebc_kbarts = []
         UmpebcKbart.all.each do |umpebc_kbart|
           umpebc_kbarts << umpebc_kbart
@@ -49,14 +51,12 @@ module AssembleMarcFiles
           umpebc_kbarts.delete(umpebc_kbart) if umpebc_kbarts.include?(umpebc_kbart)
         end
 
-        # Destroy orphan records a.k.a. previous records that no longer have a matching KBART csv file
+        # Destroy orphan KBART records a.k.a. previous records that no longer have a matching KBART csv file
         umpebc_kbarts.each(&:destroy!)
       end
-      log
     end
 
     def append_selection_month_marc_file(selection, month) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      log = +''
       filename = selection.name + format("-%02d", month)
       mrc_file = File.open(filename + '.mrc', 'w')
       xml_file = File.open(filename + '.xml', 'w')
@@ -68,16 +68,14 @@ module AssembleMarcFiles
           xml_file << work.marc.to_xml
           xml_file << "\n"
         else
-          log += "Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{filename}' in collection '#{selection.collection.name}' is missing!\n"
+          errors << "MISSING Cataloging MARC record for https://doi.org/#{work.doi} in selection #{filename} of collection #{selection.collection.name}"
         end
       end
       mrc_file.close
       xml_file.close
-      log
     end
 
     def recreate_selection_marc_files(record, selection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      log = +''
       filename = selection.name
       mrc_file = File.open(filename + '.mrc', 'w')
       xml_file = File.open(filename + '.xml', 'w')
@@ -88,16 +86,14 @@ module AssembleMarcFiles
           xml_file << "\n"
         else
           record.verified = false
-          log += "Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{selection.name}' in collection '#{selection.collection.name}' is missing!\n"
+          errors << "MISSING Cataloging MARC record for https://doi.org/#{work.doi} in selection #{filename} of collection #{selection.collection.name}"
         end
       end
       mrc_file.close
       xml_file.close
-      log
     end
 
     def recreate_collection_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      log = +''
       entries = Dir.entries(Dir.pwd)
       filename = collection.name + '_Complete'
       mrc_file = File.open(filename + '.mrc', 'wb')
@@ -114,23 +110,19 @@ module AssembleMarcFiles
       end
       mrc_file.close
       xml_file.close
-      log
     end
 
     def upload_marc_files(collection)
-      log = +''
       Dir.entries(Dir.pwd).each do |filename|
         next unless /^.+\.(mrc|xml)$/.match?(filename)
 
         collection.upload_marc_file(filename)
       end
-      log
     end
 
     def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity
-      log = +''
       # Only process UMPEBC Metadata folder.
-      return log unless /umpebc/i.match?(collection.name)
+      return unless /umpebc/i.match?(collection.name)
 
       # Update selection if KBART csv file was updated since last time marc files where assembled
       update_selection = false
@@ -143,7 +135,7 @@ module AssembleMarcFiles
       end
 
       # Return unless at least one KBART csv file has been updated since last time
-      return log unless update_selection
+      return unless update_selection
 
       # Recursive remove tmp folder from last time
       FileUtils.rm_rf('umpebc')
@@ -158,14 +150,13 @@ module AssembleMarcFiles
 
           record.updated = selection.updated
           record.verified = true
-          log += append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
-          log += recreate_selection_marc_files(record, selection)
+          append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
+          recreate_selection_marc_files(record, selection)
           record.save!
         end
-        log += recreate_collection_marc_files(collection)
-        log += upload_marc_files(collection)
+        recreate_collection_marc_files(collection)
+        upload_marc_files(collection)
       end
-      log
     end
 
     private

@@ -9,14 +9,14 @@ RSpec.describe AssembleMarcFiles do
 
     before do
       allow(AssembleMarcFiles::AssembleMarcFiles).to receive(:new).and_return(assemble_marc_files)
+      allow(assemble_marc_files).to receive(:execute).and_return(nil)
+      allow(assemble_marc_files).to receive(:errors).and_return(errors)
+      allow(NotifierMailer).to receive(:administrators).with(anything).and_return(mailer)
       allow(mailer).to receive(:deliver_now)
     end
 
-    context 'when log empty' do
-      before do
-        allow(assemble_marc_files).to receive(:execute).and_return("")
-        allow(NotifierMailer).to receive(:administrators).with(anything).and_return(mailer)
-      end
+    context 'when no errors' do
+      let(:errors) { [] }
 
       it 'does not notifies administrators' do
         described_class.run
@@ -25,11 +25,8 @@ RSpec.describe AssembleMarcFiles do
       end
     end
 
-    context 'when log non-empty' do
-      before do
-        allow(assemble_marc_files).to receive(:execute).and_return("log\n")
-        allow(NotifierMailer).to receive(:administrators).with("log\n").and_return(mailer)
-      end
+    context 'when errors' do
+      let(:errors) { ["error"] }
 
       it 'notifies administrators' do
         described_class.run
@@ -39,6 +36,8 @@ RSpec.describe AssembleMarcFiles do
     end
 
     context 'when standard error' do
+      let(:errors) { [] }
+
       before do
         allow(assemble_marc_files).to receive(:execute).and_raise(StandardError)
         allow(NotifierMailer).to receive(:administrators).with("AssembleMarcFiles run error (StandardError)\n").and_return(mailer)

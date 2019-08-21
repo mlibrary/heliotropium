@@ -5,15 +5,14 @@ require_relative 'assemble_marc_files/assemble_marc_files'
 module AssembleMarcFiles
   class << self
     def run
-      log = +''
       program = AssembleMarcFiles.new
-      log += program.execute
-      NotifierMailer.administrators(log).deliver_now unless log.empty?
+      program.execute
+      NotifierMailer.administrators(program.errors.map(&:inspect).join("\n")).deliver_now if program.errors.present?
     rescue StandardError => e
-      text = <<~MSG
+      msg = <<~MSG
         AssembleMarcFiles run error (#{e})
       MSG
-      NotifierMailer.administrators(text).deliver_now
+      NotifierMailer.administrators(msg).deliver_now
     end
   end
 end

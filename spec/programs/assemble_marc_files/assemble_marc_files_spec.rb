@@ -27,62 +27,66 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   end
 
   describe '#execute' do
-    subject { program.execute }
+    subject(:execute) { program.execute }
 
     before do
-      allow(program).to receive(:reset).and_return("reset\n")
-      allow(program).to receive(:synchronize).with(lib_ptg_box).and_return("synchronize\n")
-      allow(program).to receive(:assemble_marc_files).with(collection).and_return("collection\n")
+      allow(program).to receive(:synchronize).with(lib_ptg_box)
+      allow(program).to receive(:assemble_marc_files).with(collection)
     end
 
-    it { is_expected.to eq("reset\nsynchronize\n") }
+    it do
+      execute
+      expect(program).to have_received(:synchronize).with(lib_ptg_box)
+      expect(program).not_to have_received(:assemble_marc_files).with(collection)
+      expect(program.errors).to be_empty
+    end
 
     context 'when UMPEBC Metadata folder' do
       let(:collection_name) { umpebc_metadata }
 
-      it { is_expected.to eq("reset\nsynchronize\ncollection\n") }
-    end
-  end
-
-  describe '#reset' do
-    subject { program.reset }
-
-    before { allow(UmpebcKbart).to receive(:destroy_all) }
-
-    it { is_expected.to be_empty }
-
-    it do
-      program.reset
-      expect(UmpebcKbart).to have_received(:destroy_all)
+      it do
+        execute
+        expect(program).to have_received(:synchronize).with(lib_ptg_box)
+        expect(program).to have_received(:assemble_marc_files).with(collection)
+        expect(program.errors).to be_empty
+      end
     end
   end
 
   describe '#synchronize' do
-    subject { program.synchronize(lib_ptg_box) }
+    subject(:synchronize) { program.synchronize(lib_ptg_box) }
 
-    it { is_expected.to be_empty }
+    let(:defunct_record) { instance_double(UmpebcKbart, 'defunct_record') }
+    let(:record) { instance_double(UmpebcKbart, 'record') }
+
+    before do
+      allow(UmpebcKbart).to receive(:all).and_return([defunct_record, record])
+      allow(defunct_record).to receive(:destroy!)
+      allow(UmpebcKbart).to receive(:find_or_create_by!).with(name: selection.name, year: selection.year).and_return(record)
+    end
+
+    it do
+      synchronize
+      expect(UmpebcKbart).not_to have_received(:all)
+      expect(UmpebcKbart).not_to have_received(:find_or_create_by!).with(name: selection.name, year: selection.year)
+      expect(program.errors).to be_empty
+    end
 
     context 'when UMPEBC Metadata folder' do
       let(:collection_name) { umpebc_metadata }
-      let(:defunct_record) { instance_double(UmpebcKbart, 'defunct_record') }
-      let(:record) { instance_double(UmpebcKbart, 'record') }
 
-      before do
-        allow(UmpebcKbart).to receive(:all).and_return([defunct_record, record])
-        allow(defunct_record).to receive(:destroy!)
-        allow(UmpebcKbart).to receive(:find_or_create_by!).with(name: selection.name, year: selection.year).and_return(record)
-      end
-
-      it { is_expected.to be_empty }
       it do
-        program.synchronize(lib_ptg_box)
+        synchronize
+        expect(UmpebcKbart).to have_received(:all)
+        expect(UmpebcKbart).to have_received(:find_or_create_by!).with(name: selection.name, year: selection.year)
         expect(defunct_record).to have_received(:destroy!)
+        expect(program.errors).to be_empty
       end
     end
   end
 
   describe '#append_selection_month_marc_files' do
-    subject { program.append_selection_month_marc_file(selection, month) }
+    subject(:append_selection_month_marc_file) { program.append_selection_month_marc_file(selection, month) }
 
     let(:month) { Date.today.month }
     let(:filename) { selection.name + format("-%02d", month) }
@@ -99,23 +103,41 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       allow(xml_file).to receive(:close)
     end
 
-    it { is_expected.to be_empty }
+    it do
+      append_selection_month_marc_file
+      expect(mrc_file).not_to have_received(:<<).with(marc.to_marc)
+      expect(xml_file).not_to have_received(:<<).with(marc.to_xml)
+      expect(xml_file).not_to have_received(:<<).with("\n")
+      expect(program.errors).to be_empty
+    end
 
     context 'when new work' do
       let(:work_new) { true }
 
-      it { is_expected.to eq("Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{filename}' in collection '#{collection.name}' is missing!\n") }
+      it do
+        append_selection_month_marc_file
+        expect(mrc_file).not_to have_received(:<<).with(marc.to_marc)
+        expect(xml_file).not_to have_received(:<<).with(marc.to_xml)
+        expect(xml_file).not_to have_received(:<<).with("\n")
+        expect(program.errors).to contain_exactly("MISSING Cataloging MARC record for https://doi.org/#{work.doi} in selection #{filename} of collection #{collection.name}")
+      end
 
       context 'when catalog marc record' do # rubocop:disable RSpec/NestedGroups
         let(:work_marc) { true }
 
-        it { is_expected.to be_empty }
+        it do
+          append_selection_month_marc_file
+          expect(mrc_file).to have_received(:<<).with(marc.to_marc)
+          expect(xml_file).to have_received(:<<).with(marc.to_xml)
+          expect(xml_file).to have_received(:<<).with("\n")
+          expect(program.errors).to be_empty
+        end
       end
     end
   end
 
   describe '#recreate_selection_marc_files' do
-    subject { program.recreate_selection_marc_files(record, selection) }
+    subject(:recreate_selection_marc_files) { program.recreate_selection_marc_files(record, selection) }
 
     let(:record) { instance_double(UmpebcKbart, 'record') }
     let(:filename) { selection.name }
@@ -133,17 +155,23 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       allow(xml_file).to receive(:close)
     end
 
-    it { is_expected.to eq("Catalog MARC record for work '#{work.name}' (https://doi.org/#{work.doi}) in selection '#{selection.name}' in collection '#{collection.name}' is missing!\n") }
+    it do
+      recreate_selection_marc_files
+      expect(program.errors).to contain_exactly("MISSING Cataloging MARC record for https://doi.org/#{work.doi} in selection #{filename} of collection #{collection.name}")
+    end
 
     context 'when catalog marc record' do
       let(:work_marc) { true }
 
-      it { is_expected.to be_empty }
+      it do
+        recreate_selection_marc_files
+        expect(program.errors).to be_empty
+      end
     end
   end
 
   describe '#recreate_collection_marc_files' do
-    subject { program.recreate_collection_marc_files(collection) }
+    subject(:recreate_collection_marc_files) { program.recreate_collection_marc_files(collection) }
 
     let(:entries) { ['.', '..'] }
     let(:filename) { collection.name + '_Complete' }
@@ -160,7 +188,10 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       allow(xml_file).to receive(:close)
     end
 
-    it { is_expected.to be_empty }
+    it do
+      recreate_collection_marc_files
+      expect(program.errors).to be_empty
+    end
 
     context 'when marc files' do
       let(:month) { Date.today.month }
@@ -192,12 +223,15 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         allow(selection_xml_file).to receive(:close)
       end
 
-      it { is_expected.to be_empty }
+      it do
+        recreate_collection_marc_files
+        expect(program.errors).to be_empty
+      end
     end
   end
 
   describe '#upload_marc_files' do
-    subject { program.upload_marc_files(collection) }
+    subject(:upload_marc_files) { program.upload_marc_files(collection) }
 
     let(:entries) { ['.', '..'] }
 
@@ -207,8 +241,9 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
 
     it do
-      is_expected.to be_empty # rubocop:disable RSpec/ImplicitSubject
+      upload_marc_files
       expect(collection).not_to have_received(:upload_marc_file)
+      expect(program.errors).to be_empty
     end
 
     context 'when marc files' do
@@ -228,7 +263,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       end
 
       it do # rubocop:disable RSpec/ExampleLength
-        is_expected.to be_empty # rubocop:disable RSpec/ImplicitSubject
+        upload_marc_files
         expect(collection).not_to have_received(:upload_marc_file).with('.')
         expect(collection).not_to have_received(:upload_marc_file).with('..')
         expect(collection).to have_received(:upload_marc_file).with(selection.name + '.mrc')
@@ -237,14 +272,18 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         expect(collection).to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.xml')
         expect(collection).to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
         expect(collection).to have_received(:upload_marc_file).with(collection.name + '_Complete.xml')
+        expect(program.errors).to be_empty
       end
     end
   end
 
   describe '#assemble_marc_files' do
-    subject { program.assemble_marc_files(collection) }
+    subject(:assemble_marc_files) { program.assemble_marc_files(collection) }
 
-    it { is_expected.to be_empty }
+    it do
+      assemble_marc_files
+      expect(program.errors).to be_empty
+    end
 
     context 'when UMPEBC Metadata folder' do
       let(:collection_name) { umpebc_metadata }
@@ -253,7 +292,10 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
       before { allow(UmpebcKbart).to receive(:find_by).with(name: selection.name, year: selection.year).and_return(record) }
 
-      it { is_expected.to be_empty }
+      it do
+        assemble_marc_files
+        expect(program.errors).to be_empty
+      end
 
       context 'when selection updated' do # rubocop:disable RSpec/NestedGroups
         let(:month) { Date.today.month }
@@ -270,12 +312,18 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
           allow(record).to receive(:save!).with(no_args)
         end
 
-        it { is_expected.to eq("select\ncollect\nupload\n") }
+        it do
+          assemble_marc_files
+          expect(program.errors).to be_empty
+        end
 
         context 'when selection year updated' do # rubocop:disable RSpec/NestedGroups
           let(:selection_year) { Date.today.year }
 
-          it { is_expected.to eq("month\nselect\ncollect\nupload\n") }
+          it do
+            assemble_marc_files
+            expect(program.errors).to be_empty
+          end
         end
       end
     end
