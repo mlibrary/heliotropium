@@ -4,9 +4,9 @@ require_relative 'assemble_marc_files/assemble_marc_files'
 
 module AssembleMarcFiles
   class << self
-    def run
+    def run(reset = false)
       program = AssembleMarcFiles.new
-      program.execute
+      program.execute(reset)
       NotifierMailer.administrators(program.errors.map(&:inspect).join("\n")).deliver_now if program.errors.present?
     rescue StandardError => e
       msg = <<~MSG

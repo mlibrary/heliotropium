@@ -8,13 +8,16 @@ module AssembleMarcFiles
       @errors = []
     end
 
-    def execute # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def execute(reset = false) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      # Destroying all the UmpebcKbart records will force reassemblly of all MARC files.
+      UmpebcKbart.destroy_all if reset
+
       # Create/Change tmp working directory
       chdir_lib_ptg_box_dir
+
       # Object wrapper for M | box - All Files > Library PTG Box
       lib_ptg_box = LibPtgBox::LibPtgBox.new
-      # TODO: Remove hard reset of UmpebcKbart table
-      UmpebcKbart.destroy_all
+
       # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
       synchronize(lib_ptg_box)
 

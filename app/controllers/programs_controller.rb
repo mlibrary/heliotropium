@@ -10,7 +10,7 @@ class ProgramsController < ApplicationController
   def run
     case params[:id]
     when 'assemble_marc_files'
-      AssembleMarcFiles.run
+      AssembleMarcFiles.run(true)
     end
     render :show
   end
