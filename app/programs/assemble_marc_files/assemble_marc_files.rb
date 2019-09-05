@@ -9,7 +9,7 @@ module AssembleMarcFiles
     end
 
     def execute(reset = false) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      # Destroying all the UmpebcKbart records will force reassemblly of all MARC files.
+      # Destroying all the UmpebcKbart records will force reassembly of all MARC files.
       UmpebcKbart.destroy_all if reset
 
       # Create/Change tmp working directory
@@ -33,6 +33,15 @@ module AssembleMarcFiles
       # Cataloging Errors
       CatalogMarc.where(replaced: true).each do |record|
         errors << "INVALID UTF-8 encoding for #{record.folder} > #{record.file} https://doi.org/#{record.doi}"
+        upper = MARC::Reader.decode(record.raw, external_encoding: "UTF-8", invalid: :replace, replace: 'Z')
+        lower = MARC::Reader.decode(record.raw, external_encoding: "UTF-8", invalid: :replace, replace: 'z')
+        upper.fields.each_with_index do |upper_field, index|
+          lower_field = lower.fields[index]
+          upper_set = upper_field.to_s.split(/\s/).to_set
+          lower_set = lower_field.to_s.split(/\s/).to_set
+          difference = upper_set ^ lower_set
+          errors << "field #{upper_field.tag} #{difference}" unless difference.empty?
+        end
       end
     end
 
@@ -146,7 +155,6 @@ module AssembleMarcFiles
       Dir.mkdir('umpebc')
       # Change working directory to tmp folder
       Dir.chdir('umpebc') do
-        # NOTE: Just recreate all MARC files so we pickup the latest changes and any missing records.
         collection.selections.each do |selection|
           record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
           next unless record.updated < selection.updated || !record.verified
