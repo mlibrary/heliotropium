@@ -10,6 +10,7 @@ module LibPtgBox
         begin
           CSV.parse(@line) do |row|
             @row = row
+            Rails.logger.info "#{@row[1]}, #{@row[2]}, https://doi.org/#{doi}, #{@row[3]}, #{@row[0]}"
           end
         rescue StandardError => e
           Rails.logger.error "LibPtgBox::Unmarshaller::Kbart.initialize(#{@line}) error #{e}"
@@ -24,8 +25,9 @@ module LibPtgBox
       private
 
         def encode_line(line)
-          _content_encoding = line.encoding
-          _content_valid_encoding = line.valid_encoding?
+          # content_encoding = line.encoding
+          # content_valid_encoding = line.valid_encoding?
+          # Rails.logger.info "<#{content_valid_encoding}, #{content_encoding}>"
           line.force_encoding('UTF-8').encode('UTF-8')
         end
     end
