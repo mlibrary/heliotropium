@@ -32,5 +32,5 @@ scheduler.cron '0 0 * * *' do
   # Rails.logger.info "Daily #{Time.now}"
   # Rails.logger.flush
   # NotifierMailer.administrators("Daily").deliver_now
-  AssembleMarcFiles.run(true)
+  AssembleMarcFiles.run(false)
 end
