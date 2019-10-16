@@ -73,7 +73,7 @@ RSpec.describe LibPtgBox::Collection do
 
       it { is_expected.to be_nil }
 
-      context 'when marc with doi' do # rubocop:disable RSpec/NestedGroups
+      context 'when marc with doi' do
         let(:marc_doi) { 'doi' }
 
         it { is_expected.to be marc }

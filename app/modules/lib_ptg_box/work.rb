@@ -2,21 +2,26 @@
 
 module LibPtgBox
   class Work
-    attr_reader :doi
+    attr_reader :doi, :print, :online, :title, :date
 
     def initialize(selection, kbart)
       @selection = selection
       @kbart = kbart
-      @doi = kbart.doi
     end
 
+    delegate :doi, :print, :online, :title, :date, to: :@kbart
+
     def name
-      @doi
+      doi
+    end
+
+    def url
+      "https://doi.org/#{doi}"
     end
 
     def new?
       if marc?
-        !!!@selection.collection.marc(@doi) # rubocop:disable Style/DoubleNegation
+        !!!@selection.collection.marc(doi) # rubocop:disable Style/DoubleNegation
       else
         false
       end
@@ -27,7 +32,7 @@ module LibPtgBox
     end
 
     def marc
-      @marc ||= @selection.collection.catalog.marc(@doi)
+      @marc ||= @selection.collection.catalog.marc(doi)
     end
   end
 end

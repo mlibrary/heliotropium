@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe CatalogMarc, type: :model do
   subject(:catalog_marc) { create(:catalog_marc) }
 
-  it do # rubocop:disable RSpec/ExampleLength
+  it do
     expect(catalog_marc).to be_valid
     expect(catalog_marc.update?).to be true
     expect(catalog_marc.destroy?).to be true

@@ -4,10 +4,27 @@ require_relative 'assemble_marc_files/assemble_marc_files'
 
 module AssembleMarcFiles
   class << self
-    def run(reset = false)
-      program = AssembleMarcFiles.new
-      program.execute(reset)
-      NotifierMailer.administrators(program.errors.map(&:inspect).join("\n")).deliver_now if program.errors.present?
+    def run(options = {}) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+      # Object wrapper for M | box - All Files > Library PTG Box
+      lib_ptg_box = LibPtgBox::LibPtgBox.new
+
+      unless options[:skip_catalog_sync]
+        # Synchronize CatalogMarcs table with M | box - All Files > Library PTG Box > UMPEBC Metadata > MARC from Cataloging folder
+        # Destroying all the CatalogMarc records will force downloading of all MARC files.
+        CatalogMarc.destroy_all if options[:reset_catalog_marcs]
+        log = lib_ptg_box.synchronize_catalog_marcs
+        NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now if log.present?
+      end
+
+      # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
+      # Destroying all the UmpebcKbart records will force reassembly of all MARC files.
+      UmpebcKbart.destroy_all if options[:reset_umpebc_kbarts]
+      log = lib_ptg_box.synchronize_umpbec_kbarts
+      NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now if log.present?
+
+      program = AssembleMarcFiles.new(lib_ptg_box)
+      program.execute
+      NotifierMailer.administrators(program.errors.map(&:to_s).join("\n")).deliver_now if program.errors.present?
     rescue StandardError => e
       msg = <<~MSG
         AssembleMarcFiles run error (#{e})

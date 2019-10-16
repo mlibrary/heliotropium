@@ -3,7 +3,7 @@
 require 'rails_helper'
 
 RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
-  subject(:program) { described_class.new }
+  subject(:program) { described_class.new(lib_ptg_box) }
 
   let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box', collections: [collection]) }
   let(:collection) { instance_double(LibPtgBox::Collection, 'collection', name: collection_name, selections: [selection]) }
@@ -12,8 +12,9 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   let(:selection_name) { "Selection_#{selection_year}" }
   let(:selection_year) { '1984' }
   let(:selection_updated) { Date.today }
-  let(:work) { instance_double(LibPtgBox::Work, 'work', doi: work_doi, name: work_name, new?: work_new, marc?: work_marc, marc: marc) }
+  let(:work) { instance_double(LibPtgBox::Work, 'work', doi: work_doi, url: work_url, title: 'title', date: 'date', print: 'print', online: 'online', name: work_name, new?: work_new, marc?: work_marc, marc: marc) }
   let(:work_doi) { '10.3998/mpub.123456789' }
+  let(:work_url) { "https://doi.org/#{work_doi}" }
   let(:work_name) { 'Star Wars' }
   let(:work_new) { false }
   let(:work_marc) { false }
@@ -30,13 +31,13 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     subject(:execute) { program.execute }
 
     before do
-      allow(program).to receive(:synchronize).with(lib_ptg_box)
+      # allow(program).to receive(:synchronize).with(lib_ptg_box)
       allow(program).to receive(:assemble_marc_files).with(collection)
     end
 
     it do
       execute
-      expect(program).to have_received(:synchronize).with(lib_ptg_box)
+      # expect(program).to have_received(:synchronize).with(lib_ptg_box)
       expect(program).not_to have_received(:assemble_marc_files).with(collection)
       expect(program.errors).to be_empty
     end
@@ -46,40 +47,8 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
       it do
         execute
-        expect(program).to have_received(:synchronize).with(lib_ptg_box)
+        # expect(program).to have_received(:synchronize).with(lib_ptg_box)
         expect(program).to have_received(:assemble_marc_files).with(collection)
-        expect(program.errors).to be_empty
-      end
-    end
-  end
-
-  describe '#synchronize' do
-    subject(:synchronize) { program.synchronize(lib_ptg_box) }
-
-    let(:defunct_record) { instance_double(UmpebcKbart, 'defunct_record') }
-    let(:record) { instance_double(UmpebcKbart, 'record') }
-
-    before do
-      allow(UmpebcKbart).to receive(:all).and_return([defunct_record, record])
-      allow(defunct_record).to receive(:destroy!)
-      allow(UmpebcKbart).to receive(:find_or_create_by!).with(name: selection.name, year: selection.year).and_return(record)
-    end
-
-    it do
-      synchronize
-      expect(UmpebcKbart).not_to have_received(:all)
-      expect(UmpebcKbart).not_to have_received(:find_or_create_by!).with(name: selection.name, year: selection.year)
-      expect(program.errors).to be_empty
-    end
-
-    context 'when UMPEBC Metadata folder' do
-      let(:collection_name) { umpebc_metadata }
-
-      it do
-        synchronize
-        expect(UmpebcKbart).to have_received(:all)
-        expect(UmpebcKbart).to have_received(:find_or_create_by!).with(name: selection.name, year: selection.year)
-        expect(defunct_record).to have_received(:destroy!)
         expect(program.errors).to be_empty
       end
     end
@@ -119,10 +88,10 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         expect(mrc_file).not_to have_received(:<<).with(marc.to_marc)
         expect(xml_file).not_to have_received(:<<).with(marc.to_xml)
         expect(xml_file).not_to have_received(:<<).with("\n")
-        expect(program.errors).to contain_exactly("MISSING Cataloging MARC record for https://doi.org/#{work.doi} in selection #{filename} of collection #{collection.name}")
+        expect(program.errors).to contain_exactly("", "Selection_1984-10 MISSING Cataloging MARC record", "https://doi.org/10.3998/mpub.123456789", "online (online)", "print (print)", "title (date)")
       end
 
-      context 'when catalog marc record' do # rubocop:disable RSpec/NestedGroups
+      context 'when catalog marc record' do
         let(:work_marc) { true }
 
         it do
@@ -157,7 +126,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
     it do
       recreate_selection_marc_files
-      expect(program.errors).to contain_exactly("MISSING Cataloging MARC record for https://doi.org/#{work.doi} in selection #{filename} of collection #{collection.name}")
+      expect(program.errors).to contain_exactly("", "#{filename} MISSING Cataloging MARC record", "https://doi.org/10.3998/mpub.123456789", "online (online)", "print (print)", "title (date)")
     end
 
     context 'when catalog marc record' do
@@ -287,7 +256,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
     context 'when UMPEBC Metadata folder' do
       let(:collection_name) { umpebc_metadata }
-      let(:record) { instance_double(UmpebcKbart, 'record', id: 'id', updated: record_updated) }
+      let(:record) { instance_double(UmpebcKbart, 'record', id: 'id', updated: record_updated, verified: true) }
       let(:record_updated) { selection_updated }
 
       before { allow(UmpebcKbart).to receive(:find_by).with(name: selection.name, year: selection.year).and_return(record) }
@@ -297,7 +266,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         expect(program.errors).to be_empty
       end
 
-      context 'when selection updated' do # rubocop:disable RSpec/NestedGroups
+      context 'when selection updated' do
         let(:month) { Date.today.month }
         let(:record_updated) { Date.yesterday }
         let(:updated) { 'updated' }

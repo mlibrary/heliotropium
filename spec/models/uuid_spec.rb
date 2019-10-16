@@ -6,8 +6,6 @@ RSpec.describe Uuid, type: :model do
   describe '#facotry' do
     subject(:resource) { described_class.factory(uuid) }
 
-    # rubocop:disable RSpec/NestedGroups
-
     context 'when NullResource' do
       context 'when nil' do
         let(:uuid) { nil }
@@ -30,8 +28,6 @@ RSpec.describe Uuid, type: :model do
         it { expect(resource.uuid).to be uuid }
       end
     end
-
-    # rubocop:enable RSpec/NestedGroups
 
     context 'when Resource' do
       let(:uuid) { '00000000-0000-0000-0000-00000000000f' }

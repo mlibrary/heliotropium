@@ -8,7 +8,7 @@ RSpec.describe LibPtgBox::Work do
   let(:selection) { instance_double(LibPtgBox::Selection, 'selection', collection: collection) }
   let(:collection) { instance_double(LibPtgBox::Collection, 'collection', catalog: catalog) }
   let(:catalog) { instance_double(LibPtgBox::Catalog, 'catalog') }
-  let(:kbart) { instance_double(LibPtgBox::Unmarshaller::Kbart, 'kbart', doi: 'doi') }
+  let(:kbart) { instance_double(LibPtgBox::Unmarshaller::Kbart, 'kbart', doi: 'doi', print: 'print', online: 'online', title: 'title', date: 'date') }
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
   let(:catalog_marc) { nil }
 
@@ -17,10 +17,24 @@ RSpec.describe LibPtgBox::Work do
     allow(catalog).to receive(:marc).with('doi').and_return(catalog_marc)
   end
 
+  describe "delegate to kbart" do
+    it { expect(work.doi).to eq(kbart.doi) }
+    it { expect(work.print).to eq(kbart.print) }
+    it { expect(work.online).to eq(kbart.online) }
+    it { expect(work.title).to eq(kbart.title) }
+    it { expect(work.date).to eq(kbart.date) }
+  end
+
   describe '#name' do
     subject { work.name }
 
     it { is_expected.to eq(kbart.doi) }
+  end
+
+  describe '#url' do
+    subject { work.url }
+
+    it { is_expected.to eq("https://doi.org/#{kbart.doi}") }
   end
 
   describe '#new?' do
@@ -33,7 +47,7 @@ RSpec.describe LibPtgBox::Work do
 
       it { is_expected.to be false }
 
-      context 'when only catalog marc' do # rubocop:disable RSpec/NestedGroups
+      context 'when only catalog marc' do
         let(:marc) { nil }
 
         it { is_expected.to be true }

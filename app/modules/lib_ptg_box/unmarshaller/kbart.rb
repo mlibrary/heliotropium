@@ -10,16 +10,32 @@ module LibPtgBox
         begin
           CSV.parse(@line) do |row|
             @row = row
-            Rails.logger.info "#{@row[1]}, #{@row[2]}, https://doi.org/#{doi}, #{@row[3]}, #{@row[0]}"
+            # Rails.logger.info "#{print}, #{online}, https://doi.org/#{doi}, #{date}, #{title}"
           end
         rescue StandardError => e
           Rails.logger.error "LibPtgBox::Unmarshaller::Kbart.initialize(#{@line}) error #{e}"
-          @row = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, "10.3998/mpub.00000000"]
+          @row = ["UNTITLED", "0000000000000", "0000000000000", "1970-01-01", 5, 6, 7, 8, 9, 10, 11, "10.3998/mpub.00000000"]
         end
       end
 
       def doi
         @doi ||= @row[11]
+      end
+
+      def print
+        @print ||= @row[1]
+      end
+
+      def online
+        @online || @row[2]
+      end
+
+      def date
+        @date ||= @row[3]
+      end
+
+      def title
+        @title ||= @row[0]
       end
 
       private

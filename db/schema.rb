@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_17_202446) do
+ActiveRecord::Schema.define(version: 2019_10_11_121546) do
 
   create_table "catalog_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "folder", null: false
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_202446) do
     t.boolean "replaced", default: false, null: false
     t.integer "count", default: 0
     t.binary "raw"
+    t.boolean "selected", default: false, null: false
     t.index ["folder", "file"], name: "index_catalog_marcs_on_folder_and_file", unique: true
   end
 
