@@ -6,7 +6,9 @@ RSpec.describe AssembleMarcFiles do
   describe '#run' do
     let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box') }
     let(:assemble_marc_files) { instance_double(AssembleMarcFiles::AssembleMarcFiles, "AssembleMarcFiles") }
-    let(:mailer) { double("NotifierMailer") } # rubocop:disable RSpec/VerifiedDoubles
+    let(:admin_mailer) { double('admin_mailer') } # rubocop:disable RSpec/VerifiedDoubles
+    let(:mpub_encoding_mailer) { double('mpub_encoding_mailer') } # rubocop:disable RSpec/VerifiedDoubles
+    let(:mpub_missing_mailer) { double('mpub_missing_mailer') } # rubocop:disable RSpec/VerifiedDoubles
 
     before do
       allow(LibPtgBox::LibPtgBox).to receive(:new).and_return(lib_ptg_box)
@@ -15,8 +17,12 @@ RSpec.describe AssembleMarcFiles do
       allow(AssembleMarcFiles::AssembleMarcFiles).to receive(:new).with(lib_ptg_box).and_return(assemble_marc_files)
       allow(assemble_marc_files).to receive(:execute).and_return(nil)
       allow(assemble_marc_files).to receive(:errors).and_return([])
-      allow(NotifierMailer).to receive(:administrators).with(anything).and_return(mailer)
-      allow(mailer).to receive(:deliver_now)
+      allow(NotifierMailer).to receive(:administrators).with(anything).and_return(admin_mailer)
+      allow(NotifierMailer).to receive(:mpub_cataloging_encoding_error).with(anything).and_return(mpub_encoding_mailer)
+      allow(NotifierMailer).to receive(:mpub_cataloging_missing_record).with(anything).and_return(mpub_missing_mailer)
+      allow(admin_mailer).to receive(:deliver_now)
+      allow(mpub_encoding_mailer).to receive(:deliver_now)
+      allow(mpub_missing_mailer).to receive(:deliver_now)
       allow(CatalogMarc).to receive(:destroy_all)
       allow(UmpebcKbart).to receive(:destroy_all)
     end
@@ -63,7 +69,11 @@ RSpec.describe AssembleMarcFiles do
       it 'default' do
         described_class.run
         expect(NotifierMailer).not_to have_received(:administrators).with(anything)
-        expect(mailer).not_to have_received(:deliver_now)
+        expect(admin_mailer).not_to have_received(:deliver_now)
+        expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
+        expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+        expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
+        expect(mpub_missing_mailer).not_to have_received(:deliver_now)
       end
 
       context 'when catalog error' do
@@ -72,7 +82,11 @@ RSpec.describe AssembleMarcFiles do
         it do
           described_class.run
           expect(NotifierMailer).to have_received(:administrators).with('log')
-          expect(mailer).to have_received(:deliver_now)
+          expect(admin_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).to have_received(:mpub_cataloging_encoding_error).with(anything)
+          expect(mpub_encoding_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
+          expect(mpub_missing_mailer).not_to have_received(:deliver_now)
         end
       end
 
@@ -82,7 +96,11 @@ RSpec.describe AssembleMarcFiles do
         it do
           described_class.run
           expect(NotifierMailer).to have_received(:administrators).with('log')
-          expect(mailer).to have_received(:deliver_now)
+          expect(admin_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
+          expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
+          expect(mpub_missing_mailer).not_to have_received(:deliver_now)
         end
       end
 
@@ -92,7 +110,11 @@ RSpec.describe AssembleMarcFiles do
         it do
           described_class.run
           expect(NotifierMailer).to have_received(:administrators).with('errors')
-          expect(mailer).to have_received(:deliver_now)
+          expect(admin_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
+          expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+          expect(NotifierMailer).to have_received(:mpub_cataloging_missing_record).with(anything)
+          expect(mpub_missing_mailer).to have_received(:deliver_now)
         end
       end
 
@@ -102,7 +124,11 @@ RSpec.describe AssembleMarcFiles do
         it do
           described_class.run
           expect(NotifierMailer).to have_received(:administrators).with("AssembleMarcFiles run error (StandardError)\n")
-          expect(mailer).to have_received(:deliver_now)
+          expect(admin_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
+          expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
+          expect(mpub_missing_mailer).not_to have_received(:deliver_now)
         end
       end
     end

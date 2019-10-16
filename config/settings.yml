@@ -45,9 +45,13 @@ mailers:
   to:
     administrators:
       - administrator@heliotropium.com
+    mpub_cataloging:
+      - mpub-cataloging@umich.edu
   from:
     administrator:
       - administrator@heliotropium.com
+    fulcrum_dev:
+      - fulcrum-dev@umich.edu
     no_reply:
       - no-reply@heliotropium.com
 
