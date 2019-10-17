@@ -24,19 +24,33 @@ module AssembleMarcFiles
       log
     end
 
-    def append_selection_month_marc_file(selection, month) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      filename = selection.name + format("-%02d", month)
-      writer = MARC::Writer.new(filename + '.mrc')
-      xml_writer = MARC::XMLWriter.new(filename + '.xml')
-      selection.works.each do |work|
-        next unless work.new?
-        next unless work.marc?
+    def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      # Only process UMPEBC Metadata folder.
+      return [] unless /umpebc/i.match?(collection.name)
 
-        writer.write(work.marc.entry)
-        xml_writer.write(work.marc.entry)
+      log = []
+
+      # Recursive remove tmp folder from last time
+      FileUtils.rm_rf('umpebc')
+      # Create tmp folder
+      Dir.mkdir('umpebc')
+      # Change working directory to tmp folder
+      Dir.chdir('umpebc') do
+        collection.selections.each do |selection|
+          record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
+          next unless record.updated < selection.updated || !record.verified
+
+          record.updated = selection.updated
+          record.verified = true
+          recreate_selection_marc_files(record, selection)
+          record.save!
+        end
+        recreate_collection_month_marc_file(collection)
+        recreate_collection_marc_files(collection)
+        log = upload_marc_files(collection)
       end
-      writer.close
-      xml_writer.close
+
+      log
     end
 
     def recreate_selection_marc_files(record, selection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -47,6 +61,10 @@ module AssembleMarcFiles
         if work.marc?
           writer.write(work.marc.entry)
           xml_writer.write(work.marc.entry)
+          umpebc_marc = UmpebcMarc.find_or_create_by!(doi: work.marc.doi)
+          umpebc_marc.mrc = work.marc.to_mrc
+          umpebc_marc.year = selection.year
+          umpebc_marc.save!
         else
           record.verified = false
           errors << "#{filename} MISSING Cataloging MARC record"
@@ -59,6 +77,26 @@ module AssembleMarcFiles
       end
       writer.close
       xml_writer.close
+    end
+
+    def recreate_collection_month_marc_file(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      collection.selections.each do |selection|
+        next unless selection.year == Date.today.year
+
+        month = Date.today.month
+        filename = selection.name + format("-%02d", month)
+        writer = MARC::Writer.new(filename + '.mrc')
+        xml_writer = MARC::XMLWriter.new(filename + '.xml')
+        umpebc_marcs = UmpebcMarc.where('year = ? AND updated_at >= ?', selection.year, DateTime.new(selection.year, month, 1))
+        umpebc_marcs.each do |umpebc_marc|
+          marc = MARC::Reader.decode(umpebc_marc.mrc, external_encoding: "UTF-8", validate_encoding: true)
+          writer.write(marc)
+          xml_writer.write(marc)
+        end
+        writer.close
+        xml_writer.close
+        break
+      end
     end
 
     def recreate_collection_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -88,49 +126,6 @@ module AssembleMarcFiles
       end
 
       filenames.sort.reverse
-    end
-
-    def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-      # Only process UMPEBC Metadata folder.
-      return [] unless /umpebc/i.match?(collection.name)
-
-      # Update selection if KBART csv file was updated since last time marc files where assembled
-      update_selection = false
-      collection.selections.each do |selection|
-        record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
-        next unless record.updated < selection.updated || !record.verified
-
-        update_selection = true
-        break
-      end
-
-      # Return unless at least one KBART csv file has been updated since last time
-      return [] unless update_selection
-
-      log = []
-
-      # Recursive remove tmp folder from last time
-      FileUtils.rm_rf('umpebc')
-      # Create tmp folder
-      Dir.mkdir('umpebc')
-      # Change working directory to tmp folder
-      Dir.chdir('umpebc') do
-        collection.selections.each do |selection|
-          record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
-          next unless record.updated < selection.updated || !record.verified
-
-          record.updated = selection.updated
-          record.verified = true
-          append_selection_month_marc_file(selection, Date.today.month) if selection.year == Date.today.year
-          recreate_selection_marc_files(record, selection)
-          record.save!
-        end
-        recreate_collection_marc_files(collection)
-
-        log = upload_marc_files(collection)
-      end
-
-      log
     end
   end
 end

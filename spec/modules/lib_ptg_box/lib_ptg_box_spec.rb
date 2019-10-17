@@ -53,11 +53,11 @@ RSpec.describe LibPtgBox::LibPtgBox do
       expect(CatalogMarc.count).to eq(1)
     end
 
-    it 'marc file deleted from box' do
-      create(:catalog_marc)
+    it 'logs orphan marc record' do
+      catalog_marc = create(:catalog_marc)
       expect(CatalogMarc.count).to eq(1)
-      expect(synchronize_catalog_marcs).to contain_exactly("FILE NOT FOUND  MyString > MyString deleting orphan record", "NEW FILE CONTENT in folder > 0000000000000.mrc")
-      expect(CatalogMarc.count).to eq(1)
+      expect(synchronize_catalog_marcs).to contain_exactly("MARC FILE NOT FOUND #{catalog_marc.folder} > #{catalog_marc.file}", "NEW FILE CONTENT in folder > 0000000000000.mrc")
+      expect(CatalogMarc.count).to eq(2)
     end
 
     context 'when new file is empty' do
@@ -124,11 +124,11 @@ RSpec.describe LibPtgBox::LibPtgBox do
       expect(UmpebcKbart.count).to eq(1)
     end
 
-    it 'kbart deleted from box' do
-      create(:umpebc_kbart)
+    it 'logs orphan kbart record' do
+      umpebc_kbart = create(:umpebc_kbart)
       expect(UmpebcKbart.count).to eq(1)
-      expect(synchronize_umpbec_kbarts).to contain_exactly("FILE NOT FOUND for UMPEBC_1970 1970 deleting orphan record")
-      expect(UmpebcKbart.count).to eq(1)
+      expect(synchronize_umpbec_kbarts).to contain_exactly("KBART FILE NOT FOUND #{umpebc_kbart.name}")
+      expect(UmpebcKbart.count).to eq(2)
     end
 
     context 'when kbart record is verified' do

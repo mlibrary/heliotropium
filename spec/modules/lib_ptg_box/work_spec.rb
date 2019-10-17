@@ -37,24 +37,6 @@ RSpec.describe LibPtgBox::Work do
     it { is_expected.to eq("https://doi.org/#{kbart.doi}") }
   end
 
-  describe '#new?' do
-    subject { work.new? }
-
-    it { is_expected.to be false }
-
-    context 'when marc and catalog marc' do
-      let(:catalog_marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
-
-      it { is_expected.to be false }
-
-      context 'when only catalog marc' do
-        let(:marc) { nil }
-
-        it { is_expected.to be true }
-      end
-    end
-  end
-
   describe '#marc?' do
     subject { work.marc? }
 

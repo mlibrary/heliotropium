@@ -100,10 +100,9 @@ module LibPtgBox
         end
       end
 
-      # Destroy orphan MARC records a.k.a. previous records that no longer have a matching MARC mrc file
+      # Log orphan MARC records a.k.a. previous records that no longer have a matching MARC mrc file
       catalog_marcs.each do |catalog_marc|
-        log << "FILE NOT FOUND  #{catalog_marc.folder} > #{catalog_marc.file} deleting orphan record"
-        catalog_marc.destroy!
+        log << "MARC FILE NOT FOUND #{catalog_marc.folder} > #{catalog_marc.file}"
       end
 
       # Cataloging Errors
@@ -161,10 +160,9 @@ module LibPtgBox
         end
       end
 
-      # Destroy orphan KBART records a.k.a. previous records that no longer have a matching KBART csv file
+      # Log orphan KBART records a.k.a. previous records that no longer have a matching KBART csv file
       umpebc_kbarts.each do |umpebc_kbart|
-        log << "FILE NOT FOUND for #{umpebc_kbart.name} #{umpebc_kbart.year} deleting orphan record"
-        umpebc_kbart.destroy!
+        log << "KBART FILE NOT FOUND #{umpebc_kbart.name}"
       end
 
       log

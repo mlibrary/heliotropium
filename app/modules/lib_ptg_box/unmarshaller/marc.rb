@@ -25,7 +25,7 @@ module LibPtgBox
         end
       end
 
-      def to_marc
+      def to_mrc
         @entry.to_marc.to_s
       end
 

@@ -8,7 +8,7 @@ RSpec.describe LibPtgBox::Catalog do
   let(:selection) { instance_double(LibPtgBox::Selection, 'selection') }
   let(:marc_folder) { object_double(LibPtgBox::Unmarshaller::MarcFolder.new(marc_ftp_folder), 'marc_folder') }
   let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'folder') }
-  let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', to_marc: 'to_marc', doi: marc_doi) }
+  let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: marc_doi) }
   let(:marc_doi) { 'marc' }
   let(:catalog_marcs) { [] }
   let(:catalog_marc) { instance_double(CatalogMarc, 'catalog_marc', raw: raw_marc, parsed: true, replaced: false) }

@@ -22,8 +22,8 @@ RSpec.describe LibPtgBox::Unmarshaller::Marc do
     end
   end
 
-  describe '#to_marc' do
-    subject { marc.to_marc }
+  describe '#to_mrc' do
+    subject { marc.to_mrc }
 
     before { allow(entry).to receive(:to_marc).and_return('marc') }
 

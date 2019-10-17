@@ -19,14 +19,6 @@ module LibPtgBox
       "https://doi.org/#{doi}"
     end
 
-    def new?
-      if marc?
-        !!!@selection.collection.marc(doi) # rubocop:disable Style/DoubleNegation
-      else
-        false
-      end
-    end
-
     def marc?
       !!marc # rubocop:disable Style/DoubleNegation
     end
