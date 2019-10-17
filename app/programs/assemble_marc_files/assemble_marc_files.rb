@@ -10,14 +10,18 @@ module AssembleMarcFiles
     end
 
     def execute
+      log = []
+
       # Loop through collections a.k.a. M | box - All Files > Library PTG Box folders e.g. UMPEBC Metadata, Lever Press Metadata
       @lib_ptg_box.collections.each do |collection|
         # Only process UMPEBC Metadata folder.
         next unless /umpebc/i.match?(collection.name)
 
         # Assemble MARC Files for UMPEBC collection
-        assemble_marc_files(collection)
+        log = assemble_marc_files(collection)
       end
+
+      log
     end
 
     def append_selection_month_marc_file(selection, month) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -74,16 +78,21 @@ module AssembleMarcFiles
     end
 
     def upload_marc_files(collection)
+      filenames = []
       Dir.entries(Dir.pwd).each do |filename|
         next unless /^.+\.(mrc|xml)$/.match?(filename)
 
+        filenames << filename.to_s
+
         collection.upload_marc_file(filename)
       end
+
+      filenames.sort.reverse
     end
 
     def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       # Only process UMPEBC Metadata folder.
-      return unless /umpebc/i.match?(collection.name)
+      return [] unless /umpebc/i.match?(collection.name)
 
       # Update selection if KBART csv file was updated since last time marc files where assembled
       update_selection = false
@@ -96,7 +105,9 @@ module AssembleMarcFiles
       end
 
       # Return unless at least one KBART csv file has been updated since last time
-      return unless update_selection
+      return [] unless update_selection
+
+      log = []
 
       # Recursive remove tmp folder from last time
       FileUtils.rm_rf('umpebc')
@@ -115,8 +126,11 @@ module AssembleMarcFiles
           record.save!
         end
         recreate_collection_marc_files(collection)
-        upload_marc_files(collection)
+
+        log = upload_marc_files(collection)
       end
+
+      log
     end
   end
 end

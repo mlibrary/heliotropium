@@ -46,14 +46,22 @@ mailers:
     administrators:
       - administrator@heliotropium.com
     mpub_cataloging:
-      - mpub-cataloging@umich.edu
+      - mpub-cataloging@heliotropium.com
+    fulcrum_info:
+      - fulcrum-info@heliotropium.com
+  bcc:
+    ebc_tech_contacts:
+      - ebc-tech-contacts@heliotropium.com
   from:
     administrator:
       - administrator@heliotropium.com
     fulcrum_dev:
-      - fulcrum-dev@umich.edu
+      - fulcrum-dev@heliotropium.com
+    fulcrum_info:
+      - fulcrum-info@heliotropium.com
     no_reply:
       - no-reply@heliotropium.com
+
 
 # Keys used by LibPtgBox module
 lib_ptg_box:

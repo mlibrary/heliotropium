@@ -8,6 +8,14 @@ class NotifierMailer < ApplicationMailer
     mail(to: Settings.mailers.to.administrators)
   end
 
+  def fulcrum_info_umpebc_marc_updates(text)
+    @text = text
+    mail(to: Settings.mailers.to.fulcrum_info,
+         from: Settings.mailers.from.fulcrum_info,
+         bcc: Settings.mailers.bcc.ebc_tech_contacts,
+         subject: 'University of Michigan Press Ebook Collection MARC updates')
+  end
+
   def mpub_cataloging_encoding_error(text)
     @text = text
     mail(to: Settings.mailers.to.mpub_cataloging,

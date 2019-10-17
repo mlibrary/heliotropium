@@ -7,6 +7,7 @@ RSpec.describe AssembleMarcFiles do
     let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box') }
     let(:assemble_marc_files) { instance_double(AssembleMarcFiles::AssembleMarcFiles, "AssembleMarcFiles") }
     let(:admin_mailer) { double('admin_mailer') } # rubocop:disable RSpec/VerifiedDoubles
+    let(:fulcrum_info_mailer) { double('fulcrum_info_mailer') } # rubocop:disable RSpec/VerifiedDoubles
     let(:mpub_encoding_mailer) { double('mpub_encoding_mailer') } # rubocop:disable RSpec/VerifiedDoubles
     let(:mpub_missing_mailer) { double('mpub_missing_mailer') } # rubocop:disable RSpec/VerifiedDoubles
 
@@ -15,12 +16,14 @@ RSpec.describe AssembleMarcFiles do
       allow(lib_ptg_box).to receive(:synchronize_catalog_marcs).and_return([])
       allow(lib_ptg_box).to receive(:synchronize_umpbec_kbarts).and_return([])
       allow(AssembleMarcFiles::AssembleMarcFiles).to receive(:new).with(lib_ptg_box).and_return(assemble_marc_files)
-      allow(assemble_marc_files).to receive(:execute).and_return(nil)
+      allow(assemble_marc_files).to receive(:execute).and_return([])
       allow(assemble_marc_files).to receive(:errors).and_return([])
       allow(NotifierMailer).to receive(:administrators).with(anything).and_return(admin_mailer)
+      allow(NotifierMailer).to receive(:fulcrum_info_umpebc_marc_updates).with(anything).and_return(fulcrum_info_mailer)
       allow(NotifierMailer).to receive(:mpub_cataloging_encoding_error).with(anything).and_return(mpub_encoding_mailer)
       allow(NotifierMailer).to receive(:mpub_cataloging_missing_record).with(anything).and_return(mpub_missing_mailer)
       allow(admin_mailer).to receive(:deliver_now)
+      allow(fulcrum_info_mailer).to receive(:deliver_now)
       allow(mpub_encoding_mailer).to receive(:deliver_now)
       allow(mpub_missing_mailer).to receive(:deliver_now)
       allow(CatalogMarc).to receive(:destroy_all)
@@ -72,8 +75,26 @@ RSpec.describe AssembleMarcFiles do
         expect(admin_mailer).not_to have_received(:deliver_now)
         expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
         expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+        expect(NotifierMailer).not_to have_received(:fulcrum_info_umpebc_marc_updates).with(anything)
+        expect(fulcrum_info_mailer).not_to have_received(:deliver_now)
         expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
         expect(mpub_missing_mailer).not_to have_received(:deliver_now)
+      end
+
+      context 'when uploaded files' do
+        before { allow(assemble_marc_files).to receive(:execute).and_return(['filename']) }
+
+        it do
+          described_class.run
+          expect(NotifierMailer).to have_received(:administrators).with('filename')
+          expect(admin_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
+          expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+          expect(NotifierMailer).to have_received(:fulcrum_info_umpebc_marc_updates).with('filename')
+          expect(fulcrum_info_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
+          expect(mpub_missing_mailer).not_to have_received(:deliver_now)
+        end
       end
 
       context 'when catalog error' do
@@ -83,8 +104,10 @@ RSpec.describe AssembleMarcFiles do
           described_class.run
           expect(NotifierMailer).to have_received(:administrators).with('log')
           expect(admin_mailer).to have_received(:deliver_now)
-          expect(NotifierMailer).to have_received(:mpub_cataloging_encoding_error).with(anything)
+          expect(NotifierMailer).to have_received(:mpub_cataloging_encoding_error).with('log')
           expect(mpub_encoding_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:fulcrum_info_umpebc_marc_updates).with(anything)
+          expect(fulcrum_info_mailer).not_to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
           expect(mpub_missing_mailer).not_to have_received(:deliver_now)
         end
@@ -99,6 +122,8 @@ RSpec.describe AssembleMarcFiles do
           expect(admin_mailer).to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
           expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:fulcrum_info_umpebc_marc_updates).with(anything)
+          expect(fulcrum_info_mailer).not_to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
           expect(mpub_missing_mailer).not_to have_received(:deliver_now)
         end
@@ -113,7 +138,9 @@ RSpec.describe AssembleMarcFiles do
           expect(admin_mailer).to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
           expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
-          expect(NotifierMailer).to have_received(:mpub_cataloging_missing_record).with(anything)
+          expect(NotifierMailer).not_to have_received(:fulcrum_info_umpebc_marc_updates).with(anything)
+          expect(fulcrum_info_mailer).not_to have_received(:deliver_now)
+          expect(NotifierMailer).to have_received(:mpub_cataloging_missing_record).with('errors')
           expect(mpub_missing_mailer).to have_received(:deliver_now)
         end
       end
@@ -127,6 +154,8 @@ RSpec.describe AssembleMarcFiles do
           expect(admin_mailer).to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
           expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:fulcrum_info_umpebc_marc_updates).with(anything)
+          expect(fulcrum_info_mailer).not_to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)
           expect(mpub_missing_mailer).not_to have_received(:deliver_now)
         end

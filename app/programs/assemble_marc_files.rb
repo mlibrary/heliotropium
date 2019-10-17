@@ -28,7 +28,11 @@ module AssembleMarcFiles
       end
 
       program = AssembleMarcFiles.new(lib_ptg_box)
-      program.execute
+      log = program.execute
+      if log.present?
+        NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
+        NotifierMailer.fulcrum_info_umpebc_marc_updates(log.map(&:to_s).join("\n")).deliver_now
+      end
       if program.errors.present?
         NotifierMailer.administrators(program.errors.map(&:to_s).join("\n")).deliver_now
         NotifierMailer.mpub_cataloging_missing_record(program.errors.map(&:to_s).join("\n")).deliver_now

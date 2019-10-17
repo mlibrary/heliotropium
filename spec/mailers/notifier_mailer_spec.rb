@@ -15,6 +15,19 @@ RSpec.describe NotifierMailer, type: :mailer do
     end
   end
 
+  describe '#fulcrum_info_umpebc_marc_updates' do
+    let(:mail) { described_class.fulcrum_info_umpebc_marc_updates(text).deliver }
+    let(:text) { 'MARC Updates' }
+
+    it 'is expected' do
+      expect(mail.from).to eq(Settings.mailers.from.fulcrum_info)
+      expect(mail.to).to eq(Settings.mailers.to.fulcrum_info)
+      expect(mail.bcc).to eq(Settings.mailers.bcc.ebc_tech_contacts)
+      expect(mail.subject).to eq('University of Michigan Press Ebook Collection MARC updates')
+      expect(mail.body.to_s).to match(text)
+    end
+  end
+
   describe '#mpub_cataloging_encoding_error' do
     let(:mail) { described_class.mpub_cataloging_encoding_error(text).deliver }
     let(:text) { 'Encoding Error' }

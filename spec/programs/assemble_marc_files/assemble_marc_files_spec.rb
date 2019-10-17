@@ -238,7 +238,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
 
     it do
-      upload_marc_files
+      expect(upload_marc_files).to be_empty
       expect(collection).not_to have_received(:upload_marc_file)
       expect(program.errors).to be_empty
     end
@@ -260,7 +260,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       end
 
       it do
-        upload_marc_files
+        expect(upload_marc_files).to match_array ["Selection_1984.xml", "Selection_1984.mrc", "Selection_1984-10.xml", "Selection_1984-10.mrc", "Collection Metadata_Complete.xml", "Collection Metadata_Complete.mrc"]
         expect(collection).not_to have_received(:upload_marc_file).with('.')
         expect(collection).not_to have_received(:upload_marc_file).with('..')
         expect(collection).to have_received(:upload_marc_file).with(selection.name + '.mrc')

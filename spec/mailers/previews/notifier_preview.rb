@@ -13,4 +13,8 @@ class NotifierPreview < ActionMailer::Preview
   def mpub_cataloging_missing_record
     NotifierMailer.mpub_cataloging_missing_record("Hello World!!!")
   end
+
+  def fulcrum_info_umpebc_marc_updates
+    NotifierMailer.fulcrum_info_umpebc_marc_updates("Hello World!!!")
+  end
 end
