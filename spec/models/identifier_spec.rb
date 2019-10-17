@@ -11,7 +11,7 @@ RSpec.describe Identifier, type: :model do
     expect(identifier.resource_token).to eq(identifier.resource_type.to_s + ':' + identifier.resource_id.to_s)
   end
 
-  it do # rubocop:disable RSpec/ExampleLength
+  it do
     expect(identifier).to be_valid
     expect(identifier.resource_type).to eq :Identifier
     expect(identifier.resource_id).to eq identifier.id

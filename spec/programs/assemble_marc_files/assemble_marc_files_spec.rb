@@ -18,10 +18,12 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   let(:work_name) { 'Star Wars' }
   let(:work_new) { false }
   let(:work_marc) { false }
-  let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', to_marc: 'marc', to_xml: 'xml') }
+  let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', entry: entry, to_marc: 'marc', to_xml: 'xml') }
+  let(:entry) { instance_double(MARC::Record, 'entry') }
   let(:umpebc_metadata) { 'UMPEBC Metadata' }
 
   before do
+    LibPtgBox.chdir_lib_ptg_box_dir
     program
     allow(LibPtgBox::LibPtgBox).to receive(:new).and_return(lib_ptg_box)
     allow(selection).to receive(:collection).and_return(collection)
@@ -59,24 +61,26 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
     let(:month) { Date.today.month }
     let(:filename) { selection.name + format("-%02d", month) }
-    let(:mrc_file) { instance_double(File, 'mrc_file') }
-    let(:xml_file) { instance_double(File, 'xml_file') }
+    let(:writer) { instance_double(MARC::Writer, 'writer') }
+    let(:xml_writer) { instance_double(MARC::XMLWriter, 'xml_writer') }
 
     before do
-      allow(File).to receive(:open).with(filename + '.mrc', 'w').and_return(mrc_file)
-      allow(mrc_file).to receive(:<<).with(marc.to_marc)
-      allow(mrc_file).to receive(:close)
-      allow(File).to receive(:open).with(filename + '.xml', 'w').and_return(xml_file)
-      allow(xml_file).to receive(:<<).with(marc.to_xml)
-      allow(xml_file).to receive(:<<).with("\n")
-      allow(xml_file).to receive(:close)
+      allow(MARC::Writer).to receive(:new).with("#{filename}.mrc").and_return(writer)
+      allow(writer).to receive(:write).with(entry)
+      allow(writer).to receive(:close)
+      allow(MARC::XMLWriter).to receive(:new).with("#{filename}.xml").and_return(xml_writer)
+      allow(xml_writer).to receive(:write).with(entry)
+      allow(xml_writer).to receive(:close)
     end
 
     it do
       append_selection_month_marc_file
-      expect(mrc_file).not_to have_received(:<<).with(marc.to_marc)
-      expect(xml_file).not_to have_received(:<<).with(marc.to_xml)
-      expect(xml_file).not_to have_received(:<<).with("\n")
+      expect(MARC::Writer).to have_received(:new).with("#{filename}.mrc")
+      expect(writer).not_to have_received(:write).with(entry)
+      expect(writer).to have_received(:close)
+      expect(MARC::XMLWriter).to have_received(:new).with("#{filename}.xml")
+      expect(xml_writer).not_to have_received(:write).with(entry)
+      expect(xml_writer).to have_received(:close)
       expect(program.errors).to be_empty
     end
 
@@ -85,10 +89,13 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
       it do
         append_selection_month_marc_file
-        expect(mrc_file).not_to have_received(:<<).with(marc.to_marc)
-        expect(xml_file).not_to have_received(:<<).with(marc.to_xml)
-        expect(xml_file).not_to have_received(:<<).with("\n")
-        expect(program.errors).to contain_exactly("", "Selection_1984-10 MISSING Cataloging MARC record", "https://doi.org/10.3998/mpub.123456789", "online (online)", "print (print)", "title (date)")
+        expect(MARC::Writer).to have_received(:new).with("#{filename}.mrc")
+        expect(writer).not_to have_received(:write).with(entry)
+        expect(writer).to have_received(:close)
+        expect(MARC::XMLWriter).to have_received(:new).with("#{filename}.xml")
+        expect(xml_writer).not_to have_received(:write).with(entry)
+        expect(xml_writer).to have_received(:close)
+        expect(program.errors).to be_empty
       end
 
       context 'when catalog marc record' do
@@ -96,9 +103,12 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
         it do
           append_selection_month_marc_file
-          expect(mrc_file).to have_received(:<<).with(marc.to_marc)
-          expect(xml_file).to have_received(:<<).with(marc.to_xml)
-          expect(xml_file).to have_received(:<<).with("\n")
+          expect(MARC::Writer).to have_received(:new).with("#{filename}.mrc")
+          expect(writer).to have_received(:write).with(entry)
+          expect(writer).to have_received(:close)
+          expect(MARC::XMLWriter).to have_received(:new).with("#{filename}.xml")
+          expect(xml_writer).to have_received(:write).with(entry)
+          expect(xml_writer).to have_received(:close)
           expect(program.errors).to be_empty
         end
       end
@@ -132,8 +142,26 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     context 'when catalog marc record' do
       let(:work_marc) { true }
 
+      let(:writer) { instance_double(MARC::Writer, 'writer') }
+      let(:xml_writer) { instance_double(MARC::XMLWriter, 'xml_writer') }
+
+      before do
+        allow(MARC::Writer).to receive(:new).with("#{selection_name}.mrc").and_return(writer)
+        allow(writer).to receive(:write).with(entry)
+        allow(writer).to receive(:close)
+        allow(MARC::XMLWriter).to receive(:new).with("#{selection_name}.xml").and_return(xml_writer)
+        allow(xml_writer).to receive(:write).with(entry)
+        allow(xml_writer).to receive(:close)
+      end
+
       it do
         recreate_selection_marc_files
+        expect(MARC::Writer).to have_received(:new).with("#{selection_name}.mrc")
+        expect(writer).to have_received(:write).with(entry)
+        expect(writer).to have_received(:close)
+        expect(MARC::XMLWriter).to have_received(:new).with("#{selection_name}.xml")
+        expect(xml_writer).to have_received(:write).with(entry)
+        expect(xml_writer).to have_received(:close)
         expect(program.errors).to be_empty
       end
     end
@@ -231,7 +259,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         ]
       end
 
-      it do # rubocop:disable RSpec/ExampleLength
+      it do
         upload_marc_files
         expect(collection).not_to have_received(:upload_marc_file).with('.')
         expect(collection).not_to have_received(:upload_marc_file).with('..')

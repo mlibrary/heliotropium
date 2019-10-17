@@ -3,6 +3,8 @@
 module LibPtgBox
   module Unmarshaller
     class Marc
+      attr_reader :entry
+
       def initialize(entry)
         @entry = entry
       end

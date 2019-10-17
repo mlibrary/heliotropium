@@ -16,6 +16,11 @@ RSpec.describe LibPtgBox::LibPtgBox do
     allow(LibPtgBox::Collection).to receive(:new).with(sub_folder).and_return(collection)
   end
 
+  it '#initialize' do
+    described_class.new
+    expect(Dir.pwd).to eq(Rails.root.join('tmp', 'lib_ptg_box').to_s)
+  end
+
   describe '#collections' do
     subject { described_class.new.collections }
 
@@ -114,16 +119,48 @@ RSpec.describe LibPtgBox::LibPtgBox do
   describe '#synchronize_umpbec_kbarts' do
     subject(:synchronize_umpbec_kbarts) { described_class.new.synchronize_umpbec_kbarts }
 
-    it 'new file' do
-      expect(synchronize_umpbec_kbarts).to eq []
+    it 'new kbart' do
+      expect(synchronize_umpbec_kbarts).to be_empty
       expect(UmpebcKbart.count).to eq(1)
     end
 
-    it 'kbart file deleted from box' do
+    it 'kbart deleted from box' do
       create(:umpebc_kbart)
       expect(UmpebcKbart.count).to eq(1)
       expect(synchronize_umpbec_kbarts).to contain_exactly("FILE NOT FOUND for UMPEBC_1970 1970 deleting orphan record")
       expect(UmpebcKbart.count).to eq(1)
+    end
+
+    context 'when kbart record is verified' do
+      let(:umpebc_kbart) { instance_double(UmpebcKbart, 'umpebc_kbart', verified: true) }
+      let(:work) { instance_double(LibPtgBox::Work, 'work', marc?: true, marc: marc) }
+      let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: 'doi') }
+      let(:catalog_marc) { instance_double(CatalogMarc, 'catalog_marc', doi: marc.doi, selected: selected) }
+      let(:selected) { false }
+
+      before do
+        allow(UmpebcKbart).to receive(:find_or_create_by!).with(name: selection.name, year: selection.year).and_return(umpebc_kbart)
+        allow(selection).to receive(:works).and_return([work])
+        allow(CatalogMarc).to receive(:find_by).with(doi: marc.doi).and_return(catalog_marc)
+        allow(umpebc_kbart).to receive(:verified=).with(false)
+        allow(umpebc_kbart).to receive(:save!)
+      end
+
+      it 'when unselected' do
+        expect(synchronize_umpbec_kbarts).to be_empty
+        expect(umpebc_kbart).not_to have_received(:verified=).with(false)
+        expect(umpebc_kbart).not_to have_received(:save!)
+      end
+
+      context 'when selected' do
+        let(:selected) { true }
+
+        it do
+          expect(synchronize_umpbec_kbarts).to contain_exactly("At least one MARC record in #{selection.name} has been updated by Cataloging.")
+          expect(umpebc_kbart).to have_received(:verified=).with(false)
+          expect(umpebc_kbart).to have_received(:save!)
+        end
+      end
     end
   end
 end

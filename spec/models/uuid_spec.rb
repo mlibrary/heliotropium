@@ -136,7 +136,7 @@ RSpec.describe Uuid, type: :model do
   context 'when exercised' do
     subject(:uuid) { create(:uuid) }
 
-    it do # rubocop:disable RSpec/ExampleLength
+    it do
       expect(uuid).to be_valid
       expect(uuid.resource_type).to eq :Uuid
       expect(uuid.resource_id).to eq uuid.id

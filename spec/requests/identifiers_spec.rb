@@ -108,7 +108,7 @@ RSpec.describe "Identifiers", type: :request do
       it { expect { Uuid.find(target.uuid.id) }.to raise_error(ActiveRecord::RecordNotFound) }
     end
 
-    it 'with alias' do # rubocop:disable RSpec/ExampleLength
+    it 'with alias' do
       twin = create(:identifier, uuid: target.uuid)
       expect(target.uuid).to eq(twin.uuid)
       expect { delete_destroy }.not_to raise_error

@@ -4,7 +4,7 @@ module LibPtgBox
   class LibPtgBox # rubocop:disable Metrics/ClassLength
     def initialize
       # WARNING Instance sets pwd to ./tmp/lib_ptg_box and then assumes complete control of changing the pwd at will!!!
-      chdir_lib_ptg_box_dir
+      ::LibPtgBox.chdir_lib_ptg_box_dir
     end
 
     def collections
@@ -31,6 +31,7 @@ module LibPtgBox
 
           catalog_marc = CatalogMarc.find_or_create_by!(folder: collection.catalog.marc_folder.name, file: marc_file.name, isbn: /(^\d+)(.*$)/.match(marc_file.name)[1])
 
+          # Clear selected flag. The selected flag will be set later if the record is updated.
           if catalog_marc.selected
             catalog_marc.selected = false
             catalog_marc.save!
@@ -123,7 +124,7 @@ module LibPtgBox
     end
 
     # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
-    def synchronize_umpbec_kbarts # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def synchronize_umpbec_kbarts # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
       log = []
 
       # Previous KBART records list
@@ -141,6 +142,22 @@ module LibPtgBox
           umpebc_kbart = UmpebcKbart.find_or_create_by!(name: selection.name, year: selection.year)
           # Remove record from the previous records list
           umpebc_kbarts.delete(umpebc_kbart) if umpebc_kbarts.include?(umpebc_kbart)
+          next unless umpebc_kbart.verified
+
+          # Falsify verified KBART records that are dependent upon any updated (a.k.a. selected) MARC records
+          selection.works.each do |work|
+            next unless work.marc?
+
+            catalog_marc = CatalogMarc.find_by(doi: work.marc.doi)
+            next unless catalog_marc
+            next unless catalog_marc.selected
+
+            log << "At least one MARC record in #{selection.name} has been updated by Cataloging."
+
+            umpebc_kbart.verified = false
+            umpebc_kbart.save!
+            break
+          end
         end
       end
 
@@ -152,15 +169,5 @@ module LibPtgBox
 
       log
     end
-
-    private
-
-      def chdir_lib_ptg_box_dir
-        tmp_dir = Rails.root.join('tmp')
-        Dir.mkdir(tmp_dir) unless Dir.exist?(tmp_dir)
-        Dir.chdir(tmp_dir)
-        Dir.mkdir('lib_ptg_box') unless Dir.exist?('lib_ptg_box')
-        Dir.chdir('lib_ptg_box')
-      end
   end
 end

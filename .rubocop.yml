@@ -23,7 +23,7 @@ Metrics/LineLength:
   Enabled: false
 
 RSpec/ExampleLength:
-  Max: 7
+  Enabled: false
 
 RSpec/MultipleExpectations:
   Enabled: false

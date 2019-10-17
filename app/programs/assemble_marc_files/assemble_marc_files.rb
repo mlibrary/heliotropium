@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module AssembleMarcFiles
-  class AssembleMarcFiles # rubocop:disable Metrics/ClassLength
+  class AssembleMarcFiles
     attr_accessor :errors
 
     def initialize(lib_ptg_box)
@@ -22,37 +22,27 @@ module AssembleMarcFiles
 
     def append_selection_month_marc_file(selection, month) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       filename = selection.name + format("-%02d", month)
-      mrc_file = File.open(filename + '.mrc', 'w')
-      xml_file = File.open(filename + '.xml', 'w')
+      writer = MARC::Writer.new(filename + '.mrc')
+      xml_writer = MARC::XMLWriter.new(filename + '.xml')
       selection.works.each do |work|
         next unless work.new?
+        next unless work.marc?
 
-        if work.marc?
-          mrc_file << work.marc.to_marc
-          xml_file << work.marc.to_xml
-          xml_file << "\n"
-        else
-          errors << "#{filename} MISSING Cataloging MARC record"
-          errors << work.url.to_s
-          errors << "#{work.title} (#{work.date})"
-          errors << "#{work.print} (print)"
-          errors << "#{work.online} (online)"
-          errors << ""
-        end
+        writer.write(work.marc.entry)
+        xml_writer.write(work.marc.entry)
       end
-      mrc_file.close
-      xml_file.close
+      writer.close
+      xml_writer.close
     end
 
     def recreate_selection_marc_files(record, selection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       filename = selection.name
-      mrc_file = File.open(filename + '.mrc', 'w')
-      xml_file = File.open(filename + '.xml', 'w')
+      writer = MARC::Writer.new(filename + '.mrc')
+      xml_writer = MARC::XMLWriter.new(filename + '.xml')
       selection.works.each do |work|
         if work.marc?
-          mrc_file << work.marc.to_marc
-          xml_file << work.marc.to_xml
-          xml_file << "\n"
+          writer.write(work.marc.entry)
+          xml_writer.write(work.marc.entry)
         else
           record.verified = false
           errors << "#{filename} MISSING Cataloging MARC record"
@@ -63,27 +53,24 @@ module AssembleMarcFiles
           errors << ""
         end
       end
-      mrc_file.close
-      xml_file.close
+      writer.close
+      xml_writer.close
     end
 
     def recreate_collection_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      entries = Dir.entries(Dir.pwd)
       filename = collection.name + '_Complete'
-      mrc_file = File.open(filename + '.mrc', 'wb')
-      xml_file = File.open(filename + '.xml', 'wb')
-      entries.each do |marc_filename|
-        next if /^.+-\d{2}\....$/.match?(marc_filename)
-        next unless /^.+_\d{4}.*\....$/.match?(marc_filename)
+      writer = MARC::Writer.new(filename + '.mrc')
+      xml_writer = MARC::XMLWriter.new(filename + '.xml')
+      collection.selections.each do |selection|
+        selection.works.each do |work|
+          next unless work.marc?
 
-        if /^.+\.mrc$/.match?(marc_filename)
-          mrc_file.write(File.open(marc_filename, 'rb').read)
-        elsif /^.+\.xml$/.match?(marc_filename)
-          xml_file.write(File.open(marc_filename, 'rb').read)
+          writer.write(work.marc.entry)
+          xml_writer.write(work.marc.entry)
         end
       end
-      mrc_file.close
-      xml_file.close
+      writer.close
+      xml_writer.close
     end
 
     def upload_marc_files(collection)

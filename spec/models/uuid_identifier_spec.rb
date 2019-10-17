@@ -5,7 +5,7 @@ require 'rails_helper'
 RSpec.describe UuidIdentifier, type: :model do
   subject(:uuid_identifier) { create(:uuid_identifier) }
 
-  it do # rubocop:disable RSpec/ExampleLength
+  it do
     expect(uuid_identifier).to be_valid
     expect(Identifier.count).to eq(1)
     expect(Uuid.count).to eq(1)
