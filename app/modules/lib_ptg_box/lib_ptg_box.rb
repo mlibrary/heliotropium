@@ -105,17 +105,26 @@ module LibPtgBox
         log << "MARC FILE NOT FOUND #{catalog_marc.folder} > #{catalog_marc.file}"
       end
 
-      # Cataloging Errors
+      log
+    end
+
+    def invalid_utf_8_encoding # rubocop:disable  Metrics/MethodLength, Metrics/AbcSize
+      log = []
+
       CatalogMarc.where(replaced: true).each do |record|
         log << "INVALID UTF-8 encoding for #{record.folder} > #{record.file} https://doi.org/#{record.doi}"
-        upper = MARC::Reader.decode(record.raw, external_encoding: "UTF-8", invalid: :replace, replace: 'Z')
-        lower = MARC::Reader.decode(record.raw, external_encoding: "UTF-8", invalid: :replace, replace: 'z')
-        upper.fields.each_with_index do |upper_field, index|
-          lower_field = lower.fields[index]
-          upper_set = upper_field.to_s.split(/\s/).to_set
-          lower_set = lower_field.to_s.split(/\s/).to_set
-          difference = upper_set ^ lower_set
-          log << "field #{upper_field.tag} #{difference}" unless difference.empty?
+        begin
+          upper = MARC::Reader.decode(record.raw, external_encoding: "UTF-8", invalid: :replace, replace: 'Z')
+          lower = MARC::Reader.decode(record.raw, external_encoding: "UTF-8", invalid: :replace, replace: 'z')
+          upper.fields.each_with_index do |upper_field, index|
+            lower_field = lower.fields[index]
+            upper_set = upper_field.to_s.split(/\s/).to_set
+            lower_set = lower_field.to_s.split(/\s/).to_set
+            difference = upper_set ^ lower_set
+            log << "field #{upper_field.tag} #{difference}" unless difference.empty?
+          end
+        rescue StandardError => e
+          log << "Decode error #{e}"
         end
       end
 

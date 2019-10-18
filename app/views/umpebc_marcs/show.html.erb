@@ -2,12 +2,17 @@
 <div id="maincontent">
   <div class="container">
     <p>
-      <strong>Doi:</strong>
-      <%= @umpebc_marc.doi %>
+      <strong>Year:</strong>
+      <%= @umpebc_marc.year %>
     </p>
 
     <p>
-      <strong>Mrc:</strong>
+      <strong>DOI:</strong>
+      <%= link_to @umpebc_marc.doi, "https://doi.org/#{@umpebc_marc.doi}", target: :_blank %>
+    </p>
+
+    <p>
+      <strong>MRC:</strong>
       <%= @umpebc_marc.mrc %>
     </p>
 

@@ -14,6 +14,7 @@ RSpec.describe AssembleMarcFiles do
     before do
       allow(LibPtgBox::LibPtgBox).to receive(:new).and_return(lib_ptg_box)
       allow(lib_ptg_box).to receive(:synchronize_catalog_marcs).and_return([])
+      allow(lib_ptg_box).to receive(:invalid_utf_8_encoding).and_return([])
       allow(lib_ptg_box).to receive(:synchronize_umpbec_kbarts).and_return([])
       allow(AssembleMarcFiles::AssembleMarcFiles).to receive(:new).with(lib_ptg_box).and_return(assemble_marc_files)
       allow(assemble_marc_files).to receive(:execute).and_return([])
@@ -104,8 +105,8 @@ RSpec.describe AssembleMarcFiles do
           described_class.run
           expect(NotifierMailer).to have_received(:administrators).with('log')
           expect(admin_mailer).to have_received(:deliver_now)
-          expect(NotifierMailer).to have_received(:mpub_cataloging_encoding_error).with('log')
-          expect(mpub_encoding_mailer).to have_received(:deliver_now)
+          expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
+          expect(mpub_encoding_mailer).not_to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:fulcrum_info_umpebc_marc_updates).with(anything)
           expect(fulcrum_info_mailer).not_to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_missing_record).with(anything)

@@ -4,7 +4,7 @@ class CatalogMarcsController < ApplicationController
   before_action :set_catalog_marc, only: %i[show edit update destroy]
 
   def index
-    @catalog_marcs = CatalogMarc.filter(filtering_params(params)).order(doi: :asc).page(params[:page])
+    @catalog_marcs = CatalogMarc.filter(filtering_params(params)).order(isbn: :asc).page(params[:page])
   end
 
   def show

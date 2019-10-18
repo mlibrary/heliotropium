@@ -5,42 +5,30 @@
       <h1>UMPEBC MARCs</h1>
     </div>
     <form name="filter" method="get" action="<%= umpebc_marcs_path %>">
-      <% size = 12 %>
+      <% size = 6 %>
       <div class="row">
-        <div class="col-1"><label for="isbn_like">ISBN</label></div>
-        <div class="col-2"><input type="text" name="isbn_like" value="<%= params[:isbn_like] %>" size="<%= size %>" aria-label="isbn_like"></div>
-        <div class="col-4">File</div>
-        <div class="col-1"><label for="parsed_like">PARSE ERROR</label></div>
-        <div class="col-2"><input type="checkbox" name="parsed_like" value=0 <%= params[:parsed_like] == '0' ? 'checked' : '' %> aria-label="parsed_like"></div>
-        <div class="col-2">&nbsp;</div>
+        <div class="col-1"><label for="year_like">Year</label></div>
+        <div class="col-5"><label for="doi_like">DOI</label></div>
+        <div class="col-6">Updated</div>
       </div>
       <div class="row">
-        <div class="col-1"><label for="doi_like">DOI</label></div>
-        <div class="col-2"><input type="text" name="doi_like" value="<%= params[:doi_like] %>" size="<%= size %>" aria-label="doi_like"></div>
-        <div class="col-4">Updated</div>
-        <div class="col-1"><label for="replaced_like">ENCODE ERROR</label></div>
-        <div class="col-2"><input type="checkbox" name="replaced_like" value=1 <%= params[:replaced_like] == '1' ? 'checked' : '' %> aria-label="replaced_like"></div>
+        <div class="col-1"><input type="text" name="year_like" value="<%= params[:year_like] %>" size="<%= size %>" aria-label="year_like"></div>
+        <div class="col-5"><input type="text" name="doi_like" value="<%= params[:doi_like] %>" size="<%= size * 6 %>" aria-label="doi_like"></div>
         <div class="col-2">
           <button name="submit" type="submit" value="filter">Filter</button>
         </div>
+        <div class="col-4">&nbsp;</div>
       </div>
     </form>
     <div class="row">&nbsp;</div>
     <% @umpebc_marcs.each do |umpebc_marc| %>
       <div class="row">
-        <div class="col-3"><%= umpebc_marc.doi %></div>
-        <div class="col-4"><%= umpebc_marc.mrc %></div>
-        <div class="col-5">&nbsp;</div>
+        <div class="col-1"><%= umpebc_marc.year %></div>
+        <div class="col-5"><%= link_to umpebc_marc.doi, "https://doi.org/#{umpebc_marc.doi}", target: :_blank %></div>
+        <div class="col-4"><%= umpebc_marc.updated_at %></div>
+        <div class="col-1"><%= link_to 'Show', umpebc_marc %></div>
+        <div class="col-1"><%= link_to 'Destroy', umpebc_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
       </div>
-      <div class="row">
-        <div class="col-5">
-          <div class="row">
-            <div class="col"><%= link_to 'Show', umpebc_marc %></div>
-            <div class="col"><%= link_to 'Destroy', umpebc_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
-          </div>
-        </div>
-      </div>
-      <div class="row">&nbsp;</div>
     <% end %>
     <div class="row">
       <div class="col">&nbsp<%= paginate @umpebc_marcs %></div>

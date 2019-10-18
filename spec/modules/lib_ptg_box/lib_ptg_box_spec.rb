@@ -51,6 +51,16 @@ RSpec.describe LibPtgBox::LibPtgBox do
     it 'new file' do
       expect(synchronize_catalog_marcs).to contain_exactly("NEW FILE CONTENT in folder > 0000000000000.mrc")
       expect(CatalogMarc.count).to eq(1)
+      catalog_marc = CatalogMarc.first
+      expect(catalog_marc.selected).to be true
+      expect(catalog_marc.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+      expect(catalog_marc.content).to eq('content')
+      expect(catalog_marc.raw).to eq('raw')
+      expect(catalog_marc.count).to eq(1)
+      expect(catalog_marc.mrc).to eq(record.to_s)
+      expect(catalog_marc.doi).to eq('doi')
+      expect(catalog_marc.parsed).to be true
+      expect(catalog_marc.replaced).to be false
     end
 
     it 'logs orphan marc record' do
@@ -66,6 +76,16 @@ RSpec.describe LibPtgBox::LibPtgBox do
       it do
         expect(synchronize_catalog_marcs).to contain_exactly("NEW FILE CONTENT in folder > 0000000000000.mrc", "NO MARC RECORD in folder > 0000000000000.mrc record count = 0")
         expect(CatalogMarc.count).to eq(1)
+        catalog_marc = CatalogMarc.first
+        expect(catalog_marc.selected).to be true
+        expect(catalog_marc.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+        expect(catalog_marc.content).to eq('content')
+        expect(catalog_marc.raw).to be nil
+        expect(catalog_marc.count).to eq(0)
+        expect(catalog_marc.mrc).to be nil
+        expect(catalog_marc.doi).to be nil
+        expect(catalog_marc.parsed).to be false
+        expect(catalog_marc.replaced).to be false
       end
     end
 
@@ -75,34 +95,16 @@ RSpec.describe LibPtgBox::LibPtgBox do
       it do
         expect(synchronize_catalog_marcs).to contain_exactly("NEW FILE CONTENT in folder > 0000000000000.mrc", "MULTIPLE MARC RECORDS in folder > 0000000000000.mrc record count = 2")
         expect(CatalogMarc.count).to eq(1)
-      end
-    end
-
-    context 'when invalid UTF-8 encoding' do
-      let(:upper) { instance_double(MARC::Record, 'upper', fields: [upper_field]) }
-      let(:upper_field) { instance_double(MARC::DataField, 'upper_field', tag: 'Z') }
-      let(:lower) { instance_double(MARC::Record, 'lower', fields: [lower_field]) }
-      let(:lower_field) { instance_double(MARC::DataField, 'lower_field', tag: 'z') }
-
-      before do
-        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", validate_encoding: true).and_raise(Encoding::InvalidByteSequenceError)
-        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace).and_return(record)
-        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace, replace: 'Z').and_return(upper)
-        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace, replace: 'z').and_return(lower)
-      end
-
-      it do
-        expect(synchronize_catalog_marcs).to contain_exactly("NEW FILE CONTENT in folder > 0000000000000.mrc", "ERROR Encoding::InvalidByteSequenceError reading folder > 0000000000000.mrc", "INVALID UTF-8 encoding for folder > 0000000000000.mrc https://doi.org/doi", "field Z #<Set: {\"\\\"lower_field\\\"]\", \"\\\"upper_field\\\"]\"}>")
-        expect(CatalogMarc.count).to eq(1)
-      end
-
-      context 'when standard error' do
-        before { allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace).and_raise(StandardError) }
-
-        it do
-          expect(synchronize_catalog_marcs).to contain_exactly("ERROR Encoding::InvalidByteSequenceError reading folder > 0000000000000.mrc", "ERROR StandardError reading folder > 0000000000000.mrc", "NEW FILE CONTENT in folder > 0000000000000.mrc")
-          expect(CatalogMarc.count).to eq(1)
-        end
+        catalog_marc = CatalogMarc.first
+        expect(catalog_marc.selected).to be true
+        expect(catalog_marc.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+        expect(catalog_marc.content).to eq('content')
+        expect(catalog_marc.raw).to eq('raw')
+        expect(catalog_marc.count).to eq(2)
+        expect(catalog_marc.mrc).to eq(record.to_s)
+        expect(catalog_marc.doi).to eq('doi')
+        expect(catalog_marc.parsed).to be true
+        expect(catalog_marc.replaced).to be false
       end
     end
 
@@ -112,6 +114,105 @@ RSpec.describe LibPtgBox::LibPtgBox do
       it do
         expect(synchronize_catalog_marcs).to contain_exactly("NEW FILE CONTENT in folder > 0000000000000.mrc", "ERROR StandardError reading folder > 0000000000000.mrc")
         expect(CatalogMarc.count).to eq(1)
+        catalog_marc = CatalogMarc.first
+        expect(catalog_marc.selected).to be true
+        expect(catalog_marc.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+        expect(catalog_marc.content).to eq('content')
+        expect(catalog_marc.raw).to eq('raw')
+        expect(catalog_marc.count).to eq(1)
+        expect(catalog_marc.mrc).to be nil
+        expect(catalog_marc.doi).to be nil
+        expect(catalog_marc.parsed).to be false
+        expect(catalog_marc.replaced).to be false
+      end
+    end
+
+    context 'when encoding invalid byte squence error' do
+      before do
+        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", validate_encoding: true).and_raise(Encoding::InvalidByteSequenceError)
+        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace).and_return(record)
+      end
+
+      it do
+        expect(synchronize_catalog_marcs).to contain_exactly("ERROR Encoding::InvalidByteSequenceError reading folder > 0000000000000.mrc", "NEW FILE CONTENT in folder > 0000000000000.mrc")
+        expect(CatalogMarc.count).to eq(1)
+        catalog_marc = CatalogMarc.first
+        expect(catalog_marc.selected).to be true
+        expect(catalog_marc.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+        expect(catalog_marc.content).to eq('content')
+        expect(catalog_marc.raw).to eq('raw')
+        expect(catalog_marc.count).to eq(1)
+        expect(catalog_marc.mrc).to eq(record.to_s)
+        expect(catalog_marc.doi).to eq('doi')
+        expect(catalog_marc.parsed).to be true
+        expect(catalog_marc.replaced).to be true
+      end
+
+      context 'when standard error' do
+        before do
+          allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace).and_raise(StandardError)
+        end
+
+        it do
+          expect(synchronize_catalog_marcs).to contain_exactly("ERROR Encoding::InvalidByteSequenceError reading folder > 0000000000000.mrc", "ERROR StandardError reading folder > 0000000000000.mrc", "NEW FILE CONTENT in folder > 0000000000000.mrc")
+          expect(CatalogMarc.count).to eq(1)
+          catalog_marc = CatalogMarc.first
+          expect(catalog_marc.selected).to be true
+          expect(catalog_marc.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+          expect(catalog_marc.content).to eq('content')
+          expect(catalog_marc.raw).to eq('raw')
+          expect(catalog_marc.count).to eq(1)
+          expect(catalog_marc.mrc).to be nil
+          expect(catalog_marc.doi).to be nil
+          expect(catalog_marc.parsed).to be false
+          expect(catalog_marc.replaced).to be false
+        end
+      end
+    end
+  end
+
+  describe 'invalid_utf_8_encoding' do
+    subject(:invalid_utf_8_encoding) { described_class.new.invalid_utf_8_encoding }
+
+    it do
+      expect(invalid_utf_8_encoding).to be_empty
+      expect(CatalogMarc.count).to eq(0)
+    end
+
+    context 'when invalid UTF-8 encoding' do
+      let(:record) { instance_double(CatalogMarc, 'record', folder: 'folder', file: 'file', doi: 'doi', raw: 'raw') }
+      let(:upper) { instance_double(MARC::Record, 'upper', fields: [upper_field]) }
+      let(:upper_field) { instance_double(MARC::DataField, 'upper_field', tag: 'Z') }
+      let(:lower) { instance_double(MARC::Record, 'lower', fields: [lower_field]) }
+      let(:lower_field) { instance_double(MARC::DataField, 'lower_field', tag: 'z') }
+
+      before do
+        allow(CatalogMarc).to receive(:where).with(replaced: true).and_return([record])
+        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace, replace: 'Z').and_return(upper)
+        allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace, replace: 'z').and_return(lower)
+      end
+
+      it do
+        expect(invalid_utf_8_encoding).to contain_exactly("INVALID UTF-8 encoding for folder > file https://doi.org/doi", "field Z #<Set: {\"\\\"lower_field\\\"]\", \"\\\"upper_field\\\"]\"}>")
+        expect(CatalogMarc.count).to eq(0)
+      end
+
+      context 'when standard Z error' do
+        before { allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace, replace: 'Z').and_raise(StandardError) }
+
+        it do
+          expect(invalid_utf_8_encoding).to contain_exactly("Decode error StandardError", "INVALID UTF-8 encoding for folder > file https://doi.org/doi")
+          expect(CatalogMarc.count).to eq(0)
+        end
+      end
+
+      context 'when standard z error' do
+        before { allow(MARC::Reader).to receive(:decode).with('raw', external_encoding: "UTF-8", invalid: :replace, replace: 'z').and_raise(StandardError) }
+
+        it do
+          expect(invalid_utf_8_encoding).to contain_exactly("Decode error StandardError", "INVALID UTF-8 encoding for folder > file https://doi.org/doi")
+          expect(CatalogMarc.count).to eq(0)
+        end
       end
     end
   end

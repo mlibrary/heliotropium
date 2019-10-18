@@ -62,7 +62,6 @@ mailers:
     no_reply:
       - no-reply@heliotropium.com
 
-
 # Keys used by LibPtgBox module
 lib_ptg_box:
   ftp: <host>

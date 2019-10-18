@@ -4,7 +4,7 @@ class UmpebcMarcsController < ApplicationController
   before_action :set_umpebc_marc, only: %i[show edit update destroy]
 
   def index
-    @umpebc_marcs = UmpebcMarc.filter(filtering_params(params)).order(doi: :asc).page(params[:page])
+    @umpebc_marcs = UmpebcMarc.filter(filtering_params(params)).order(updated_at: :desc).page(params[:page])
   end
 
   def show
@@ -62,6 +62,6 @@ class UmpebcMarcsController < ApplicationController
     end
 
     def filtering_params(params)
-      params.slice(:doi_like)
+      params.slice(:doi_like, :year_like)
     end
 end

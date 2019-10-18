@@ -13,10 +13,16 @@ module AssembleMarcFiles
         # Destroying all the CatalogMarc records will force downloading of all MARC from Cataloging files
         CatalogMarc.destroy_all if options[:reset_catalog_marcs]
         log = lib_ptg_box.synchronize_catalog_marcs
-        if log.present?
+        if log.present? # rubocop:disable Style/IfUnlessModifier
           NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
-          NotifierMailer.mpub_cataloging_encoding_error(log.map(&:to_s).join("\n")).deliver_now
         end
+      end
+
+      # MARC from Cataloging invalid UTF-8 encoding
+      log = lib_ptg_box.invalid_utf_8_encoding
+      if log.present?
+        NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
+        NotifierMailer.mpub_cataloging_encoding_error(log.map(&:to_s).join("\n")).deliver_now
       end
 
       # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
@@ -40,7 +46,7 @@ module AssembleMarcFiles
       end
     rescue StandardError => e
       msg = <<~MSG
-        AssembleMarcFiles run error (#{e})
+        AssembleMarcFiles run error (#{e.backtrace})
       MSG
       NotifierMailer.administrators(msg).deliver_now
     end

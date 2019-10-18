@@ -4,6 +4,7 @@ class UmpebcMarc < ApplicationRecord
   include Filterable
 
   scope :doi_like, ->(like) { where("doi like ?", "%#{like}%") }
+  scope :year_like, ->(like) { where("year like ?", "%#{like}%") }
 
   validates :doi, presence: true, allow_blank: false, uniqueness: true
 

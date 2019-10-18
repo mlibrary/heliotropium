@@ -43,7 +43,7 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-3"><%= catalog_marc.doi %></div>
+        <div class="col-3"><%= link_to catalog_marc.doi, "https://doi.org/#{catalog_marc.doi}", target: :_blank %></div>
         <div class="col-4"><%= catalog_marc.updated %></div>
         <div class="col-5">
           <div class="row">
