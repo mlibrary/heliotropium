@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>UMPEBC Files</h1>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>ID</em></div>
+      <div class="col"><%= @umpebc_file.id %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Name</em></div>
+      <div class="col"><%= @umpebc_file.name %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Checksum</em></div>
+      <div class="col"><%= @umpebc_file.checksum %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+    <div class="row">
+      <%= link_to_if @umpebc_file.update?, 'Edit', edit_umpebc_file_path(@umpebc_file) %>
+      <span> | </span>
+      <%= link_to 'Back', umpebc_files_path %>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+  </div>
+</div>

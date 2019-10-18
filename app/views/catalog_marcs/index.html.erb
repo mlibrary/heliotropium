@@ -2,7 +2,7 @@
 <div id="maincontent">
   <div class="container">
     <div class="row">
-      <h1>Catalog Marcs</h1>
+      <h1>Catalog MARCs</h1>
     </div>
     <form name="filter" method="get" action="<%= catalog_marcs_path %>">
       <% size = 12 %>
@@ -11,16 +11,20 @@
         <div class="col-2"><input type="text" name="isbn_like" value="<%= params[:isbn_like] %>" size="<%= size %>" aria-label="isbn_like"></div>
         <div class="col-4">File</div>
         <div class="col-1"><label for="parsed_like">PARSE ERROR</label></div>
-        <div class="col-2"><input type="checkbox" name="parsed_like" value=0 <%= params[:parsed_like] == '0' ? 'checked' : '' %> aria-label="parsed_like"></div>
-        <div class="col-2">&nbsp;</div>
+        <div class="col-1"><input type="checkbox" name="parsed_like" value=0 <%= params[:parsed_like] == '0' ? 'checked' : '' %> aria-label="parsed_like"></div>
+        <div class="col-1"><label for="selected_like">SELECTED</label></div>
+        <div class="col-1"><input type="checkbox" name="selected_like" value=1 <%= params[:selected_like] == '1' ? 'checked' : '' %> aria-label="selected_like"></div>
+        <div class="col-1">&nbsp;</div>
       </div>
       <div class="row">
         <div class="col-1"><label for="doi_like">DOI</label></div>
         <div class="col-2"><input type="text" name="doi_like" value="<%= params[:doi_like] %>" size="<%= size %>" aria-label="doi_like"></div>
         <div class="col-4">Updated</div>
         <div class="col-1"><label for="replaced_like">ENCODE ERROR</label></div>
-        <div class="col-2"><input type="checkbox" name="replaced_like" value=1 <%= params[:replaced_like] == '1' ? 'checked' : '' %> aria-label="replaced_like"></div>
-        <div class="col-2">
+        <div class="col-1"><input type="checkbox" name="replaced_like" value=1 <%= params[:replaced_like] == '1' ? 'checked' : '' %> aria-label="replaced_like"></div>
+        <div class="col-1"><label for="count_like">COUNT ERROR</label></div>
+        <div class="col-1"><input type="checkbox" name="count_like" value=1 <%= params[:count_like] == '1' ? 'checked' : '' %> aria-label="count_like"></div>
+        <div class="col-1">
           <button name="submit" type="submit" value="filter">Filter</button>
         </div>
       </div>
@@ -30,7 +34,13 @@
       <div class="row">
         <div class="col-3"><%= catalog_marc.isbn %></div>
         <div class="col-4"><%= catalog_marc.file %></div>
-        <div class="col-5">&nbsp;</div>
+        <div class="col-5">
+          <div class="row">
+            <div class="col"><%= catalog_marc.replaced ? 'X' : '' %>&nbsp;</div>
+            <div class="col"><%= catalog_marc.selected ? 'X' : '' %>&nbsp;</div>
+            <div class="col"><%= link_to 'Show', catalog_marc %></div>
+          </div>
+        </div>
       </div>
       <div class="row">
         <div class="col-3"><%= catalog_marc.doi %></div>
@@ -39,7 +49,6 @@
           <div class="row">
             <div class="col"><%= catalog_marc.parsed ? '' : 'X' %>&nbsp;</div>
             <div class="col"><%= catalog_marc.count %>&nbsp;</div>
-            <div class="col"><%= link_to 'Show', catalog_marc %></div>
             <div class="col"><%= link_to 'Destroy', catalog_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
           </div>
         </div>

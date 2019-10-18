@@ -62,6 +62,6 @@ class CatalogMarcsController < ApplicationController
     end
 
     def filtering_params(params)
-      params.slice(:folder_like, :file_like, :isbn_like, :doi_like, :parsed_like, :replaced_like)
+      params.slice(:folder_like, :file_like, :isbn_like, :doi_like, :parsed_like, :replaced_like, :selected_like, :count_like)
     end
 end
