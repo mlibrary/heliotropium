@@ -247,6 +247,10 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         ]
       end
 
+      before do
+        allow(File).to receive(:read).with(anything).and_return('content')
+      end
+
       it do
         expect(upload_marc_files).to match_array ["#{selection_name}.xml", "#{selection_name}.mrc", "#{selection_name}-#{month}.xml", "#{selection_name}-#{month}.mrc", "Collection Metadata_Complete.xml", "Collection Metadata_Complete.mrc"]
         expect(collection).not_to have_received(:upload_marc_file).with('.')

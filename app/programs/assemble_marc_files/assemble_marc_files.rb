@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require 'digest/md5'
+
 module AssembleMarcFiles
-  class AssembleMarcFiles
+  class AssembleMarcFiles # rubocop:disable Metrics/ClassLength
     attr_accessor :errors
 
     def initialize(lib_ptg_box)
@@ -115,14 +117,24 @@ module AssembleMarcFiles
       xml_writer.close
     end
 
-    def upload_marc_files(collection)
+    def upload_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       filenames = []
-      Dir.entries(Dir.pwd).each do |filename|
+      Dir.entries(Dir.pwd).each do |entry|
+        filename = entry.to_s
         next unless /^.+\.(mrc|xml)$/.match?(filename)
 
-        filenames << filename.to_s
+        umpebc_file = UmpebcFile.find_or_create_by!(name: filename)
+        checksum = Digest::MD5.hexdigest(File.read(filename))
+        next if umpebc_file.checksum == checksum
 
-        collection.upload_marc_file(filename)
+        begin
+          collection.upload_marc_file(filename)
+          umpebc_file.checksum = checksum
+          umpebc_file.save!
+          filenames << filename.to_s
+        rescue StandardError => e
+          errors << "ERROR Uploading #{filename} #{e}"
+        end
       end
 
       filenames.sort.reverse
