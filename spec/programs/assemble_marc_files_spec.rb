@@ -151,7 +151,7 @@ RSpec.describe AssembleMarcFiles do
 
         it do
           described_class.run
-          expect(NotifierMailer).to have_received(:administrators).with("AssembleMarcFiles run error (StandardError)\n")
+          expect(NotifierMailer).to have_received(:administrators).with(/AssembleMarcFiles run error/)
           expect(admin_mailer).to have_received(:deliver_now)
           expect(NotifierMailer).not_to have_received(:mpub_cataloging_encoding_error).with(anything)
           expect(mpub_encoding_mailer).not_to have_received(:deliver_now)

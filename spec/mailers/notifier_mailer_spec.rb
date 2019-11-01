@@ -11,7 +11,7 @@ RSpec.describe NotifierMailer, type: :mailer do
       expect(mail.from).to eq(Settings.mailers.from.no_reply)
       expect(mail.to).to eq(Settings.mailers.to.administrators)
       expect(mail.subject).to eq("Administrators")
-      expect(mail.body.to_s).to match(text)
+      expect(mail.body.encoded).to match(text)
     end
   end
 
@@ -24,7 +24,7 @@ RSpec.describe NotifierMailer, type: :mailer do
       expect(mail.to).to eq(Settings.mailers.to.fulcrum_info)
       expect(mail.bcc).to eq(Settings.mailers.bcc.ebc_tech_contacts)
       expect(mail.subject).to eq('University of Michigan Press Ebook Collection MARC updates')
-      expect(mail.body.to_s).to match(text)
+      expect(mail.body.encoded).to match(text)
     end
   end
 
@@ -36,7 +36,7 @@ RSpec.describe NotifierMailer, type: :mailer do
       expect(mail.from).to eq(Settings.mailers.from.fulcrum_dev)
       expect(mail.to).to eq(Settings.mailers.to.mpub_cataloging)
       expect(mail.subject).to eq('bad character encoding in MARC records for Michigan Publishing')
-      expect(mail.body.to_s).to match(text)
+      expect(mail.body.encoded).to match(text)
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.describe NotifierMailer, type: :mailer do
       expect(mail.from).to eq(Settings.mailers.from.fulcrum_dev)
       expect(mail.to).to eq(Settings.mailers.to.mpub_cataloging)
       expect(mail.subject).to eq('missing MARC records for Michigan Publishing')
-      expect(mail.body.to_s).to match(text)
+      expect(mail.body.encoded).to match(text)
     end
   end
 end
