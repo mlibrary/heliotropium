@@ -87,9 +87,11 @@ module AssembleMarcFiles
 
         month = Date.today.month
         filename = selection.name + format("-%02d", month)
+        umpebc_marcs = UmpebcMarc.where('year = ? AND updated_at >= ?', selection.year, DateTime.new(selection.year, month, 1))
+        break if umpebc_marcs.blank?
+
         writer = MARC::Writer.new(filename + '.mrc')
         xml_writer = MARC::XMLWriter.new(filename + '.xml')
-        umpebc_marcs = UmpebcMarc.where('year = ? AND updated_at >= ?', selection.year, DateTime.new(selection.year, month, 1))
         umpebc_marcs.each do |umpebc_marc|
           marc = MARC::Reader.decode(umpebc_marc.mrc, external_encoding: "UTF-8", validate_encoding: true)
           writer.write(marc)
