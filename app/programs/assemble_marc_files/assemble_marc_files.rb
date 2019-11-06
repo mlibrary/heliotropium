@@ -129,6 +129,13 @@ module AssembleMarcFiles
         checksum = Digest::MD5.hexdigest(File.read(filename))
         next if umpebc_file.checksum == checksum
 
+        # TODO: Remove this work around when the mystery of the changing checksum is solved.
+        if /^UMPEBC_Complete.mrc$/.match?(filename)
+          xml_file = UmpebcFile.find_or_create_by!(name: 'UMPEBC_Complete.xml')
+          xml_checksum = Digest::MD5.hexdigest(File.read('UMPEBC_Complete.xml'))
+          next if xml_file.checksum == xml_checksum
+        end
+
         begin
           collection.upload_marc_file(filename)
           umpebc_file.checksum = checksum
