@@ -49,7 +49,7 @@ module AssembleMarcFiles
         end
         recreate_collection_month_marc_file(collection)
         recreate_collection_marc_files(collection)
-        log = upload_marc_files(collection)
+        # log = upload_marc_files(collection)  TODO: Uncomment after bug fix
       end
 
       log
