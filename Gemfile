@@ -10,7 +10,7 @@ gem 'rails', '~> 5.2.3'
 
 group :development, :test do
   # Use Puma as the app server
-  gem 'puma', '~> 3.11'
+  gem 'puma', '~> 3.12'
 end
 
 # Post-install message from sass:
