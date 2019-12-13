@@ -8,10 +8,10 @@ gem 'rails', '~> 5.2.3'
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
 
-group :development, :test do
-  # Use Puma as the app server
-  gem 'puma', '~> 3.12'
-end
+# group :development, :test do
+#   # Use Puma as the app server
+#   gem 'puma', '~> 3.12'
+# end
 
 # Post-install message from sass:
 #
@@ -83,6 +83,10 @@ gem 'bootstrap', '~> 4.3'
 # Bootstrap JavaScript depends on jQuery. If you're using Rails 5.1+,
 # add the jquery-rails gem to your Gemfile:
 gem 'jquery-rails', '~> 4.3'
+
+# Moku freeze
+gem 'nio4r', '= 2.5.1'
+gem 'puma', '= 4.1.0'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
