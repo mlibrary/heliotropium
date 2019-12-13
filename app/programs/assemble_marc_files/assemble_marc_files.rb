@@ -87,7 +87,7 @@ module AssembleMarcFiles
 
         month = Date.today.month
         filename = selection.name + format("-%02d", month)
-        umpebc_marcs = UmpebcMarc.where('year = ? AND updated_at >= ?', selection.year, DateTime.new(selection.year, month, 6))
+        umpebc_marcs = UmpebcMarc.where('year = ? AND updated_at >= ?', selection.year, DateTime.new(selection.year, month, 1))
         break if umpebc_marcs.blank?
 
         writer = MARC::Writer.new(filename + '.mrc')

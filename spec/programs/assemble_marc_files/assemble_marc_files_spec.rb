@@ -138,7 +138,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       let(:umpebc_marc) { instance_double(UmpebcMarc, 'umpebc_marc', mrc: 'mrc') }
 
       before do
-        allow(UmpebcMarc).to receive(:where).with('year = ? AND updated_at >= ?', selection_year, DateTime.new(selection.year, Date.today.month, 6)).and_return([umpebc_marc])
+        allow(UmpebcMarc).to receive(:where).with('year = ? AND updated_at >= ?', selection_year, DateTime.new(selection.year, Date.today.month, 1)).and_return([umpebc_marc])
         allow(MARC::Reader).to receive(:decode).with(umpebc_marc.mrc, external_encoding: "UTF-8", validate_encoding: true).and_return(entry)
       end
 
