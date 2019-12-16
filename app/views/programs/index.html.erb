@@ -4,9 +4,30 @@
     <div class="row">
       <div class="col">
         <h1>Programs</h1>
-        <ul>
-          <li><a href="programs/assemble_marc_files/run" data-turbolinks="false">run Assemble MARC Files</a></li>
-        </ul>
+        <%= form_with(url: 'programs/assemble_marc_files/run', method: :get, local: true) do %>
+          <h2>Assemble MARC Files</h2>
+          <div>
+            <%= check_box_tag(:skip_catalog_sync) %>
+            <%= label_tag(:skip_catalog_sync, "Skip Synchronize Cataloging MARC files") %>
+          </div>
+          <div>
+            <%= check_box_tag(:reset_catalog_marcs) %>
+            <%= label_tag(:reset_catalog_marcs, "Reload Cataloging MARC files") %>
+          </div>
+          <div>
+            <%= check_box_tag(:reset_umpebc_marcs) %>
+            <%= label_tag(:reset_umpebc_marcs, "Reload MARC files") %>
+          </div>
+          <div>
+            <%= check_box_tag(:reset_umpebc_kbarts) %>
+            <%= label_tag(:reset_umpebc_kbarts, "Reload KBART files") %>
+          </div>
+          <div>
+            <%= check_box_tag(:reset_upload_checksums) %>
+            <%= label_tag(:reset_upload_checksums, "Reset Upload Checksums") %>
+          </div>
+          <div><%= submit_tag("Run") %></div>
+        <% end %>
       </div>
     </div>
   </div>

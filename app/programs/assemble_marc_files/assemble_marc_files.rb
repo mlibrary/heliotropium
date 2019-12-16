@@ -49,7 +49,7 @@ module AssembleMarcFiles
         end
         recreate_collection_month_marc_file(collection)
         recreate_collection_marc_files(collection)
-        # log = upload_marc_files(collection)  TODO: Uncomment after bug fix
+        log = upload_marc_files(collection)
       end
 
       log
@@ -57,14 +57,25 @@ module AssembleMarcFiles
 
     def recreate_selection_marc_files(record, selection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       filename = selection.name
-      writer = MARC::Writer.new(filename + '.mrc')
+
+      # Danger Will Robinson! Danger Will Robinson!
+      #
+      # Bill Dueber:vomit_frog: 16:51
+      # Figured it out. MARC-XML doesn't allow non-alphanumerics in the leader by spec,
+      # so the MARC::XMLWriter turns them into Zs. So you get a '?' in the original marc,
+      # which gets writen to the .marc file. Then the xml writer changes the leader before
+      # it writes it out. So when you repeat, you get the change.
+      #
+      # The "solution", I guess, is to write the XML file out first,
+      # but I'd document the @^%& out of it.
+
       xml_writer = MARC::XMLWriter.new(filename + '.xml')
+      writer = MARC::Writer.new(filename + '.mrc')
       selection.works.each do |work|
         if work.marc?
-          writer.write(work.marc.entry)
           xml_writer.write(work.marc.entry)
+          writer.write(work.marc.entry)
           umpebc_marc = UmpebcMarc.find_or_create_by!(doi: work.marc.doi)
-          umpebc_marc.mrc = work.marc.to_mrc
           umpebc_marc.year = selection.year
           umpebc_marc.save!
         else
@@ -77,8 +88,8 @@ module AssembleMarcFiles
           errors << ""
         end
       end
-      writer.close
       xml_writer.close
+      writer.close
     end
 
     def recreate_collection_month_marc_file(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -90,33 +101,56 @@ module AssembleMarcFiles
         umpebc_marcs = UmpebcMarc.where('year = ? AND updated_at >= ?', selection.year, DateTime.new(selection.year, month, 1))
         break if umpebc_marcs.blank?
 
-        writer = MARC::Writer.new(filename + '.mrc')
+        # Danger Will Robinson! Danger Will Robinson!
+        #
+        # Bill Dueber:vomit_frog: 16:51
+        # Figured it out. MARC-XML doesn't allow non-alphanumerics in the leader by spec,
+        # so the MARC::XMLWriter turns them into Zs. So you get a '?' in the original marc,
+        # which gets writen to the .marc file. Then the xml writer changes the leader before
+        # it writes it out. So when you repeat, you get the change.
+        #
+        # The "solution", I guess, is to write the XML file out first,
+        # but I'd document the @^%& out of it.
+
         xml_writer = MARC::XMLWriter.new(filename + '.xml')
+        writer = MARC::Writer.new(filename + '.mrc')
         umpebc_marcs.each do |umpebc_marc|
-          marc = MARC::Reader.decode(umpebc_marc.mrc, external_encoding: "UTF-8", validate_encoding: true)
-          writer.write(marc)
-          xml_writer.write(marc)
+          marc = collection.catalog.marc(umpebc_marc.doi)
+          xml_writer.write(marc.entry)
+          writer.write(marc.entry)
         end
-        writer.close
         xml_writer.close
+        writer.close
         break
       end
     end
 
     def recreate_collection_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       filename = collection.name + '_Complete'
-      writer = MARC::Writer.new(filename + '.mrc')
+
+      # Danger Will Robinson! Danger Will Robinson!
+      #
+      # Bill Dueber:vomit_frog: 16:51
+      # Figured it out. MARC-XML doesn't allow non-alphanumerics in the leader by spec,
+      # so the MARC::XMLWriter turns them into Zs. So you get a '?' in the original marc,
+      # which gets writen to the .marc file. Then the xml writer changes the leader before
+      # it writes it out. So when you repeat, you get the change.
+      #
+      # The "solution", I guess, is to write the XML file out first,
+      # but I'd document the @^%& out of it.
+
       xml_writer = MARC::XMLWriter.new(filename + '.xml')
+      writer = MARC::Writer.new(filename + '.mrc')
       collection.selections.each do |selection|
         selection.works.each do |work|
           next unless work.marc?
 
-          writer.write(work.marc.entry)
           xml_writer.write(work.marc.entry)
+          writer.write(work.marc.entry)
         end
       end
-      writer.close
       xml_writer.close
+      writer.close
     end
 
     def upload_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -128,13 +162,6 @@ module AssembleMarcFiles
         umpebc_file = UmpebcFile.find_or_create_by!(name: filename)
         checksum = Digest::MD5.hexdigest(File.read(filename))
         next if umpebc_file.checksum == checksum
-
-        # TODO: Remove this work around when the mystery of the changing checksum is solved.
-        if /^UMPEBC_Complete.mrc$/.match?(filename)
-          xml_file = UmpebcFile.find_or_create_by!(name: 'UMPEBC_Complete.xml')
-          xml_checksum = Digest::MD5.hexdigest(File.read('UMPEBC_Complete.xml'))
-          next if xml_file.checksum == xml_checksum
-        end
 
         begin
           collection.upload_marc_file(filename)

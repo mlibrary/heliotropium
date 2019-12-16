@@ -6,7 +6,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   subject(:program) { described_class.new(lib_ptg_box) }
 
   let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box', collections: [collection]) }
-  let(:collection) { instance_double(LibPtgBox::Collection, 'collection', name: collection_name, selections: [selection]) }
+  let(:collection) { instance_double(LibPtgBox::Collection, 'collection', name: collection_name, selections: [selection], catalog: catalog) }
   let(:collection_name) { 'Collection Metadata' }
   let(:selection) { instance_double(LibPtgBox::Selection, 'selection', name: selection_name, year: selection_year, updated: selection_updated, works: [work]) }
   let(:selection_name) { "Selection_#{selection_year}" }
@@ -19,6 +19,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   let(:work_marc) { false }
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', entry: entry, doi: work_doi, to_mrc: 'to_mrc') }
   let(:entry) { instance_double(MARC::Record, 'entry') }
+  let(:catalog) { instance_double(LibPtgBox::Catalog, 'catalog') }
   let(:umpebc_metadata) { 'UMPEBC Metadata' }
 
   before do
@@ -84,7 +85,6 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         allow(xml_writer).to receive(:write).with(entry)
         allow(xml_writer).to receive(:close)
         allow(UmpebcMarc).to receive(:find_or_create_by!).with(doi: work.doi).and_return(umpebc_marc)
-        allow(umpebc_marc).to receive(:mrc=).with(marc.to_mrc).and_return(marc.to_mrc)
         allow(umpebc_marc).to receive(:year=).with(selection_year)
         allow(umpebc_marc).to receive(:save!)
       end
@@ -98,7 +98,6 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         expect(xml_writer).to have_received(:write).with(entry)
         expect(xml_writer).to have_received(:close)
         expect(UmpebcMarc).to have_received(:find_or_create_by!).with(doi: work.doi)
-        expect(umpebc_marc).to have_received(:mrc=).with(marc.to_mrc)
         expect(umpebc_marc).to have_received(:year=).with(selection_year)
         expect(umpebc_marc).to have_received(:save!)
         expect(program.errors).to be_empty
@@ -135,11 +134,11 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
 
     context 'when umpebc marc' do
-      let(:umpebc_marc) { instance_double(UmpebcMarc, 'umpebc_marc', mrc: 'mrc') }
+      let(:umpebc_marc) { instance_double(UmpebcMarc, 'umpebc_marc', doi: 'doi') }
 
       before do
         allow(UmpebcMarc).to receive(:where).with('year = ? AND updated_at >= ?', selection_year, DateTime.new(selection.year, Date.today.month, 1)).and_return([umpebc_marc])
-        allow(MARC::Reader).to receive(:decode).with(umpebc_marc.mrc, external_encoding: "UTF-8", validate_encoding: true).and_return(entry)
+        allow(catalog).to receive(:marc).with('doi').and_return(marc)
       end
 
       it do
@@ -281,33 +280,6 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
           expect(collection).not_to have_received(:upload_marc_file).with(selection.name + '.xml')
           expect(collection).not_to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.mrc')
           expect(collection).not_to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.xml')
-          expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
-          expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.xml')
-          expect(program.errors).to be_empty
-        end
-      end
-
-      context 'with mystery changing checksum' do
-        let(:record) { instance_double(UmpebcFile, 'record', checksum: Digest::MD5.hexdigest('content')) }
-        let(:mystery) { instance_double(UmpebcFile, 'mystery', checksum: Digest::MD5.hexdigest('mystery')) }
-
-        before do
-          allow(UmpebcFile).to receive(:find_or_create_by!).with(anything).and_return(record)
-          allow(UmpebcFile).to receive(:find_or_create_by!).with(name: 'UMPEBC_Complete.mrc').and_return(mystery)
-          allow(mystery).to receive(:checksum=).with(Digest::MD5.hexdigest('content'))
-          allow(mystery).to receive(:save!)
-        end
-
-        it do
-          # expect(upload_marc_files).to match_array ["#{collection.name}_Complete.mrc"]
-          expect(upload_marc_files).to be_empty
-          expect(collection).not_to have_received(:upload_marc_file).with('.')
-          expect(collection).not_to have_received(:upload_marc_file).with('..')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + '.mrc')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + '.xml')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.mrc')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.xml')
-          # expect(collection).to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
           expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
           expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.xml')
           expect(program.errors).to be_empty

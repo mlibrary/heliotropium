@@ -58,7 +58,7 @@ class UmpebcMarcsController < ApplicationController
     end
 
     def umpebc_marc_params
-      params.require(:umpebc_marc).permit(:doi, :mrc)
+      params.require(:umpebc_marc).permit(:doi, :year)
     end
 
     def filtering_params(params)

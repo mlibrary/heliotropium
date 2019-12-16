@@ -26,8 +26,7 @@
         <div class="col-1"><%= umpebc_marc.year %></div>
         <div class="col-5"><%= link_to umpebc_marc.doi, "https://doi.org/#{umpebc_marc.doi}", target: :_blank %></div>
         <div class="col-4"><%= umpebc_marc.updated_at %></div>
-        <div class="col-1"><%= link_to 'Show', umpebc_marc %></div>
-        <div class="col-1"><%= link_to 'Destroy', umpebc_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
+        <div class="col-2"><%= link_to 'Destroy', umpebc_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
       </div>
     <% end %>
     <div class="row">
