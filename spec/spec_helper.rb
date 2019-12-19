@@ -20,7 +20,7 @@ Coveralls.wear!('rails')
 
 # Require any test helpers we've created in spec/support
 Dir[File.expand_path(File.join(File.dirname(__FILE__), "support", "**", "*.rb"))]
-  .each { |f| require f }
+  .sort.each { |f| require f }
 
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|

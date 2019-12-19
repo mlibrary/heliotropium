@@ -9,9 +9,9 @@ RSpec.describe CatalogMarc, type: :model do
     expect(catalog_marc).to be_valid
     expect(catalog_marc.update?).to be true
     expect(catalog_marc.destroy?).to be true
-    expect(CatalogMarc.count).to eq(1)
+    expect(described_class.count).to eq(1)
 
     catalog_marc.destroy
-    expect(CatalogMarc.count).to be_zero
+    expect(described_class.count).to be_zero
   end
 end

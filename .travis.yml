@@ -5,6 +5,8 @@ sudo: required
 bundler_args: --without production
 before_script:
   - bin/bundle exec bin/setup
+before_install:
+  - gem update --system
 rvm:
   - 2.6.2
 jdk:

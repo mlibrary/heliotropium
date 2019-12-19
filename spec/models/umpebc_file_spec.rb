@@ -9,9 +9,9 @@ RSpec.describe UmpebcFile, type: :model do
     expect(umpebc_file).to be_valid
     expect(umpebc_file.update?).to be true
     expect(umpebc_file.destroy?).to be true
-    expect(UmpebcFile.count).to eq(1)
+    expect(described_class.count).to eq(1)
 
     umpebc_file.destroy
-    expect(UmpebcFile.count).to be_zero
+    expect(described_class.count).to be_zero
   end
 end

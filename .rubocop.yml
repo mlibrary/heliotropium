@@ -13,14 +13,14 @@ AllCops:
     - 'tmp/**/*'
 
 Layout/IndentationConsistency:
-  EnforcedStyle: rails
+  EnforcedStyle: indented_internal_methods
+
+Layout/LineLength:
+  Enabled: false
 
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*'
-
-Metrics/LineLength:
-  Enabled: false
 
 RSpec/ExampleLength:
   Enabled: false
@@ -36,6 +36,9 @@ Style/Documentation:
 
 Style/EmptyMethod:
   Enabled: false
+
+Style/FormatStringToken:
+             Enabled: false
 
 Style/RegexpLiteral:
   Enabled: false

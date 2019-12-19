@@ -18,7 +18,7 @@ RSpec.describe Identifier, type: :model do
     expect(identifier.uuid).to be nil
     expect(identifier.update?).to be true
     expect(identifier.destroy?).to be true
-    expect(Identifier.count).to eq(1)
+    expect(described_class.count).to eq(1)
     expect(UuidIdentifier.count).to be_zero
     expect(Uuid.count).to be_zero
 
@@ -32,7 +32,7 @@ RSpec.describe Identifier, type: :model do
     expect(identifier.update?).to be true
     expect(identifier.destroy?).to be false
     expect { identifier.destroy }.to raise_exception(ActiveRecord::StatementInvalid)
-    expect(Identifier.count).to eq(1)
+    expect(described_class.count).to eq(1)
     expect(UuidIdentifier.count).to eq(1)
     expect(Uuid.count).to eq(1)
 
@@ -46,7 +46,7 @@ RSpec.describe Identifier, type: :model do
     expect(identifier.uuid).to be nil
     expect(identifier.update?).to be true
     expect(identifier.destroy?).to be true
-    expect(Identifier.count).to eq(1)
+    expect(described_class.count).to eq(1)
     expect(UuidIdentifier.count).to be_zero
     expect(Uuid.count).to eq(2)
 
@@ -57,12 +57,12 @@ RSpec.describe Identifier, type: :model do
     expect(identifier.update?).to be true
     expect(identifier.destroy?).to be false
     expect { identifier.destroy }.to raise_exception(ActiveRecord::StatementInvalid)
-    expect(Identifier.count).to eq(1)
+    expect(described_class.count).to eq(1)
     expect(UuidIdentifier.count).to eq(1)
     expect(Uuid.count).to eq(2)
 
     uuid.destroy
-    expect(Identifier.count).to eq(1)
+    expect(described_class.count).to eq(1)
     expect(UuidIdentifier.count).to eq(1)
     expect(Uuid.count).to eq(1)
 
@@ -71,17 +71,17 @@ RSpec.describe Identifier, type: :model do
     expect(identifier.uuid).to be nil
     expect(identifier.update?).to be true
     expect(identifier.destroy?).to be true
-    expect(Identifier.count).to eq(1)
+    expect(described_class.count).to eq(1)
     expect(UuidIdentifier.count).to be_zero
     expect(Uuid.count).to eq(1)
 
     identifier.destroy
-    expect(Identifier.count).to be_zero
+    expect(described_class.count).to be_zero
     expect(UuidIdentifier.count).to be_zero
     expect(Uuid.count).to eq(1)
 
     uuid2.destroy
-    expect(Identifier.count).to be_zero
+    expect(described_class.count).to be_zero
     expect(UuidIdentifier.count).to be_zero
     expect(Uuid.count).to be_zero
   end

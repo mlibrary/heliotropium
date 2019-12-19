@@ -145,7 +145,7 @@ RSpec.describe Uuid, type: :model do
       expect(uuid.destroy?).to be true
       expect(Identifier.count).to be_zero
       expect(UuidIdentifier.count).to be_zero
-      expect(Uuid.count).to eq(1)
+      expect(described_class.count).to eq(1)
 
       n = 3
       identifiers = []
@@ -174,12 +174,12 @@ RSpec.describe Uuid, type: :model do
       expect(uuid.destroy?).to be true
       expect(Identifier.count).to eq(n)
       expect(UuidIdentifier.count).to be_zero
-      expect(Uuid.count).to eq(1)
+      expect(described_class.count).to eq(1)
 
       identifiers.each(&:destroy)
       uuid.destroy
       expect(Identifier.count).to be_zero
-      expect(Uuid.count).to be_zero
+      expect(described_class.count).to be_zero
     end
   end
 end

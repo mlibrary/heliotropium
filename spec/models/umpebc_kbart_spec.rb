@@ -9,9 +9,9 @@ RSpec.describe UmpebcKbart, type: :model do
     expect(umpebc_kbart).to be_valid
     expect(umpebc_kbart.update?).to be true
     expect(umpebc_kbart.destroy?).to be true
-    expect(UmpebcKbart.count).to eq(1)
+    expect(described_class.count).to eq(1)
 
     umpebc_kbart.destroy
-    expect(UmpebcKbart.count).to be_zero
+    expect(described_class.count).to be_zero
   end
 end

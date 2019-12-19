@@ -9,9 +9,9 @@ RSpec.describe UmpebcMarc, type: :model do
     expect(umpebc_marc).to be_valid
     expect(umpebc_marc.update?).to be true
     expect(umpebc_marc.destroy?).to be true
-    expect(UmpebcMarc.count).to eq(1)
+    expect(described_class.count).to eq(1)
 
     umpebc_marc.destroy
-    expect(UmpebcMarc.count).to be_zero
+    expect(described_class.count).to be_zero
   end
 end

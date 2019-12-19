@@ -9,11 +9,11 @@ RSpec.describe UuidIdentifier, type: :model do
     expect(uuid_identifier).to be_valid
     expect(Identifier.count).to eq(1)
     expect(Uuid.count).to eq(1)
-    expect(UuidIdentifier.count).to eq(1)
+    expect(described_class.count).to eq(1)
 
     uuid_identifier.destroy
     expect(Identifier.count).to eq(1)
     expect(Uuid.count).to eq(1)
-    expect(UuidIdentifier.count).to be_zero
+    expect(described_class.count).to be_zero
   end
 end
