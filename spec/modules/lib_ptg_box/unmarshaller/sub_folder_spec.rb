@@ -45,9 +45,9 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
 
     context 'with upload folder' do
       let(:ftp_folders) { [upload_ftp_folder] }
-      let(:upload_ftp_folder) { instance_double(Ftp::Folder, 'upload_ftp_folder', name: 'marc') }
+      let(:upload_ftp_folder) { instance_double(Ftp::Folder, 'upload_ftp_folder', name: 'dev') }
 
-      it { expect(upload_folder.name).to eq('marc') }
+      it { expect(upload_folder.name).to eq('dev') }
     end
   end
 

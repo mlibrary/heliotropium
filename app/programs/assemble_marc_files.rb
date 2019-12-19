@@ -25,15 +25,19 @@ module AssembleMarcFiles
         NotifierMailer.mpub_cataloging_encoding_error(log.map(&:to_s).join("\n")).deliver_now
       end
 
+      # Destroying all the UmpebcMarc records will force reloading of all MARC records
+      UmpebcMarc.destroy_all if options[:reset_umpebc_marcs]
+
       # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
       # Destroying all the UmpebcKbart records will force reassembly of all UMPEBC MARC files
-      UmpebcKbart.destroy_all if options[:reset_umpebc_kbarts]
+      UmpebcKbart.destroy_all if options[:reset_umpebc_kbarts] || options[:reset_umpebc_marcs] || options[:reset_upload_checksums]
       log = lib_ptg_box.synchronize_umpbec_kbarts
       if log.present? # rubocop:disable Style/IfUnlessModifier
         NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
       end
 
       # Assemble MARC files and upload changes to M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC MARC folder
+      UmpebcFile.destroy_all if options[:reset_upload_checksums]
       program = AssembleMarcFiles.new(lib_ptg_box)
       log = program.execute
       if log.present?

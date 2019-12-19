@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_10_18_124822) do
+ActiveRecord::Schema.define(version: 2019_12_18_200506) do
 
   create_table "catalog_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "folder", null: false
@@ -56,7 +56,6 @@ ActiveRecord::Schema.define(version: 2019_10_18_124822) do
 
   create_table "umpebc_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "doi", null: false
-    t.binary "mrc"
     t.integer "year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

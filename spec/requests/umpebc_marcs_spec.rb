@@ -46,7 +46,7 @@ RSpec.describe "UmpebcMarcs", type: :request do
   describe '#create' do
     subject(:post_create) { post "/umpebc_marcs", params: { umpebc_marc: umpebc_marc_params } }
 
-    let(:umpebc_marc_params) { { doi: 'doi', mrc: 'mrc' } }
+    let(:umpebc_marc_params) { { doi: 'doi' } }
 
     before { post_create }
 
