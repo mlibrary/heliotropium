@@ -234,6 +234,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
     context 'when marc files' do
       let(:month) { Date.today.month }
+      let(:month_string) { format("%02d", month) }
 
       let(:entries) do
         [
@@ -253,7 +254,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       end
 
       it do
-        expect(upload_marc_files).to match_array ["#{selection_name}.xml", "#{selection_name}.mrc", "#{selection_name}-#{month}.xml", "#{selection_name}-#{month}.mrc", "#{collection.name}_Complete.xml", "#{collection.name}_Complete.mrc"]
+        expect(upload_marc_files).to match_array ["#{selection_name}.xml", "#{selection_name}.mrc", "#{selection_name}-#{month_string}.xml", "#{selection_name}-#{month_string}.mrc", "#{collection.name}_Complete.xml", "#{collection.name}_Complete.mrc"]
         expect(collection).not_to have_received(:upload_marc_file).with('.')
         expect(collection).not_to have_received(:upload_marc_file).with('..')
         expect(collection).to have_received(:upload_marc_file).with(selection.name + '.mrc')
