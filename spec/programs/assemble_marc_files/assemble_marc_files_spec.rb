@@ -217,8 +217,6 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   describe '#upload_marc_files' do
     subject(:upload_marc_files) { program.upload_marc_files(collection) }
 
-    # TODO: Remove this line when the mystery of the changing checksum is solved
-    let(:collection_name) { 'UMPEBC' }
     let(:entries) { ['.', '..'] }
 
     before do

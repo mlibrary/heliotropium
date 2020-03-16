@@ -6,6 +6,11 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
   subject(:sub_folder) { described_class.new(sub_ftp_folder) }
 
   let(:sub_ftp_folder) { instance_double(Ftp::Folder, 'sub_ftp_folder') }
+  let(:cataloging_marc_ftp_folder) { instance_double(Ftp::Folder, 'cataloging_marc_ftp_folder', name: 'MARC from Cataloging') }
+  let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'UMPEBC MARC') }
+  let(:kbart_ftp_folder) { instance_double(Ftp::Folder, 'kbart_ftp_folder', name: 'UMPEBC KBART') }
+  let(:fixes_ftp_folder) { instance_double(Ftp::Folder, 'upload_ftp_folder', name: 'OCLC_fixes') }
+  let(:all_ftp_folders) { [cataloging_marc_ftp_folder, marc_ftp_folder, kbart_ftp_folder, fixes_ftp_folder] }
   let(:ftp_folders) { [] }
 
   before do
@@ -17,11 +22,10 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
 
     it { expect(kbart_folder.name).to eq('NullFolder') }
 
-    context 'with kbart folder' do
-      let(:ftp_folders) { [kbart_ftp_folder] }
-      let(:kbart_ftp_folder) { instance_double(Ftp::Folder, 'kbart_ftp_folder', name: 'kbart') }
+    context 'with all foldesr' do
+      let(:ftp_folders) { all_ftp_folders }
 
-      it { expect(kbart_folder.name).to eq('kbart') }
+      it { expect(kbart_folder.name).to eq(kbart_ftp_folder.name) }
     end
   end
 
@@ -30,11 +34,10 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
 
     it { expect(marc_folder.name).to eq('NullFolder') }
 
-    context 'with marc folder' do
-      let(:ftp_folders) { [marc_ftp_folder] }
-      let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'marc') }
+    context 'with all folders' do
+      let(:ftp_folders) { all_ftp_folders }
 
-      it { expect(marc_folder.name).to eq('marc') }
+      it { expect(marc_folder.name).to eq(marc_ftp_folder.name) }
     end
   end
 
@@ -43,11 +46,10 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
 
     it { expect(upload_folder.name).to eq('NullFolder') }
 
-    context 'with upload folder' do
-      let(:ftp_folders) { [upload_ftp_folder] }
-      let(:upload_ftp_folder) { instance_double(Ftp::Folder, 'upload_ftp_folder', name: 'dev') }
+    context 'with all folders' do
+      let(:ftp_folders) { all_ftp_folders }
 
-      it { expect(upload_folder.name).to eq('dev') }
+      it { expect(upload_folder.name).to eq(marc_ftp_folder.name) }
     end
   end
 
@@ -56,11 +58,10 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
 
     it { expect(cataloging_marc_folder.name).to eq('NullFolder') }
 
-    context 'with cataloging marc folder' do
-      let(:ftp_folders) { [cataloging_marc_ftp_folder] }
-      let(:cataloging_marc_ftp_folder) { instance_double(Ftp::Folder, 'cataloging_marc_ftp_folder', name: 'cataloging') }
+    context 'with all folders' do
+      let(:ftp_folders) { all_ftp_folders }
 
-      it { expect(cataloging_marc_folder.name).to eq('cataloging') }
+      it { expect(cataloging_marc_folder.name).to eq(cataloging_marc_ftp_folder.name) }
     end
   end
 end
