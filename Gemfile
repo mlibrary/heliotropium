@@ -74,7 +74,7 @@ gem 'mysql2', '~> 0.5'
 
 # Pagination
 # https://github.com/kaminari/kaminari
-gem 'kaminari', '~> 1.1'
+gem 'kaminari', '~> 1.2'
 
 # Bootstrap
 # https://github.com/twbs/bootstrap-rubygem
