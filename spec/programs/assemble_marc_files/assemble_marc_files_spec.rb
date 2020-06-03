@@ -6,8 +6,9 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   subject(:program) { described_class.new(lib_ptg_box) }
 
   let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box', collections: [collection]) }
-  let(:collection) { instance_double(LibPtgBox::Collection, 'collection', name: collection_name, selections: [selection], catalog: catalog) }
-  let(:collection_name) { 'Collection Metadata' }
+  let(:collection) { instance_double(LibPtgBox::Collection, 'collection', key: collection_key, name: collection_name, selections: [selection], catalog: catalog) }
+  let(:collection_key) { 'collection' }
+  let(:collection_name) { 'Collection' }
   let(:selection) { instance_double(LibPtgBox::Selection, 'selection', name: selection_name, year: selection_year, updated: selection_updated, works: [work]) }
   let(:selection_name) { "Selection_#{selection_year}" }
   let(:selection_year) { Date.today.year }
@@ -20,7 +21,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', entry: entry, doi: work_doi, to_mrc: 'to_mrc') }
   let(:entry) { instance_double(MARC::Record, 'entry') }
   let(:catalog) { instance_double(LibPtgBox::Catalog, 'catalog') }
-  let(:umpebc_metadata) { 'UMPEBC Metadata' }
+  let(:umpebc) { 'UMPEBC' }
 
   before do
     LibPtgBox.chdir_lib_ptg_box_dir
@@ -29,26 +30,48 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     allow(selection).to receive(:collection).and_return(collection)
   end
 
-  describe '#execute' do
-    subject(:execute) { program.execute }
+  describe '#assemble_marc_files' do
+    subject(:assemble_marc_files) { program.assemble_marc_files(collection) }
+
+    let(:record) { instance_double(KbartFile, 'record', id: 'id', updated: record_updated, verified: true) }
+    let(:record_updated) { selection_updated }
 
     before do
-      allow(program).to receive(:assemble_marc_files).with(collection)
+      allow(KbartFile).to receive(:find_by).with(folder: collection.key, name: selection.name, year: selection.year).and_return(record)
+      allow(program).to receive(:upload_marc_files).with(collection).and_return("upload\n")
     end
 
     it do
-      execute
-      expect(program).not_to have_received(:assemble_marc_files).with(collection)
+      assemble_marc_files
       expect(program.errors).to be_empty
     end
 
-    context 'when UMPEBC Metadata folder' do
-      let(:collection_name) { umpebc_metadata }
+    context 'when selection updated' do
+      let(:month) { Date.today.month }
+      let(:record_updated) { Date.yesterday }
+      let(:updated) { 'updated' }
+
+      before do
+        allow(record).to receive(:verified=).with(true)
+        allow(program).to receive(:recreate_selection_marc_files).with(record, selection).and_return("select\n")
+        allow(program).to receive(:recreate_collection_month_marc_file).with(collection).and_return("month\n")
+        allow(program).to receive(:recreate_collection_marc_files).with(collection).and_return("collect\n")
+        allow(record).to receive(:updated=).with(selection_updated)
+        allow(record).to receive(:save!).with(no_args)
+      end
 
       it do
-        execute
-        expect(program).to have_received(:assemble_marc_files).with(collection)
+        assemble_marc_files
         expect(program.errors).to be_empty
+      end
+
+      context 'when selection year updated' do
+        let(:selection_year) { Date.today.year }
+
+        it do
+          assemble_marc_files
+          expect(program.errors).to be_empty
+        end
       end
     end
   end
@@ -56,7 +79,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   describe '#recreate_selection_marc_files' do
     subject(:recreate_selection_marc_files) { program.recreate_selection_marc_files(record, selection) }
 
-    let(:record) { instance_double(UmpebcKbart, 'record') }
+    let(:record) { instance_double(KbartFile, 'record') }
     let(:filename) { selection.name }
     let(:mrc_file) { instance_double(File, 'mrc_file') }
     let(:xml_file) { instance_double(File, 'xml_file') }
@@ -67,7 +90,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
     it do
       recreate_selection_marc_files
-      expect(program.errors).to contain_exactly("", "#{filename} MISSING Cataloging MARC record", "https://doi.org/10.3998/mpub.123456789", "online (online)", "print (print)", "title (date)")
+      expect(program.errors).to contain_exactly("", "#{filename} MISSING MARC Record", "https://doi.org/10.3998/mpub.123456789", "online (online)", "print (print)", "title (date)")
     end
 
     context 'when catalog marc record' do
@@ -75,7 +98,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
       let(:writer) { instance_double(MARC::Writer, 'writer') }
       let(:xml_writer) { instance_double(MARC::XMLWriter, 'xml_writer') }
-      let(:umpebc_marc) { instance_double(UmpebcMarc, 'umpebc_marc') }
+      let(:kbart_marc) { instance_double(KbartMarc, 'kbart_marc') }
 
       before do
         allow(MARC::Writer).to receive(:new).with("#{selection_name}.mrc").and_return(writer)
@@ -84,9 +107,9 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         allow(MARC::XMLWriter).to receive(:new).with("#{selection_name}.xml").and_return(xml_writer)
         allow(xml_writer).to receive(:write).with(entry)
         allow(xml_writer).to receive(:close)
-        allow(UmpebcMarc).to receive(:find_or_create_by!).with(doi: work.doi).and_return(umpebc_marc)
-        allow(umpebc_marc).to receive(:year=).with(selection_year)
-        allow(umpebc_marc).to receive(:save!)
+        allow(KbartMarc).to receive(:find_or_create_by!).with(folder: collection_key, doi: work.doi).and_return(kbart_marc)
+        allow(kbart_marc).to receive(:year=).with(selection_year)
+        allow(kbart_marc).to receive(:save!)
       end
 
       it do
@@ -97,9 +120,9 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         expect(MARC::XMLWriter).to have_received(:new).with("#{selection_name}.xml")
         expect(xml_writer).to have_received(:write).with(entry)
         expect(xml_writer).to have_received(:close)
-        expect(UmpebcMarc).to have_received(:find_or_create_by!).with(doi: work.doi)
-        expect(umpebc_marc).to have_received(:year=).with(selection_year)
-        expect(umpebc_marc).to have_received(:save!)
+        expect(KbartMarc).to have_received(:find_or_create_by!).with(folder: collection_key, doi: work.doi)
+        expect(kbart_marc).to have_received(:year=).with(selection_year)
+        expect(kbart_marc).to have_received(:save!)
         expect(program.errors).to be_empty
       end
     end
@@ -133,11 +156,11 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       expect(program.errors).to be_empty
     end
 
-    context 'when umpebc marc' do
-      let(:umpebc_marc) { instance_double(UmpebcMarc, 'umpebc_marc', doi: 'doi') }
+    context 'when kbart marc' do
+      let(:kbart_marc) { instance_double(KbartMarc, 'kbart_marc', doi: 'doi') }
 
       before do
-        allow(UmpebcMarc).to receive(:where).with('year = ? AND updated_at >= ?', selection_year, DateTime.new(selection.year, Date.today.month, 1)).and_return([umpebc_marc])
+        allow(KbartMarc).to receive(:where).with('folder = ? AND year = ? AND updated_at >= ?', collection_key, selection_year, DateTime.new(selection.year, Date.today.month, 1)).and_return([kbart_marc])
         allow(catalog).to receive(:marc).with('doi').and_return(marc)
       end
 
@@ -265,10 +288,10 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       end
 
       context 'with same checksum' do
-        let(:record) { instance_double(UmpebcFile, 'record', checksum: Digest::MD5.hexdigest('content')) }
+        let(:record) { instance_double(MarcFile, 'record', checksum: Digest::MD5.hexdigest('content')) }
 
         before do
-          allow(UmpebcFile).to receive(:find_or_create_by!).with(anything).and_return(record)
+          allow(MarcFile).to receive(:find_or_create_by!).with(anything).and_return(record)
         end
 
         it do
@@ -282,60 +305,6 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
           expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
           expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.xml')
           expect(program.errors).to be_empty
-        end
-      end
-    end
-  end
-
-  describe '#assemble_marc_files' do
-    subject(:assemble_marc_files) { program.assemble_marc_files(collection) }
-
-    it do
-      assemble_marc_files
-      expect(program.errors).to be_empty
-    end
-
-    context 'when UMPEBC Metadata folder' do
-      let(:collection_name) { umpebc_metadata }
-      let(:record) { instance_double(UmpebcKbart, 'record', id: 'id', updated: record_updated, verified: true) }
-      let(:record_updated) { selection_updated }
-
-      before do
-        allow(UmpebcKbart).to receive(:find_by).with(name: selection.name, year: selection.year).and_return(record)
-        allow(program).to receive(:upload_marc_files).with(collection).and_return("upload\n")
-      end
-
-      it do
-        assemble_marc_files
-        expect(program.errors).to be_empty
-      end
-
-      context 'when selection updated' do
-        let(:month) { Date.today.month }
-        let(:record_updated) { Date.yesterday }
-        let(:updated) { 'updated' }
-
-        before do
-          allow(record).to receive(:verified=).with(true)
-          allow(program).to receive(:recreate_selection_marc_files).with(record, selection).and_return("select\n")
-          allow(program).to receive(:recreate_collection_month_marc_file).with(collection).and_return("month\n")
-          allow(program).to receive(:recreate_collection_marc_files).with(collection).and_return("collect\n")
-          allow(record).to receive(:updated=).with(selection_updated)
-          allow(record).to receive(:save!).with(no_args)
-        end
-
-        it do
-          assemble_marc_files
-          expect(program.errors).to be_empty
-        end
-
-        context 'when selection year updated' do # rubocop:disable RSpec/NestedGroups
-          let(:selection_year) { Date.today.year }
-
-          it do
-            assemble_marc_files
-            expect(program.errors).to be_empty
-          end
         end
       end
     end

@@ -3,8 +3,9 @@
 require 'rails_helper'
 
 RSpec.describe LibPtgBox::Collection do
-  subject(:collection) { described_class.new(sub_folder) }
+  subject(:collection) { described_class.new(collection_hash, sub_folder) }
 
+  let(:collection_hash) { Settings.lib_ptg_box.collections.first }
   let(:sub_folder) { object_double(LibPtgBox::Unmarshaller::SubFolder.new(sub_ftp_folder), 'sub_folder') }
   let(:sub_ftp_folder) { instance_double(Ftp::Folder, 'sub_ftp_folder', name: 'Collection Metadata') }
 

@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>MARC Files</h1>
+    </div>
+    <div class="row">
+      <div class="col">Folder</div>
+      <div class="col">Name</div>
+      <div class="col">Checksum</div>
+      <div class="col-3">&nbsp;</div>
+    </div>
+    <div class="row">&nbsp;</div>
+    <% @marc_files.each do |marc_file| %>
+      <div class="row">
+        <div class="col"><%= marc_file.folder %></div>
+        <div class="col"><%= marc_file.name %></div>
+        <div class="col"><%= marc_file.checksum %></div>
+        <div class="col-3">
+          <div class="row">
+            <div class="col"><%= link_to 'Destroy', marc_file, method: :delete, data: { confirm: 'Are you sure?' } %></div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+    <div class="row">
+      <div class="col">&nbsp<%= paginate @marc_files %></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>MARC Records</h1>
+    </div>
+    <form name="filter" method="get" action="<%= marc_records_path %>">
+      <% size = 12 %>
+      <div class="row">
+        <div class="col-1"><label for="folder_like">Folder</label></div>
+        <div class="col-2"><input type="text" name="folder_like" value="<%= params[:folder_like] %>" size="<%= size %>" aria-label="folder_like"></div>
+        <div class="col-4">File</div>
+        <div class="col-1"><label for="parsed_like">UNPARSED</label></div>
+        <div class="col-1"><input type="checkbox" name="parsed_like" value=0 <%= params[:parsed_like] == '0' ? 'checked' : '' %> aria-label="parsed_like"></div>
+        <div class="col-1"><label for="count_like">MULTI</label></div>
+        <div class="col-1"><input type="checkbox" name="count_like" value=1 <%= params[:count_like] == '1' ? 'checked' : '' %> aria-label="count_like"></div>
+        <div class="col-1">&nbsp;</div>
+      </div>
+      <div class="row">
+        <div class="col-1"><label for="doi_like">DOI</label></div>
+        <div class="col-2"><input type="text" name="doi_like" value="<%= params[:doi_like] %>" size="<%= size %>" aria-label="doi_like"></div>
+        <div class="col-4">Updated</div>
+        <div class="col-1"><label for="selected_like">SELECTED</label></div>
+        <div class="col-1"><input type="checkbox" name="selected_like" value=1 <%= params[:selected_like] == '1' ? 'checked' : '' %> aria-label="selected_like"></div>
+        <div class="col-1">
+          <button name="submit" type="submit" value="filter">Filter</button>
+        </div>
+        <div class="col-1">&nbsp;</div>
+      </div>
+    </form>
+    <div class="row">&nbsp;</div>
+    <% @marc_records.each do |marc_record| %>
+      <div class="row">
+        <div class="col-3"><%= marc_record.folder %></div>
+        <div class="col-4"><%= marc_record.file %></div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-1"><%= marc_record.parsed ? 'P' : '' %>&nbsp;</div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-1"><%= marc_record.count %>&nbsp;</div>
+        <div class="col-1"><%= link_to 'Show', marc_record %></div>
+      </div>
+      <div class="row">
+        <div class="col-3"><%= link_to marc_record.doi, "https://doi.org/#{marc_record.doi}", target: :_blank %></div>
+        <div class="col-4"><%= marc_record.updated %></div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-1"><%= marc_record.selected ? 'S' : '' %>&nbsp;</div>
+        <div class="col-2">&nbsp;</div>
+        <div class="col-1"><%= link_to 'Destroy', marc_record, method: :delete, data: { confirm: 'Are you sure?' } %></div>
+      </div>
+      <div class="row">&nbsp;</div>
+    <% end %>
+    <div class="row">
+      <div class="col">&nbsp<%= paginate @marc_records %></div>
+    </div>
+  </div>
+</div>

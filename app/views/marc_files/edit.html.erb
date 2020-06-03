@@ -1,0 +1,17 @@
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>Editing MARC Filet</h1>
+    </div>
+    <div class="row"><br/></div>
+    <div class="row">
+      <%= render 'form', marc_file: @marc_file %>
+    </div>
+    <div class="row"><br/></div>
+    <div class="row">
+      <%= link_to 'Show', @marc_file %>
+      <span> | </span>
+      <%= link_to 'Back', marc_files_path %>
+    </div>
+  </div>
+</div>

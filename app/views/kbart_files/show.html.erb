@@ -1,0 +1,43 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>KBART File</h1>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>ID</em></div>
+      <div class="col"><%= @kbart_file.id %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Folder</em></div>
+      <div class="col"><%= @kbart_file.folder %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Name</em></div>
+      <div class="col"><%= @kbart_file.name %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Year</em></div>
+      <div class="col"><%= @kbart_file.year %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Updated</em></div>
+      <div class="col"><%= @kbart_file.updated %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Verified</em></div>
+      <div class="col"><%= @kbart_file.verified %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+    <div class="row">
+      <%= link_to_if @kbart_file.update?, 'Edit', edit_kbart_file_path(@kbart_file) %>
+      <span> | </span>
+      <%= link_to 'Back', kbart_files_path %>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+  </div>
+</div>

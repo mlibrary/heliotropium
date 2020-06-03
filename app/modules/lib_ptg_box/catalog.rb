@@ -20,17 +20,19 @@ module LibPtgBox
       nil
     end
 
-    def marcs # rubocop:disable  Metrics/MethodLength
+    def marcs # rubocop:disable  Metrics/MethodLength, Metrics/AbcSize
       @marcs ||= begin
         marcs = []
-        CatalogMarc.all.each do |catalog_marc|
-          next unless catalog_marc.parsed && !catalog_marc.replaced
+        MarcRecord.where(folder: @collection.key).each do |marc_record|
+          next unless marc_record.parsed
 
           begin
-            marc = MARC::Reader.decode(catalog_marc.raw, external_encoding: "UTF-8", validate_encoding: true)
+            marc = MARC::Reader.decode(marc_record.mrc, external_encoding: "UTF-8", validate_encoding: true)
             marcs << Unmarshaller::Marc.new(marc)
           rescue Encoding::InvalidByteSequenceError => e
-            Rails.logger.error("LibPtgBox::Catalog#marcs(id #{catalog_marc.id}, doi #{catalog_marc.doi}) #{e}")
+            msg = "LibPtgBox::Catalog#marcs(id #{marc_record.id}, doi #{marc_record.doi}) #{e}"
+            Rails.logger.error msg
+            NotifierMailer.administrators("StandardError", msg).deliver_now
           end
         end
         marcs

@@ -3,18 +3,40 @@
 # Preview all emails at http://localhost:3000/rails/mailers/notifier
 class NotifierPreview < ActionMailer::Preview
   def administrators
-    NotifierMailer.administrators("Hello World!!!")
+    NotifierMailer.administrators("Subject", "Hello World!!!")
   end
 
-  def mpub_cataloging_encoding_error
-    NotifierMailer.mpub_cataloging_encoding_error("Hello World!!!")
+  def bar_encoding_error
+    NotifierMailer.encoding_error(collection('bar'), "Hello World!!!")
   end
 
-  def mpub_cataloging_missing_record
-    NotifierMailer.mpub_cataloging_missing_record("Hello World!!!")
+  def bar_missing_record
+    NotifierMailer.missing_record(collection('bar'), "Hello World!!!")
   end
 
-  def fulcrum_info_umpebc_marc_updates
-    NotifierMailer.fulcrum_info_umpebc_marc_updates("Hello World!!!")
+  def bar_marc_file_updates
+    NotifierMailer.marc_file_updates(collection('bar'), "Hello World!!!")
   end
+
+  def umpebc_encoding_error
+    NotifierMailer.encoding_error(collection('umpebc'), "Hello World!!!")
+  end
+
+  def umpebc_missing_record
+    NotifierMailer.missing_record(collection('umpebc'), "Hello World!!!")
+  end
+
+  def umpebc_marc_file_updates
+    NotifierMailer.marc_file_updates(collection('umpebc'), "Hello World!!!")
+  end
+
+  private
+
+    def collection(key)
+      Settings.lib_ptg_box.collections.each do |collection|
+        next unless collection.key == key
+
+        return collection
+      end
+    end
 end

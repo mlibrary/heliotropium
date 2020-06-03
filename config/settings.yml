@@ -42,25 +42,9 @@ scheduler:
 
 # Keys used by application mailers
 mailers:
-  to:
-    administrators:
-      - administrator@heliotropium.com
-    mpub_cataloging:
-      - mpub-cataloging@heliotropium.com
-    fulcrum_info:
-      - fulcrum-info@heliotropium.com
-  bcc:
-    ebc_tech_contacts:
-      - ebc-tech-contacts@heliotropium.com
-  from:
-    administrator:
-      - administrator@heliotropium.com
-    fulcrum_dev:
-      - fulcrum-dev@heliotropium.com
-    fulcrum_info:
-      - fulcrum-info@heliotropium.com
-    no_reply:
-      - no-reply@heliotropium.com
+  administrators:
+    - admin@heliotropium.com
+  no_reply: no-reply@heliotropium.com
 
 # Keys used by LibPtgBox module
 lib_ptg_box:
@@ -68,3 +52,58 @@ lib_ptg_box:
   user: <user>
   password: <password>
   root: <folder>
+  collections:
+    - key: umpebc
+      folder: UMPEBC Metadata
+      mailers:
+        encoding_error:
+          to:
+            - to_encoding_error@umpebc.com
+          from:
+            - from_encoding_error@umpebc.com
+          bcc:
+            - bcc_encoding_error@umpebc.com
+          subject: Encoding Error
+        missing_record:
+          to:
+            - to_missing_record@umpebc.com
+          from:
+            - from_missing_record@umpebc.com
+          bcc:
+            - bcc_missing_record@umpebc.com
+          subject: Missing Record
+        marc_file_updates:
+          to:
+            - to_marc_file_updates@umpebc.com
+          from:
+            - from_marc_file_updates@umpebc.com
+          bcc:
+            - bcc_marc_file_updates@umpebc.com
+          subject: MARC File Updates
+    - key: bar
+      folder: BAR Metadata
+      mailers:
+        encoding_error:
+          to:
+            - to_encoding_error@bar.com
+          from:
+            - from_encoding_error@bar.com
+          bcc:
+            # - bcc_encoding_error@bar.com
+          subject: Encoding Error
+        missing_record:
+          to:
+            - to_missing_record@bar.com
+          from:
+            - from_missing_record@bar.com
+          bcc:
+            # - bcc_missing_record@bar.com
+          subject: Missing Record
+        marc_file_updates:
+          to:
+            - to_marc_file_updates@bar.com
+          from:
+            - from_marc_file_updates@bar.com
+          bcc:
+            # - bcc_marc_file_updates@bar.com
+          subject: MARC File Updates

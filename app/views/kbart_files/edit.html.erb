@@ -1,0 +1,17 @@
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>Editing KBART File</h1>
+    </div>
+    <div class="row"><br/></div>
+    <div class="row">
+      <%= render 'form', kbart_file: @kbart_file %>
+    </div>
+    <div class="row"><br/></div>
+    <div class="row">
+      <%= link_to 'Show', @kbart_file %>
+      <span> | </span>
+      <%= link_to 'Back', kbart_files_path %>
+    </div>
+  </div>
+</div>

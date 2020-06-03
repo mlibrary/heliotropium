@@ -10,25 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_18_200506) do
-
-  create_table "catalog_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "folder", null: false
-    t.string "file", null: false
-    t.string "isbn"
-    t.string "doi"
-    t.binary "mrc"
-    t.datetime "updated", default: "1970-01-01 05:00:00", null: false
-    t.boolean "parsed", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.binary "content"
-    t.boolean "replaced", default: false, null: false
-    t.integer "count", default: 0
-    t.binary "raw"
-    t.boolean "selected", default: false, null: false
-    t.index ["folder", "file"], name: "index_catalog_marcs_on_folder_and_file", unique: true
-  end
+ActiveRecord::Schema.define(version: 2020_05_28_121506) do
 
   create_table "identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -37,28 +19,46 @@ ActiveRecord::Schema.define(version: 2019_12_18_200506) do
     t.index ["name"], name: "index_identifiers_on_name"
   end
 
-  create_table "umpebc_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "checksum"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "umpebc_kbarts", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "kbart_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
     t.integer "year", default: 1970, null: false
     t.date "updated", default: "1970-01-01", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "verified", default: false
-    t.index ["name"], name: "index_umpebc_kbarts_on_name", unique: true
+    t.string "folder", null: false
+    t.index ["name"], name: "index_kbart_files_on_name", unique: true
   end
 
-  create_table "umpebc_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "kbart_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "doi", null: false
     t.integer "year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "folder", null: false
+  end
+
+  create_table "marc_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "folder", null: false
+  end
+
+  create_table "marc_records", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+    t.string "folder", null: false
+    t.string "file", null: false
+    t.string "doi"
+    t.binary "mrc"
+    t.datetime "updated", default: "1970-01-01 05:00:00", null: false
+    t.boolean "parsed", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.binary "content"
+    t.integer "count", default: 0
+    t.boolean "selected", default: false, null: false
+    t.index ["folder", "file"], name: "index_marc_records_on_folder_and_file", unique: true
   end
 
   create_table "uuid_identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|

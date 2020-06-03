@@ -2,9 +2,13 @@
 
 module LibPtgBox
   class Collection
+    attr_reader :key
+    attr_reader :mailers
     attr_reader :name
 
-    def initialize(sub_folder)
+    def initialize(collection, sub_folder)
+      @key = collection.key
+      @mailers = collection.mailers
       @sub_folder = sub_folder
       match = /(^.+)(\sMetadata$)/i.match(sub_folder.name)
       @name = match.present? ? match[1] : sub_folder.name

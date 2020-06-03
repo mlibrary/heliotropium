@@ -7,10 +7,10 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :catalog_marcs
-  resources :umpebc_kbarts
-  resources :umpebc_marcs
-  resources :umpebc_files
+  resources :marc_records
+  resources :kbart_files
+  resources :kbart_marcs
+  resources :marc_files
 
   resources :identifiers
   resources :uuid_identifiers

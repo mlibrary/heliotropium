@@ -8,51 +8,50 @@ module AssembleMarcFiles
       # Object wrapper for M | box - All Files > Library PTG Box
       lib_ptg_box = LibPtgBox::LibPtgBox.new
 
-      unless options[:skip_catalog_sync]
-        # Synchronize CatalogMarcs table with M | box - All Files > Library PTG Box > UMPEBC Metadata > MARC from Cataloging folder
-        # Destroying all the CatalogMarc records will force downloading of all MARC from Cataloging files
-        CatalogMarc.destroy_all if options[:reset_catalog_marcs]
-        log = lib_ptg_box.synchronize_catalog_marcs
-        if log.present? # rubocop:disable Style/IfUnlessModifier
-          NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
-        end
-      end
+      # Destroying all MarcRecord records will force downloading of all MARC from Cataloging files
+      MarcRecord.destroy_all if options[:reset_marc_records]
 
-      # MARC from Cataloging invalid UTF-8 encoding
-      log = lib_ptg_box.invalid_utf_8_encoding
-      if log.present?
-        NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
-        NotifierMailer.mpub_cataloging_encoding_error(log.map(&:to_s).join("\n")).deliver_now
-      end
+      # Clear selected flag on all MarcRecord records
+      MarcRecord.update_all(selected: false)
 
-      # Destroying all the UmpebcMarc records will force reloading of all MARC records
-      UmpebcMarc.destroy_all if options[:reset_umpebc_marcs]
+      # Destroying all KbartMarc records will force recreation of all KbartMarc records
+      KbartMarc.destroy_all if options[:reset_kbart_marcs]
 
-      # Synchronize UmpebcKbart table with M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC KBART folder
-      # Destroying all the UmpebcKbart records will force reassembly of all UMPEBC MARC files
-      UmpebcKbart.destroy_all if options[:reset_umpebc_kbarts] || options[:reset_umpebc_marcs] || options[:reset_upload_checksums]
-      log = lib_ptg_box.synchronize_umpbec_kbarts
-      if log.present? # rubocop:disable Style/IfUnlessModifier
-        NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
-      end
+      # Destroying all MarcFile records will force uploading of all MARC files
+      MarcFile.destroy_all if options[:reset_upload_checksums]
 
-      # Assemble MARC files and upload changes to M | box - All Files > Library PTG Box > UMPEBC Metadata > UMPEBC MARC folder
-      UmpebcFile.destroy_all if options[:reset_upload_checksums]
+      # Destroying all KbartFile records will force reassembly of all MARC files
+      KbartFile.destroy_all if options[:reset_kbart_files] || options[:reset_kbart_marcs] || options[:reset_upload_checksums]
+
       program = AssembleMarcFiles.new(lib_ptg_box)
-      log = program.execute
-      if log.present?
-        NotifierMailer.administrators(log.map(&:to_s).join("\n")).deliver_now
-        NotifierMailer.fulcrum_info_umpebc_marc_updates(log.map(&:to_s).join("\n")).deliver_now
-      end
-      if program.errors.present?
-        NotifierMailer.administrators(program.errors.map(&:to_s).join("\n")).deliver_now
-        NotifierMailer.mpub_cataloging_missing_record(program.errors.map(&:to_s).join("\n")).deliver_now
+      lib_ptg_box.collections.each do |collection|
+        unless options[:skip_catalog_sync] && !options[:reset_marc_records]
+          log = lib_ptg_box.synchronize_marc_records(collection)
+          if log.present? # rubocop:disable Style/IfUnlessModifier
+            NotifierMailer.administrators("synchronize_marc_records(#{collection.key})", log.map(&:to_s).join("\n")).deliver_now
+          end
+        end
+
+        log = lib_ptg_box.synchronize_kbart_files(collection)
+        if log.present? # rubocop:disable Style/IfUnlessModifier
+          NotifierMailer.administrators("synchronize_kbart_files(#{collection.key})", log.map(&:to_s).join("\n")).deliver_now
+        end
+
+        log = program.assemble_marc_files(collection)
+        if log.present?
+          NotifierMailer.administrators("marc_file_updates(#{collection.key})", log.map(&:to_s).join("\n")).deliver_now
+          NotifierMailer.marc_file_updates(collection, log.map(&:to_s).join("\n")).deliver_now
+        end
+        if program.errors.present?
+          NotifierMailer.administrators("missing_record(#{collection.key})", program.errors.map(&:to_s).join("\n")).deliver_now
+          NotifierMailer.missing_record(collection, program.errors.map(&:to_s).join("\n")).deliver_now
+        end
       end
     rescue StandardError => e
       msg = <<~MSG
-        AssembleMarcFiles run error (#{e.backtrace})
+        AssembleMarcFiles run error #{e.message} (#{e.backtrace})
       MSG
-      NotifierMailer.administrators(msg).deliver_now
+      NotifierMailer.administrators("StandardError", msg).deliver_now
     end
   end
 end
