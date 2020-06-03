@@ -1,0 +1,32 @@
+<%= form_with(model: kbart_marc, local: true) do |form| %>
+  <% if kbart_marc.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(kbart_marc.errors.count, "error") %> prohibited this kbart_marc from being saved:</h2>
+
+      <ul>
+      <% kbart_marc.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :folder %>
+    <%= form.text_field :folder %>
+  </div>
+
+  <div class="field">
+    <%= form.label :doi %>
+    <%= form.text_field :doi %>
+  </div>
+
+  <div class="field">
+    <%= form.label :mrc %>
+    <%= form.text_field :mrc %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>MARC Files</h1>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>ID</em></div>
+      <div class="col"><%= @marc_file.id %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Folder</em></div>
+      <div class="col"><%= @marc_file.folder %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Name</em></div>
+      <div class="col"><%= @marc_file.name %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <div class="col-1"><em>Checksum</em></div>
+      <div class="col"><%= @marc_file.checksum %>&nbsp;</div>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+    <div class="row">
+      <%= link_to_if @marc_file.update?, 'Edit', edit_marc_file_path(@marc_file) %>
+      <span> | </span>
+      <%= link_to 'Back', marc_files_path %>
+    </div>
+    <div class="row">
+      <br/>
+    </div>
+  </div>
+</div>

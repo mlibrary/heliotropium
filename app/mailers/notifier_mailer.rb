@@ -1,32 +1,36 @@
 # frozen_string_literal: true
 
 class NotifierMailer < ApplicationMailer
-  default from: Settings.mailers.from.no_reply
-
-  def administrators(text)
+  def administrators(subject, text)
     @text = text
-    mail(to: Settings.mailers.to.administrators)
+    mail(to: Settings.mailers.administrators,
+         subject: subject)
   end
 
-  def fulcrum_info_umpebc_marc_updates(text)
+  def marc_file_updates(collection, text)
+    @collection = collection
     @text = text
-    mail(to: Settings.mailers.to.fulcrum_info,
-         from: Settings.mailers.from.fulcrum_info,
-         bcc: Settings.mailers.bcc.ebc_tech_contacts,
-         subject: 'University of Michigan Press Ebook Collection MARC updates')
+    mail(to: collection.mailers.marc_file_updates.to,
+         from: collection.mailers.marc_file_updates.from,
+         bcc: collection.mailers.marc_file_updates.bcc,
+         subject: collection.mailers.marc_file_updates.subject)
   end
 
-  def mpub_cataloging_encoding_error(text)
+  def encoding_error(collection, text)
+    @collection = collection
     @text = text
-    mail(to: Settings.mailers.to.mpub_cataloging,
-         from: Settings.mailers.from.fulcrum_dev,
-         subject: 'bad character encoding in MARC records for Michigan Publishing')
+    mail(to: collection.mailers.encoding_error.to,
+         from: collection.mailers.encoding_error.from,
+         bcc: collection.mailers.encoding_error.bcc,
+         subject: collection.mailers.encoding_error.subject)
   end
 
-  def mpub_cataloging_missing_record(text)
+  def missing_record(collection, text)
+    @collection = collection
     @text = text
-    mail(to: Settings.mailers.to.mpub_cataloging,
-         from: Settings.mailers.from.fulcrum_dev,
-         subject: 'missing MARC records for Michigan Publishing')
+    mail(to: collection.mailers.missing_record.to,
+         from: collection.mailers.missing_record.from,
+         bcc: collection.mailers.missing_record.bcc,
+         subject: collection.mailers.missing_record.subject)
   end
 end

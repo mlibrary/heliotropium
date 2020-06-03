@@ -11,35 +11,18 @@ module AssembleMarcFiles
       @errors = []
     end
 
-    def execute
-      log = []
-
-      # Loop through collections a.k.a. M | box - All Files > Library PTG Box folders e.g. UMPEBC Metadata, Lever Press Metadata
-      @lib_ptg_box.collections.each do |collection|
-        # Only process UMPEBC Metadata folder.
-        next unless /umpebc/i.match?(collection.name)
-
-        # Assemble MARC Files for UMPEBC collection
-        log = assemble_marc_files(collection)
-      end
-
-      log
-    end
-
     def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-      # Only process UMPEBC Metadata folder.
-      return [] unless /umpebc/i.match?(collection.name)
-
       log = []
 
       # Recursive remove tmp folder from last time
-      FileUtils.rm_rf('umpebc')
+      FileUtils.rm_rf(collection.key)
       # Create tmp folder
-      Dir.mkdir('umpebc')
+      Dir.mkdir(collection.key)
       # Change working directory to tmp folder
-      Dir.chdir('umpebc') do
+      Dir.chdir(collection.key) do
         collection.selections.each do |selection|
-          record = UmpebcKbart.find_by(name: selection.name, year: selection.year)
+          record = KbartFile.find_by(folder: collection.key, name: selection.name, year: selection.year)
+          next unless record
           next unless record.updated < selection.updated || !record.verified
 
           record.updated = selection.updated
@@ -75,12 +58,12 @@ module AssembleMarcFiles
         if work.marc?
           xml_writer.write(work.marc.entry)
           writer.write(work.marc.entry)
-          umpebc_marc = UmpebcMarc.find_or_create_by!(doi: work.marc.doi)
-          umpebc_marc.year = selection.year
-          umpebc_marc.save!
+          kbart_marc = KbartMarc.find_or_create_by!(folder: selection.collection.key, doi: work.marc.doi)
+          kbart_marc.year = selection.year
+          kbart_marc.save!
         else
           record.verified = false
-          errors << "#{filename} MISSING Cataloging MARC record"
+          errors << "#{filename} MISSING MARC Record"
           errors << work.url.to_s
           errors << "#{work.title} (#{work.date})"
           errors << "#{work.print} (print)"
@@ -98,8 +81,8 @@ module AssembleMarcFiles
 
         month = Date.today.month
         filename = selection.name + format("-%02d", month)
-        umpebc_marcs = UmpebcMarc.where('year = ? AND updated_at >= ?', selection.year, DateTime.new(selection.year, month, 1))
-        break if umpebc_marcs.blank?
+        kbart_marcs = KbartMarc.where('folder = ? AND year = ? AND updated_at >= ?', collection.key, selection.year, DateTime.new(selection.year, month, 1))
+        break if kbart_marcs.blank?
 
         # Danger Will Robinson! Danger Will Robinson!
         #
@@ -114,8 +97,8 @@ module AssembleMarcFiles
 
         xml_writer = MARC::XMLWriter.new(filename + '.xml')
         writer = MARC::Writer.new(filename + '.mrc')
-        umpebc_marcs.each do |umpebc_marc|
-          marc = collection.catalog.marc(umpebc_marc.doi)
+        kbart_marcs.each do |kbart_marc|
+          marc = collection.catalog.marc(kbart_marc.doi)
           xml_writer.write(marc.entry)
           writer.write(marc.entry)
         end
@@ -159,14 +142,14 @@ module AssembleMarcFiles
         filename = entry.to_s
         next unless /^.+\.(mrc|xml)$/.match?(filename)
 
-        umpebc_file = UmpebcFile.find_or_create_by!(name: filename)
+        marc_file = MarcFile.find_or_create_by!(folder: collection.key, name: filename)
         checksum = Digest::MD5.hexdigest(File.read(filename))
-        next if umpebc_file.checksum == checksum
+        next if marc_file.checksum == checksum
 
         begin
           collection.upload_marc_file(filename)
-          umpebc_file.checksum = checksum
-          umpebc_file.save!
+          marc_file.checksum = checksum
+          marc_file.save!
           filenames << filename.to_s
         rescue StandardError => e
           errors << "ERROR Uploading #{filename} #{e}"

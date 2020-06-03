@@ -1,0 +1,51 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <p>
+      <strong>DOI:</strong>
+      <%= link_to @marc_record.doi, "https://doi.org/#{@marc_record.doi}" %>
+    </p>
+
+    <p>
+      <strong>Folder:</strong>
+      <%= @marc_record.folder %>
+    </p>
+
+    <p>
+      <strong>File:</strong>
+      <%= @marc_record.file %>
+    </p>
+
+    <p>
+      <strong>Updated:</strong>
+      <%= @marc_record.updated %>
+    </p>
+
+    <p>
+      <strong>Parsed:</strong>
+      <%= @marc_record.parsed %>
+    </p>
+
+    <p>
+      <strong>Selected:</strong>
+      <%= @marc_record.selected %>
+    </p>
+
+    <p>
+      <strong>Count:</strong>
+      <%= @marc_record.count %>
+    </p>
+
+    <p>
+      <strong>Content:</strong>
+      <%= @marc_record.content %>
+    </p>
+
+    <p>
+      <strong>MRC:</strong>
+      <%= @marc_record.mrc %>
+    </p>
+
+    <%= link_to 'Back', marc_records_path %>
+  </div>
+</div>

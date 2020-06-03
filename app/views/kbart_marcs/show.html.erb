@@ -1,0 +1,21 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <p>
+      <strong>Folder:</strong>
+      <%= @kbart_marc.folder %>
+    </p>
+
+    <p>
+      <strong>Year:</strong>
+      <%= @kbart_marc.year %>
+    </p>
+
+    <p>
+      <strong>DOI:</strong>
+      <%= link_to @kbart_marc.doi, "https://doi.org/#{@kbart_marc.doi}", target: :_blank %>
+    </p>
+
+    <%= link_to 'Back', kbart_marcs_path %>
+  </div>
+</div>

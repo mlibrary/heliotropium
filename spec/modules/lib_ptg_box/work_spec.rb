@@ -10,11 +10,11 @@ RSpec.describe LibPtgBox::Work do
   let(:catalog) { instance_double(LibPtgBox::Catalog, 'catalog') }
   let(:kbart) { instance_double(LibPtgBox::Unmarshaller::Kbart, 'kbart', doi: 'doi', print: 'print', online: 'online', title: 'title', date: 'date') }
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
-  let(:catalog_marc) { nil }
+  let(:marc_record) { nil }
 
   before do
     allow(collection).to receive(:marc).with('doi').and_return(marc)
-    allow(catalog).to receive(:marc).with('doi').and_return(catalog_marc)
+    allow(catalog).to receive(:marc).with('doi').and_return(marc_record)
   end
 
   describe "delegate to kbart" do
@@ -43,7 +43,7 @@ RSpec.describe LibPtgBox::Work do
     it { is_expected.to be false }
 
     context 'with marc' do
-      let(:catalog_marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
+      let(:marc_record) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
 
       it { is_expected.to be true }
     end
@@ -55,9 +55,9 @@ RSpec.describe LibPtgBox::Work do
     it { is_expected.to be_nil }
 
     context 'with marc' do
-      let(:catalog_marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
+      let(:marc_record) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc') }
 
-      it { is_expected.to be catalog_marc }
+      it { is_expected.to be marc_record }
     end
   end
 end

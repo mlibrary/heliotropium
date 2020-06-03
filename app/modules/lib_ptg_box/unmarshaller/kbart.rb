@@ -5,7 +5,7 @@ require 'csv'
 module LibPtgBox
   module Unmarshaller
     class Kbart
-      def initialize(line)
+      def initialize(line) # rubocop:disable Metrics/MethodLength
         @line = encode_line(line)
         begin
           CSV.parse(@line) do |row|
@@ -13,7 +13,9 @@ module LibPtgBox
             # Rails.logger.info "#{print}, #{online}, https://doi.org/#{doi}, #{date}, #{title}"
           end
         rescue StandardError => e
-          Rails.logger.error "LibPtgBox::Unmarshaller::Kbart.initialize(#{@line}) error #{e}"
+          msg = "LibPtgBox::Unmarshaller::Kbart.initialize(#{@line}) error #{e}"
+          Rails.logger.error msg
+          NotifierMailer.administrators("StandardError", msg).deliver_now
           @row = ["UNTITLED", "0000000000000", "0000000000000", "1970-01-01", 5, 6, 7, 8, 9, 10, 11, "10.3998/mpub.00000000"]
         end
       end

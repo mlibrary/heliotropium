@@ -10,7 +10,8 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
   let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'UMPEBC MARC') }
   let(:kbart_ftp_folder) { instance_double(Ftp::Folder, 'kbart_ftp_folder', name: 'UMPEBC KBART') }
   let(:fixes_ftp_folder) { instance_double(Ftp::Folder, 'upload_ftp_folder', name: 'OCLC_fixes') }
-  let(:all_ftp_folders) { [cataloging_marc_ftp_folder, marc_ftp_folder, kbart_ftp_folder, fixes_ftp_folder] }
+  let(:dev_ftp_folder) { instance_double(Ftp::Folder, 'dev_ftp_folder', name: 'DEV') }
+  let(:all_ftp_folders) { [cataloging_marc_ftp_folder, marc_ftp_folder, kbart_ftp_folder, fixes_ftp_folder, dev_ftp_folder] }
   let(:ftp_folders) { [] }
 
   before do
@@ -49,7 +50,8 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
     context 'with all folders' do
       let(:ftp_folders) { all_ftp_folders }
 
-      it { expect(upload_folder.name).to eq(marc_ftp_folder.name) }
+      xit { expect(upload_folder.name).to eq(marc_ftp_folder.name) }
+      it { expect(upload_folder.name).to eq(dev_ftp_folder.name) }
     end
   end
 
