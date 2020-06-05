@@ -5,6 +5,8 @@ require_relative 'assemble_marc_files/assemble_marc_files'
 module AssembleMarcFiles
   class << self
     def run(options = {}) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity
+      NotifierMailer.administrators("AssembleMarcFiles.run", "AssembleMarcFiles.run").deliver_now
+
       # Object wrapper for M | box - All Files > Library PTG Box
       lib_ptg_box = LibPtgBox::LibPtgBox.new
 
