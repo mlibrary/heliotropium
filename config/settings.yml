@@ -63,7 +63,7 @@ lib_ptg_box:
             - from_encoding_error@umpebc.com
           bcc:
             - bcc_encoding_error@umpebc.com
-          subject: Encoding Error
+          subject: UMPEBC MARC record encoding errors
         missing_record:
           to:
             - to_missing_record@umpebc.com
@@ -71,7 +71,7 @@ lib_ptg_box:
             - from_missing_record@umpebc.com
           bcc:
             - bcc_missing_record@umpebc.com
-          subject: Missing Record
+          subject: UMPEBC missing MARC records
         marc_file_updates:
           to:
             - to_marc_file_updates@umpebc.com
@@ -79,7 +79,7 @@ lib_ptg_box:
             - from_marc_file_updates@umpebc.com
           bcc:
             - bcc_marc_file_updates@umpebc.com
-          subject: MARC File Updates
+          subject: UMPEBC MARC file updates
     - key: bar
       folder: BAR Metadata
       mailers:
@@ -90,7 +90,7 @@ lib_ptg_box:
             - from_encoding_error@bar.com
           bcc:
             # - bcc_encoding_error@bar.com
-          subject: Encoding Error
+          subject: BAR MARC record encoding errors
         missing_record:
           to:
             - to_missing_record@bar.com
@@ -98,7 +98,7 @@ lib_ptg_box:
             - from_missing_record@bar.com
           bcc:
             # - bcc_missing_record@bar.com
-          subject: Missing Record
+          subject: BAR missing MARC records
         marc_file_updates:
           to:
             - to_marc_file_updates@bar.com
@@ -106,4 +106,4 @@ lib_ptg_box:
             - from_marc_file_updates@bar.com
           bcc:
             # - bcc_marc_file_updates@bar.com
-          subject: MARC File Updates
+          subject: BAR MARC file updates
