@@ -25,7 +25,7 @@ RSpec.describe NotifierMailer, type: :mailer do
       expect(mail.from).to eq(collection.mailers.marc_file_updates.from)
       expect(mail.to).to eq(collection.mailers.marc_file_updates.to)
       expect(mail.bcc).to eq(collection.mailers.marc_file_updates.bcc)
-      expect(mail.subject).to eq('MARC File Updates')
+      expect(mail.subject).to eq('UMPEBC MARC file updates')
       expect(mail.body.encoded).to match(text)
     end
   end
@@ -38,7 +38,7 @@ RSpec.describe NotifierMailer, type: :mailer do
     it 'is expected' do
       expect(mail.from).to eq(collection.mailers.encoding_error.from)
       expect(mail.to).to eq(collection.mailers.encoding_error.to)
-      expect(mail.subject).to eq('Encoding Error')
+      expect(mail.subject).to eq('UMPEBC MARC record encoding errors')
       expect(mail.body.encoded).to match(text)
     end
   end
@@ -51,7 +51,7 @@ RSpec.describe NotifierMailer, type: :mailer do
     it 'is expected' do
       expect(mail.from).to eq(collection.mailers.missing_record.from)
       expect(mail.to).to eq(collection.mailers.missing_record.to)
-      expect(mail.subject).to eq('Missing Record')
+      expect(mail.subject).to eq('UMPEBC missing MARC records')
       expect(mail.body.encoded).to match(text)
     end
   end
