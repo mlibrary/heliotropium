@@ -3,7 +3,7 @@
 FactoryBot.define do
   factory :kbart_marc do
     folder { "MyFolder" }
+    file { "MyFile" }
     doi { "MyDOI" }
-    year { 1970 }
   end
 end

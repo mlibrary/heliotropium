@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_28_121506) do
+ActiveRecord::Schema.define(version: 2020_06_25_191317) do
 
   create_table "identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
@@ -21,7 +21,6 @@ ActiveRecord::Schema.define(version: 2020_05_28_121506) do
 
   create_table "kbart_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "name", null: false
-    t.integer "year", default: 1970, null: false
     t.date "updated", default: "1970-01-01", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -32,10 +31,11 @@ ActiveRecord::Schema.define(version: 2020_05_28_121506) do
 
   create_table "kbart_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
     t.string "doi", null: false
-    t.integer "year"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "folder", null: false
+    t.string "file"
+    t.date "updated"
   end
 
   create_table "marc_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
@@ -51,7 +51,7 @@ ActiveRecord::Schema.define(version: 2020_05_28_121506) do
     t.string "file", null: false
     t.string "doi"
     t.binary "mrc"
-    t.datetime "updated", default: "1970-01-01 05:00:00", null: false
+    t.date "updated", default: "1970-01-01", null: false
     t.boolean "parsed", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

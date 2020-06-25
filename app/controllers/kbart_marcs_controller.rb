@@ -58,10 +58,10 @@ class KbartMarcsController < ApplicationController
     end
 
     def kbart_marc_params
-      params.require(:kbart_marc).permit(:folder, :doi, :year)
+      params.require(:kbart_marc).permit(:folder, :file, :doi, :updated)
     end
 
     def filtering_params(params)
-      params.slice(:folder_like, :doi_like, :year_like)
+      params.slice(:folder_like, :file_like, :doi_like, :updated_like)
     end
 end

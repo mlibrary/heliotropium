@@ -11,7 +11,7 @@ RSpec.describe LibPtgBox::Catalog do
   let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', doi: marc_doi) }
   let(:marc_doi) { 'marc' }
   let(:marc_records) { [] }
-  let(:marc_record) { instance_double(MarcRecord, 'marc_record', mrc: to_marc, parsed: true) }
+  let(:marc_record) { instance_double(MarcRecord, 'marc_record', id: 'id', doi: 'doi', mrc: to_marc, parsed: true) }
   let(:to_marc) { instance_double(String, 'to_marc') }
   let(:obj_marc) { instance_double(String, 'obj_marc') }
 
@@ -42,7 +42,7 @@ RSpec.describe LibPtgBox::Catalog do
   end
 
   describe '#marcs' do
-    subject { catalog.marcs }
+    subject(:marcs) { catalog.marcs }
 
     it { is_expected.to be_empty }
 
@@ -50,6 +50,24 @@ RSpec.describe LibPtgBox::Catalog do
       let(:marc_records) { [marc_record] }
 
       it { is_expected.to contain_exactly(marc) }
+
+      context 'when encoding error' do
+        let(:msg) { 'LibPtgBox::Catalog#marcs(id id, doi doi) Encoding::InvalidByteSequenceError' }
+        let(:message) { double('message') } # rubocop:disable RSpec/VerifiedDoubles
+
+        before do
+          allow(MARC::Reader).to receive(:decode).with(to_marc, external_encoding: "UTF-8", validate_encoding: true).and_raise(Encoding::InvalidByteSequenceError)
+          allow(Rails.logger).to receive(:error).with(msg)
+          allow(NotifierMailer).to receive(:administrators).with('StandardError', msg).and_return(message)
+          allow(message).to receive(:deliver_now)
+        end
+
+        it do
+          expect(marcs).to be_empty
+          expect(Rails.logger).to have_received(:error).with(msg)
+          expect(message).to have_received(:deliver_now)
+        end
+      end
     end
   end
 end

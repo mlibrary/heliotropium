@@ -5,6 +5,7 @@ class KbartFile < ApplicationRecord
 
   scope :folder_like, ->(like) { where("folder like ?", "%#{like}%") }
   scope :name_like, ->(like) { where("name like ?", "%#{like}%") }
+  scope :updated_like, ->(like) { where("updated like ?", "%#{like}%") }
 
   validates :folder, presence: true, allow_blank: false
   validates :name, presence: true, allow_blank: false, uniqueness: true

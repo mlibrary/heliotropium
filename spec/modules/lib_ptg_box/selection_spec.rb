@@ -13,7 +13,6 @@ RSpec.describe LibPtgBox::Selection do
   before { allow(kbart_file).to receive(:name).and_return(kbart_ftp_file.name) }
 
   it { expect(selection.name).to eq('Prefix_1970_Suffix') }
-  it { expect(selection.year).to eq(1970) }
   it { expect(selection.updated).to eq(Date.parse('1999-01-01')) }
 
   describe '#works' do

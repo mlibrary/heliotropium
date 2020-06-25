@@ -58,10 +58,10 @@ class KbartFilesController < ApplicationController
     end
 
     def kbart_file_params
-      params.require(:kbart_file).permit(:folder, :name, :year, :updated)
+      params.require(:kbart_file).permit(:folder, :name, :updated)
     end
 
     def filtering_params(params)
-      params.slice(:folder_like, :name_like)
+      params.slice(:folder_like, :name_like, :updated_like)
     end
 end

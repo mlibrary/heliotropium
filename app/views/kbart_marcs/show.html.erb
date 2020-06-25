@@ -7,13 +7,18 @@
     </p>
 
     <p>
-      <strong>Year:</strong>
-      <%= @kbart_marc.year %>
+      <strong>File:</strong>
+      <%= @kbart_marc.file %>
     </p>
 
     <p>
       <strong>DOI:</strong>
       <%= link_to @kbart_marc.doi, "https://doi.org/#{@kbart_marc.doi}", target: :_blank %>
+    </p>
+
+    <p>
+      <strong>Updated:</strong>
+      <%= @kbart_marc.updated %>
     </p>
 
     <%= link_to 'Back', kbart_marcs_path %>

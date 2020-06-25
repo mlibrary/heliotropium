@@ -3,7 +3,7 @@
 module LibPtgBox
   module Unmarshaller
     class MarcFile < SimpleDelegator
-      def marcs # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      def marcs # rubocop:disable Metrics/MethodLength
         @marcs ||= begin
           marc_entries = []
           begin
@@ -14,16 +14,21 @@ module LibPtgBox
               Rails.logger.error msg
               NotifierMailer.administrators("StandardError", msg).deliver_now
             end
-          rescue StandardError => e
-            msg = "LibPtgBox::Unmarshaller::MarcFile(#{name})#marcs #{e}"
-            Rails.logger.error msg
-            NotifierMailer.administrators("StandardError", msg).deliver_now
           end
           marc_entries
         end
       end
 
       private
+
+        def reader_entries
+          reader = MARC::Reader.new(string_io_content)
+          reader.entries
+        end
+
+        def string_io_content
+          StringIO.new(encode_content)
+        end
 
         def encode_content
           utf_8_content = content.force_encoding('UTF-8')
@@ -39,15 +44,6 @@ module LibPtgBox
           NotifierMailer.administrators("Invalid UTF-8 encoding!!!", msg).deliver_now
 
           utf_content.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
-        end
-
-        def string_io_content
-          StringIO.new(encode_content)
-        end
-
-        def reader_entries
-          reader = MARC::Reader.new(string_io_content)
-          reader.entries
         end
     end
   end

@@ -104,7 +104,7 @@ module LibPtgBox
 
       # Find or create a record for each KBART csv file
       collection.selections.each do |selection|
-        kbart_file = KbartFile.find_or_create_by!(folder: collection.key, name: selection.name, year: selection.year)
+        kbart_file = KbartFile.find_or_create_by!(folder: collection.key, name: selection.name)
         # Remove record from the previous records list
         kbart_files.delete(kbart_file) if kbart_files.include?(kbart_file)
         next unless kbart_file.verified

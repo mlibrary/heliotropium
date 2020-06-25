@@ -25,6 +25,8 @@ module AssembleMarcFiles
       # Destroying all KbartFile records will force reassembly of all MARC files
       KbartFile.destroy_all if options[:reset_kbart_files] || options[:reset_kbart_marcs] || options[:reset_upload_checksums]
 
+      delta = !!(Date.today.day == 15 || options[:create_marc_deltas]) # rubocop:disable Style/DoubleNegation
+
       program = AssembleMarcFiles.new(lib_ptg_box)
       lib_ptg_box.collections.each do |collection|
         unless options[:skip_catalog_sync] && !options[:reset_marc_records]
@@ -39,7 +41,7 @@ module AssembleMarcFiles
           NotifierMailer.administrators("synchronize_kbart_files(#{collection.key})", log.map(&:to_s).join("\n")).deliver_now
         end
 
-        log = program.assemble_marc_files(collection)
+        log = program.assemble_marc_files(collection, delta)
         if log.present?
           NotifierMailer.administrators("marc_file_updates(#{collection.key})", log.map(&:to_s).join("\n")).deliver_now
           NotifierMailer.marc_file_updates(collection, log.map(&:to_s).join("\n")).deliver_now
