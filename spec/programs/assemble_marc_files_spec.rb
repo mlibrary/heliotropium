@@ -6,6 +6,7 @@ RSpec.describe AssembleMarcFiles do
   describe '#run' do
     let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box') }
     let(:collection) { instance_double(LibPtgBox::Collection, 'collection', key: 'umpebc', name: 'UMPEBC') }
+    let(:delta) { false }
     let(:assemble_marc_files) { instance_double(AssembleMarcFiles::AssembleMarcFiles, "AssembleMarcFiles") }
     let(:admin_mailer) { double('admin_mailer') } # rubocop:disable RSpec/VerifiedDoubles
     let(:fulcrum_info_mailer) { double('fulcrum_info_mailer') } # rubocop:disable RSpec/VerifiedDoubles
@@ -18,7 +19,7 @@ RSpec.describe AssembleMarcFiles do
       allow(lib_ptg_box).to receive(:synchronize_marc_records).with(collection).and_return([])
       allow(lib_ptg_box).to receive(:synchronize_kbart_files).with(collection).and_return([])
       allow(AssembleMarcFiles::AssembleMarcFiles).to receive(:new).with(lib_ptg_box).and_return(assemble_marc_files)
-      allow(assemble_marc_files).to receive(:assemble_marc_files).with(collection).and_return([])
+      allow(assemble_marc_files).to receive(:assemble_marc_files).with(collection, delta).and_return([])
       allow(assemble_marc_files).to receive(:errors).and_return([])
       allow(NotifierMailer).to receive(:administrators).with(anything, anything).and_return(admin_mailer)
       allow(NotifierMailer).to receive(:marc_file_updates).with(anything, anything).and_return(fulcrum_info_mailer)
@@ -84,7 +85,7 @@ RSpec.describe AssembleMarcFiles do
       end
 
       context 'when uploaded files' do
-        before { allow(assemble_marc_files).to receive(:assemble_marc_files).with(collection).and_return(['filename']) }
+        before { allow(assemble_marc_files).to receive(:assemble_marc_files).with(collection, delta).and_return(['filename']) }
 
         it do
           described_class.run
@@ -148,7 +149,7 @@ RSpec.describe AssembleMarcFiles do
       end
 
       context 'when standard error' do
-        before { allow(assemble_marc_files).to receive(:assemble_marc_files).with(collection).and_raise(StandardError) }
+        before { allow(assemble_marc_files).to receive(:assemble_marc_files).with(collection, delta).and_raise(StandardError) }
 
         it do
           described_class.run

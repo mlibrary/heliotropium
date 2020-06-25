@@ -9,7 +9,8 @@
       <div class="row">
         <div class="col-1"><label for="folder_like">Folder</label></div>
         <div class="col-2"><input type="text" name="folder_like" value="<%= params[:folder_like] %>" size="<%= size %>" aria-label="folder_like"></div>
-        <div class="col-4">File</div>
+        <div class="col-1"><label for="file_like">File</label></div>
+        <div class="col-3"><input type="text" name="file_like" value="<%= params[:file_like] %>" size="<%= size %>" aria-label="file_like"></div>
         <div class="col-1"><label for="parsed_like">UNPARSED</label></div>
         <div class="col-1"><input type="checkbox" name="parsed_like" value=0 <%= params[:parsed_like] == '0' ? 'checked' : '' %> aria-label="parsed_like"></div>
         <div class="col-1"><label for="count_like">MULTI</label></div>
@@ -19,7 +20,8 @@
       <div class="row">
         <div class="col-1"><label for="doi_like">DOI</label></div>
         <div class="col-2"><input type="text" name="doi_like" value="<%= params[:doi_like] %>" size="<%= size %>" aria-label="doi_like"></div>
-        <div class="col-4">Updated</div>
+        <div class="col-1"><label for="updated_like">Updated</label></div>
+        <div class="col-3"><input type="text" name="updated_like" value="<%= params[:updated_like] %>" size="<%= size %>" aria-label="updated_like"></div>
         <div class="col-1"><label for="selected_like">SELECTED</label></div>
         <div class="col-1"><input type="checkbox" name="selected_like" value=1 <%= params[:selected_like] == '1' ? 'checked' : '' %> aria-label="selected_like"></div>
         <div class="col-1">

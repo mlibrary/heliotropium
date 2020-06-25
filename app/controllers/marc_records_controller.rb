@@ -62,6 +62,6 @@ class MarcRecordsController < ApplicationController
     end
 
     def filtering_params(params)
-      params.slice(:folder_like, :file_like, :doi_like, :parsed_like, :selected_like, :count_like)
+      params.slice(:folder_like, :file_like, :doi_like, :updated_like, :parsed_like, :selected_like, :count_like)
     end
 end

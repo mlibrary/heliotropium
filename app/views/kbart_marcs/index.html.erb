@@ -8,14 +8,15 @@
       <% size = 6 %>
       <div class="row">
         <div class="col-1"><label for="folder_like">Folder</label></div>
-        <div class="col-1"><label for="year_like">Year</label></div>
-        <div class="col-4"><label for="doi_like">DOI</label></div>
-        <div class="col-6">Updated</div>
+        <div class="col-3"><input type="text" name="folder_like" value="<%= params[:folder_like] %>" size="<%= size * 5 %>" aria-label="folder_like"></div>
+        <div class="col-1"><label for="file_like">File</label></div>
+        <div class="col-3"><input type="text" name="file_like" value="<%= params[:file_like] %>" size="<%= size * 5 %>" aria-label="file_like"></div>
       </div>
       <div class="row">
-        <div class="col-1"><input type="text" name="folder_like" value="<%= params[:folder_like] %>" size="<%= size %>" aria-label="folder_like"></div>
-        <div class="col-1"><input type="text" name="year_like" value="<%= params[:year_like] %>" size="<%= size %>" aria-label="year_like"></div>
-        <div class="col-4"><input type="text" name="doi_like" value="<%= params[:doi_like] %>" size="<%= size * 6 %>" aria-label="doi_like"></div>
+        <div class="col-1"><label for="doi_like">DOI</label></div>
+        <div class="col-3"><input type="text" name="doi_like" value="<%= params[:doi_like] %>" size="<%= size * 5 %>" aria-label="doi_like"></div>
+        <div class="col-1"><label for="updated_like">Updated</label></div>
+        <div class="col-3"><input type="text" name="updated_like" value="<%= params[:updated_like] %>" size="<%= size * 5 %>" aria-label="updated_like"></div>
         <div class="col-2">
           <button name="submit" type="submit" value="filter">Filter</button>
         </div>
@@ -25,11 +26,13 @@
     <div class="row">&nbsp;</div>
     <% @kbart_marcs.each do |kbart_marc| %>
       <div class="row">
-        <div class="col-1"><%= kbart_marc.folder %></div>
-        <div class="col-1"><%= kbart_marc.year %></div>
+        <div class="col-4"><%= kbart_marc.folder %></div>
+        <div class="col-4"><%= kbart_marc.file %></div>
+      </div>
+      <div class="row">
         <div class="col-4"><%= link_to kbart_marc.doi, "https://doi.org/#{kbart_marc.doi}", target: :_blank %></div>
-        <div class="col-4"><%= kbart_marc.updated_at %></div>
-        <div class="col-2"><%= link_to 'Destroy', kbart_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
+        <div class="col-4"><%= kbart_marc.updated %></div>
+        <div class="col-4"><%= link_to 'Destroy', kbart_marc, method: :delete, data: { confirm: 'Are you sure?' } %></div>
       </div>
     <% end %>
     <div class="row">

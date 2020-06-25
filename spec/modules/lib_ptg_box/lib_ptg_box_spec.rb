@@ -11,7 +11,7 @@ RSpec.describe LibPtgBox::LibPtgBox do
   let(:marc_folder) { object_double(LibPtgBox::Unmarshaller::MarcFolder.new(marc_ftp_folder), 'marc_folder', marc_files: marc_files, name: marc_ftp_folder.name) }
   let(:marc_ftp_folder) { instance_double(Ftp::Folder, 'marc_ftp_folder', name: 'folder') }
   let(:marc_files) { [] }
-  let(:selection) {  instance_double(LibPtgBox::Selection, 'selection', name: 'name', year: 'year') }
+  let(:selection) {  instance_double(LibPtgBox::Selection, 'selection', name: 'name') }
 
   before do
     allow(LibPtgBox::Unmarshaller::RootFolder).to receive(:sub_folders).and_return([sub_folder])
@@ -55,7 +55,7 @@ RSpec.describe LibPtgBox::LibPtgBox do
       expect(MarcRecord.count).to eq(1)
       marc_record = MarcRecord.first
       expect(marc_record.selected).to be true
-      expect(marc_record.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+      expect(marc_record.updated).to eq(Date.parse('1970-01-01'))
       expect(marc_record.content).to eq('content')
       expect(marc_record.mrc).to eq('mrc')
       expect(marc_record.doi).to eq('doi')
@@ -78,7 +78,7 @@ RSpec.describe LibPtgBox::LibPtgBox do
         expect(MarcRecord.count).to eq(1)
         marc_record = MarcRecord.first
         expect(marc_record.selected).to be true
-        expect(marc_record.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+        expect(marc_record.updated).to eq(Date.parse('1970-01-01'))
         expect(marc_record.content).to eq('content')
         expect(marc_record.count).to eq(0)
         expect(marc_record.mrc).to be nil
@@ -95,7 +95,7 @@ RSpec.describe LibPtgBox::LibPtgBox do
         expect(MarcRecord.count).to eq(1)
         marc_record = MarcRecord.first
         expect(marc_record.selected).to be true
-        expect(marc_record.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+        expect(marc_record.updated).to eq(Date.parse('1970-01-01'))
         expect(marc_record.content).to eq('content')
         expect(marc_record.count).to eq(2)
         expect(marc_record.mrc).to eq('mrc')
@@ -112,7 +112,7 @@ RSpec.describe LibPtgBox::LibPtgBox do
         expect(MarcRecord.count).to eq(1)
         marc_record = MarcRecord.first
         expect(marc_record.selected).to be false
-        expect(marc_record.updated).to eq('1970-01-01 00:00:00.000000000 +0000')
+        expect(marc_record.updated).to eq(Date.parse('1970-01-01'))
         expect(marc_record.content).to be nil
         expect(marc_record.count).to eq(0)
         expect(marc_record.mrc).to be nil
@@ -145,7 +145,7 @@ RSpec.describe LibPtgBox::LibPtgBox do
       let(:selected) { false }
 
       before do
-        allow(KbartFile).to receive(:find_or_create_by!).with(folder: collection.key, name: selection.name, year: selection.year).and_return(kbart_file)
+        allow(KbartFile).to receive(:find_or_create_by!).with(folder: collection.key, name: selection.name).and_return(kbart_file)
         allow(selection).to receive(:works).and_return([work])
         allow(MarcRecord).to receive(:find_by).with(folder: collection.key, doi: marc.doi).and_return(marc_record)
         allow(kbart_file).to receive(:verified=).with(false)

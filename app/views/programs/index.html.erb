@@ -26,6 +26,10 @@
             <%= check_box_tag(:reset_upload_checksums) %>
             <%= label_tag(:reset_upload_checksums, "Reset Upload Checksums") %>
           </div>
+          <div>
+            <%= check_box_tag(:create_marc_deltas) %>
+            <%= label_tag(:create_marc_deltas, "Create MARC Deltas") %>
+          </div>
           <div><%= submit_tag("Run") %></div>
         <% end %>
       </div>

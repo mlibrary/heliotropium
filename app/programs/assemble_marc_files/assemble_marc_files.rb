@@ -11,7 +11,8 @@ module AssembleMarcFiles
       @errors = []
     end
 
-    def assemble_marc_files(collection) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def assemble_marc_files(collection, delta) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+      @errors = []
       log = []
 
       # Recursive remove tmp folder from last time
@@ -21,16 +22,17 @@ module AssembleMarcFiles
       # Change working directory to tmp folder
       Dir.chdir(collection.key) do
         collection.selections.each do |selection|
-          record = KbartFile.find_by(folder: collection.key, name: selection.name, year: selection.year)
+          record = KbartFile.find_by(folder: collection.key, name: selection.name)
           next unless record
-          next unless record.updated < selection.updated || !record.verified
 
-          record.updated = selection.updated
-          record.verified = true
-          recreate_selection_marc_files(record, selection)
-          record.save!
+          if record.updated < selection.updated || !record.verified
+            record.updated = selection.updated
+            record.verified = true
+            recreate_selection_marc_files(record, selection)
+            record.save!
+          end
+          create_selection_marc_delta_files(selection) if delta # && record.verified
         end
-        recreate_collection_month_marc_file(collection)
         recreate_collection_marc_files(collection)
         log = upload_marc_files(collection)
       end
@@ -44,9 +46,11 @@ module AssembleMarcFiles
       selection_works = {}
       selection.works.each do |work|
         if work.marc?
-          kbart_marc = KbartMarc.find_or_create_by!(folder: selection.collection.key, doi: work.marc.doi)
-          kbart_marc.year = selection.year
-          kbart_marc.save!
+          kbart_marc = KbartMarc.find_or_create_by!(folder: selection.collection.key, file: selection.name, doi: work.marc.doi)
+          unless kbart_marc.updated
+            kbart_marc.updated = selection.updated
+            kbart_marc.save!
+          end
           selection_works[work.doi.to_s] = work
         else
           record.verified = false
@@ -58,6 +62,8 @@ module AssembleMarcFiles
           errors << ""
         end
       end
+
+      return if selection_works.empty?
 
       # Danger Will Robinson! Danger Will Robinson!
       #
@@ -81,37 +87,44 @@ module AssembleMarcFiles
       writer.close
     end
 
-    def recreate_collection_month_marc_file(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      collection.selections.each do |selection|
-        next unless selection.year == Date.today.year
+    def create_selection_marc_delta_files(selection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+      prev_delta = 1.month.ago
+      prev_delta_date = Date.new(prev_delta.year, prev_delta.month, 15)
+      this_delta = Time.now
+      this_delta_date = Date.new(this_delta.year, this_delta.month, 15)
 
-        month = Date.today.month
-        filename = selection.name + format("-%02d", month)
-        kbart_marcs = KbartMarc.where('folder = ? AND year = ? AND updated_at >= ?', collection.key, selection.year, DateTime.new(selection.year, month, 1))
-        break if kbart_marcs.blank?
+      filename = selection.name + '_update_' + format("%04d-%02d-%02d", this_delta_date.year, this_delta_date.month, this_delta_date.day)
 
-        # Danger Will Robinson! Danger Will Robinson!
-        #
-        # Bill Dueber:vomit_frog: 16:51
-        # Figured it out. MARC-XML doesn't allow non-alphanumerics in the leader by spec,
-        # so the MARC::XMLWriter turns them into Zs. So you get a '?' in the original marc,
-        # which gets writen to the .marc file. Then the xml writer changes the leader before
-        # it writes it out. So when you repeat, you get the change.
-        #
-        # The "solution", I guess, is to write the XML file out first,
-        # but I'd document the @^%& out of it.
+      selection_works = {}
+      selection.works.each do |work|
+        next unless work.marc?
 
-        xml_writer = MARC::XMLWriter.new(filename + '.xml')
-        writer = MARC::Writer.new(filename + '.mrc')
-        kbart_marcs.each do |kbart_marc|
-          marc = collection.catalog.marc(kbart_marc.doi)
-          xml_writer.write(marc.entry)
-          writer.write(marc.entry)
-        end
-        xml_writer.close
-        writer.close
-        break
+        kbart_marc = KbartMarc.find_by!(folder: selection.collection.key, file: selection.name, doi: work.marc.doi)
+        selection_works[work.doi.to_s] = work if kbart_marc.updated > prev_delta_date && kbart_marc.updated <= this_delta_date
       end
+
+      return if selection_works.empty?
+
+      # Danger Will Robinson! Danger Will Robinson!
+      #
+      # Bill Dueber:vomit_frog: 16:51
+      # Figured it out. MARC-XML doesn't allow non-alphanumerics in the leader by spec,
+      # so the MARC::XMLWriter turns them into Zs. So you get a '?' in the original marc,
+      # which gets writen to the .marc file. Then the xml writer changes the leader before
+      # it writes it out. So when you repeat, you get the change.
+      #
+      # The "solution", I guess, is to write the XML file out first,
+      # but I'd document the @^%& out of it.
+
+      xml_writer = MARC::XMLWriter.new(filename + '.xml')
+      writer = MARC::Writer.new(filename + '.mrc')
+      selection_works.keys.sort.each do |key|
+        work = selection_works[key]
+        xml_writer.write(work.marc.entry)
+        writer.write(work.marc.entry)
+      end
+      xml_writer.close
+      writer.close
     end
 
     def recreate_collection_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
@@ -125,6 +138,8 @@ module AssembleMarcFiles
           collection_works[work.doi.to_s] = work
         end
       end
+
+      return if collection_works.empty?
 
       # Danger Will Robinson! Danger Will Robinson!
       #

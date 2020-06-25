@@ -46,7 +46,7 @@ RSpec.describe "KbartMarcs", type: :request do
   describe '#create' do
     subject(:post_create) { post "/kbart_marcs", params: { kbart_marc: kbart_marc_params } }
 
-    let(:kbart_marc_params) { { folder: 'folder', doi: 'doi' } }
+    let(:kbart_marc_params) { { folder: 'folder', file: 'file', doi: 'doi' } }
 
     before { post_create }
 

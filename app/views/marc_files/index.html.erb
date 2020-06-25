@@ -5,15 +5,15 @@
       <h1>MARC Files</h1>
     </div>
     <div class="row">
-      <div class="col">Folder</div>
-      <div class="col">Name</div>
+      <div class="col-1">Folder</div>
+      <div class="col">File</div>
       <div class="col">Checksum</div>
       <div class="col-3">&nbsp;</div>
     </div>
     <div class="row">&nbsp;</div>
     <% @marc_files.each do |marc_file| %>
       <div class="row">
-        <div class="col"><%= marc_file.folder %></div>
+        <div class="col-1"><%= marc_file.folder %></div>
         <div class="col"><%= marc_file.name %></div>
         <div class="col"><%= marc_file.checksum %></div>
         <div class="col-3">

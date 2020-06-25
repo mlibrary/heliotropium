@@ -6,6 +6,7 @@ class MarcRecord < ApplicationRecord
   scope :folder_like, ->(like) { where("folder like ?", "%#{like}%") }
   scope :file_like, ->(like) { where("file like ?", "%#{like}%") }
   scope :doi_like, ->(like) { where("doi like ?", "%#{like}%") }
+  scope :updated_like, ->(like) { where("updated like ?", Date.parse(like).to_s) }
   scope :parsed_like, ->(like) { where("parsed like ?", "%#{like}%") }
   scope :replaced_like, ->(like) { where("replaced like ?", "%#{like}%") }
   scope :selected_like, ->(like) { where("selected like ?", "%#{like}%") }
