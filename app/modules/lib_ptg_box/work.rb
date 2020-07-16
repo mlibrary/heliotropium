@@ -20,7 +20,7 @@ module LibPtgBox
     end
 
     def marc?
-      !!marc # rubocop:disable Style/DoubleNegation
+      !!marc
     end
 
     def marc

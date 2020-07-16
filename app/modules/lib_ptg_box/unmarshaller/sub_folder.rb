@@ -36,6 +36,7 @@ module LibPtgBox
           folders.each do |folder|
             next if /cataloging/i.match?(folder.name)
             next unless /marc/i.match?(folder.name)
+
             # next unless /dev/i.match?(folder.name)
 
             f = folder

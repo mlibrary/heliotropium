@@ -8,7 +8,9 @@ inherit_mode:
 
 AllCops:
   TargetRubyVersion: 2.6
+  NewCops: enable
   Exclude:
+    - '.simplecov'
     - 'db/**/*'
     - 'tmp/**/*'
 
@@ -31,6 +33,9 @@ RSpec/MultipleExpectations:
 RSpec/NestedGroups:
   Max: 4
 
+Style/AccessorGrouping:
+  Enabled: false
+
 Style/Documentation:
   Enabled: false
 
@@ -38,7 +43,7 @@ Style/EmptyMethod:
   Enabled: false
 
 Style/FormatStringToken:
-             Enabled: false
+  Enabled: false
 
 Style/RegexpLiteral:
   Enabled: false

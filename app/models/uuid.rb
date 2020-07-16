@@ -37,7 +37,7 @@ class Uuid < ApplicationRecord
     end
 
     def uuid_generator_packed
-      uuid_pack(open('https://www.famkruithof.net/uuid/uuidgen').read.scan(/([-[:alnum:]]+)\<\/h3\>/)[0][0])
+      uuid_pack(open('https://www.famkruithof.net/uuid/uuidgen').read.scan(/([-[:alnum:]]+)<\/h3>/)[0][0])
     end
 
     def uuid_generator_unpacked

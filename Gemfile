@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 5.2.4.3'
 # Use sqlite3 as the database for Active Record
 # gem 'sqlite3'
 
@@ -51,7 +51,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 # Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.1.0', require: false
+gem 'bootsnap', '~> 1.4.6', require: false
 
 # The best way to add settings in any ruby project.
 # https://github.com/mlibrary/ettin
@@ -109,7 +109,7 @@ end
 
 group :test do
   # Adds support for Capybara system testing and selenium driver
-  gem 'capybara', '>= 2.15'
+  gem 'capybara', '~> 3.29'
   gem 'coveralls', '~> 0.8', require: false
   gem 'selenium-webdriver'
   # Easy installation and use of chromedriver to run system tests with Chrome
