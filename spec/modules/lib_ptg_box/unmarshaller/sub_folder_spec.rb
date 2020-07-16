@@ -50,8 +50,9 @@ RSpec.describe LibPtgBox::Unmarshaller::SubFolder do
     context 'with all folders' do
       let(:ftp_folders) { all_ftp_folders }
 
-      xit { expect(upload_folder.name).to eq(marc_ftp_folder.name) }
-      it { expect(upload_folder.name).to eq(dev_ftp_folder.name) }
+      it { expect(upload_folder.name).not_to eq(cataloging_marc_ftp_folder.name) }
+      it { expect(upload_folder.name).to eq(marc_ftp_folder.name) }
+      xit { expect(upload_folder.name).to eq(dev_ftp_folder.name) }
     end
   end
 
