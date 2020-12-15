@@ -70,7 +70,7 @@ gem 'boxr', '~> 1.4'
 gem 'marc', '~>1.0'
 
 # Use MySQL as the database for Active Record
-gem 'mysql2', '~> 0.5'
+gem 'mysql2', '~> 0.4.10'
 
 # Pagination
 # https://github.com/kaminari/kaminari

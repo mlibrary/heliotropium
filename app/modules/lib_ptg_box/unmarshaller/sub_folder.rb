@@ -35,9 +35,7 @@ module LibPtgBox
           f = Ftp::Folder.null_folder
           folders.each do |folder|
             next if /cataloging/i.match?(folder.name)
-            next unless /marc/i.match?(folder.name)
-
-            # next unless /dev/i.match?(folder.name)
+            next unless /#{Regexp.escape(Settings.lib_ptg_box.upload)}/i.match?(folder.name)
 
             f = folder
             break

@@ -33,7 +33,7 @@ module AssembleMarcFiles
           end
           create_selection_marc_delta_files(selection) if delta # && record.verified
         end
-        recreate_collection_marc_files(collection)
+        recreate_collection_marc_files(collection) if collection.selections.count > 1
         log = upload_marc_files(collection)
       end
 

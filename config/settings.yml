@@ -52,6 +52,7 @@ lib_ptg_box:
   user: <user>
   password: <password>
   root: <folder>
+  upload: MARC
   collections:
     - key: umpebc
       folder: UMPEBC Metadata
@@ -107,3 +108,30 @@ lib_ptg_box:
           bcc:
             # - bcc_marc_file_updates@bar.com
           subject: BAR MARC file updates
+    - key: leverpress
+      folder: Lever Press Metadata
+      mailers:
+        encoding_error:
+          to:
+            - to_encoding_error@leverpress.com
+          from:
+            - from_encoding_error@leverpress.com
+          bcc:
+          # - bcc_encoding_error@leverpress.com
+          subject: Lever Press MARC record encoding errors
+        missing_record:
+          to:
+            - to_missing_record@leverpress.com
+          from:
+            - from_missing_record@leverpress.com
+          bcc:
+          # - bcc_missing_record@leverpress.com
+          subject: Lever Press missing MARC records
+        marc_file_updates:
+          to:
+            - to_marc_file_updates@leverpress.com
+          from:
+            - from_marc_file_updates@leverpress.com
+          bcc:
+          # - bcc_marc_file_updates@leverpress.com
+          subject: Lever Press MARC file updates
