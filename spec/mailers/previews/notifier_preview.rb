@@ -18,6 +18,18 @@ class NotifierPreview < ActionMailer::Preview
     NotifierMailer.marc_file_updates(collection('bar'), "Hello World!!!")
   end
 
+  def lever_press_encoding_error
+    NotifierMailer.encoding_error(collection('leverpress'), "Hello World!!!")
+  end
+
+  def lever_press_missing_record
+    NotifierMailer.missing_record(collection('leverpress'), "Hello World!!!")
+  end
+
+  def lever_press_marc_file_updates
+    NotifierMailer.marc_file_updates(collection('leverpress'), "Hello World!!!")
+  end
+
   def umpebc_encoding_error
     NotifierMailer.encoding_error(collection('umpebc'), "Hello World!!!")
   end
