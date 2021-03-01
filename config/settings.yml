@@ -135,3 +135,30 @@ lib_ptg_box:
           bcc:
           # - bcc_marc_file_updates@leverpress.com
           subject: Lever Press MARC file updates
+    - key: amherst
+      folder: Amherst College Press Metadata
+      mailers:
+        encoding_error:
+          to:
+            - to_encoding_error@amherst.com
+          from:
+            - from_encoding_error@amherst.com
+          bcc:
+          # - bcc_encoding_error@amherst.com
+          subject: Amhrest College Press MARC record encoding errors
+        missing_record:
+          to:
+            - to_missing_record@amherst.com
+          from:
+            - from_missing_record@amherst.com
+          bcc:
+          # - bcc_missing_record@amherst.com
+          subject: Amherst College Press Missing MARC records
+        marc_file_updates:
+          to:
+            - to_marc_file_updates@amherst.com
+          from:
+            - from_marc_file_updates@amherst.com
+          bcc:
+          # - bcc_marc_file_updates@amherst.com
+          subject: Amhrest College Press MARC file updates

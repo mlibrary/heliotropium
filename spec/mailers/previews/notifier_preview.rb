@@ -6,6 +6,18 @@ class NotifierPreview < ActionMailer::Preview
     NotifierMailer.administrators("Subject", "Hello World!!!")
   end
 
+  def amherst_press_encoding_error
+    NotifierMailer.encoding_error(collection('amherst'), "Hello World!!!")
+  end
+
+  def amherst_press_missing_record
+    NotifierMailer.missing_record(collection('amherst'), "Hello World!!!")
+  end
+
+  def amherst_press_marc_file_updates
+    NotifierMailer.marc_file_updates(collection('amherst'), "Hello World!!!")
+  end
+
   def bar_encoding_error
     NotifierMailer.encoding_error(collection('bar'), "Hello World!!!")
   end
