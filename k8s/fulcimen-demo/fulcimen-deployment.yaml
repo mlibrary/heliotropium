@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: fulcimen
+  name: fulcimen-deployment
+  namespace: fulcimen-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fulcimen
+  template:
+    metadata:
+      annotations:
+        imageregistry: "https://hub.docker.com/"
+      labels:
+        app: fulcimen
+    spec:
+      containers:
+        - name: heliotropium
+          image: gkostin1966/heliotropium:0.0.1
+          env:
+            - name: DATABASE_URL
+              value: "mysql2://mysql/heliotropium_development"
+          ports:
+            - containerPort: 3000
+#          resources:
+#            limits:
+#              memory: "2Gi"
+#              cpu: "1000m"
+#            requests:
+#              memory: "1Gi"
+#              cpu: "500m"
