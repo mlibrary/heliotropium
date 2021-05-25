@@ -1,4 +1,4 @@
-name: package-branch-image
+name: package-nginx-image
 
 on: workflow_dispatch
 
@@ -13,7 +13,9 @@ jobs:
         id: url-GPR
         with:
           access_token: ${{ secrets.GITHUB_TOKEN }}
-          image_name: fulcimen
+          context: ./nginx
+          dockerfile: ./nginx/Dockerfile.nginx
+          image_name: nginx
           tags: |
             latest
             ${{ github.sha }}

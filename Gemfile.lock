@@ -333,6 +333,7 @@ DEPENDENCIES
   nio4r (= 2.5.1)
   puma (= 4.3.8)
   rails (~> 5.2.6)
+  rake
   rspec-rails (~> 4.0)
   rubocop-performance (~> 1.2)
   rubocop-rspec (~> 1.32)

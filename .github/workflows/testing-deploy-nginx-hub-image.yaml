@@ -1,0 +1,64 @@
+name: testing-deploy-nginx-hub-image
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: fulcrum-testing
+    steps:
+      - name: Setup Kubectl
+        uses: azure/setup-kubectl@v1
+      - name: Authenticate with kubernetes
+        run: |
+          mkdir -p ${HOME}/.kube/certs/cluster
+          echo ${{ secrets.CA_CRT_BASE64 }} | base64 -d > ${HOME}/.kube/certs/cluster/k8s-ca.crt
+          kubectl config set-cluster cluster --certificate-authority=${HOME}/.kube/certs/cluster/k8s-ca.crt --server=`echo ${{ secrets.SERVER_URL_BASE64 }} | base64 -d`
+          kubectl config set-credentials default --token=`echo ${{ secrets.TOKEN_BASE64 }} | base64 -d`
+          kubectl config set-context default --cluster=cluster --user=default --namespace=`echo ${{ secrets.NAMESPACE_BASE64 }} | base64 -d`
+          kubectl config use-context default
+          kubectl config view
+          kubectl config current-context
+      - name: Deploy with kubectl
+        run: |
+          kubectl apply -f - <<EOF
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            labels:
+              app: nginx
+            name: nginx
+          spec:
+            replicas: 1
+            selector:
+              matchLabels:
+                app: nginx
+            template:
+              metadata:
+                annotations:
+                  imageregistry: "https://hub.docker.com/"
+                labels:
+                  app: nginx
+              spec:
+                containers:
+                  - name: nginx
+                    image: nginx
+                    ports:
+                      - containerPort: 80
+          EOF
+          kubectl apply -f - <<EOF
+          apiVersion: v1
+          kind: Service
+          metadata:
+            labels:
+              app: nginx
+            name: web
+          spec:
+            ports:
+              - port: 80
+                protocol: TCP
+                targetPort: 80
+            selector:
+              app: nginx
+            type: LoadBalancer
+          EOF

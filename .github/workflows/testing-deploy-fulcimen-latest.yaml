@@ -1,4 +1,4 @@
-name: deploy-branch-to-testing
+name: testing-deploy-fulcimen-latest
 
 on: workflow_dispatch
 
@@ -7,14 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     environment: fulcrum-testing
     steps:
-      - name: GITHUB_SHA
-        run: echo "$GITHUB_SHA"
-      - name: GITHUB_REF
-        run: echo "$GITHUB_REF"
-      - name: SECRETS
-        env:
-          SECRETS: ${{ toJson(secrets) }}
-        run: echo "$SECRETS"
+      - name: Checkout
+        uses: actions/checkout@v2
       - name: Setup Kubectl
         uses: azure/setup-kubectl@v1
       - name: Authenticate with kubernetes
@@ -25,8 +19,9 @@ jobs:
           kubectl config set-credentials default --token=`echo ${{ secrets.TOKEN_BASE64 }} | base64 -d`
           kubectl config set-context default --cluster=cluster --user=default --namespace=`echo ${{ secrets.NAMESPACE_BASE64 }} | base64 -d`
           kubectl config use-context default
-      - name: Deploy
-        run: |
           kubectl config view
           kubectl config current-context
-#          kubectl set image deployment web web=docker.pkg.github.com/mlibrary/patron_account/patron_account:${{ steps.tag_check.outputs.tag }}
+      - name: Deploy with kubectl apply
+        run: |
+          kubectl apply -f ./.github/manifests/fulcimen-latest-deployment.yaml
+          kubectl apply -f ./.github/manifests/fulcimen-load-balancer-service.yaml

@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: web
+  name: web
+spec:
+  ports:              # Lists of named subobjects preferred over maps
+    - nodePort: 30000 # externally exposed port e.g. localhost:30080
+      port: 80        # static node port (virtual or physical machine) e.g. docker-desktop
+      protocol: TCP
+      targetPort: 80  # container port e.g. deployment/nginx
+  selector:
+    app: web
+  type: NodePort
