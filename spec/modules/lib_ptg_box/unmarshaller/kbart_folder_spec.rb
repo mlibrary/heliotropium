@@ -19,7 +19,7 @@ RSpec.describe LibPtgBox::Unmarshaller::KbartFolder do
 
     context 'with files' do
       let(:ftp_files) { [ftp_file] }
-      let(:ftp_file) { instance_double(Ftp::File, 'ftp_file') }
+      let(:ftp_file) { instance_double(Ftp::File, 'ftp_file', extension: '.csv') }
       let(:kbart_file) { instance_double(LibPtgBox::Unmarshaller::KbartFile, 'kbart_file') }
 
       before do
