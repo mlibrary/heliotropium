@@ -16,6 +16,10 @@ module Ftp
       ::File.basename(@pathname)
     end
 
+    def extension
+      ::File.extname(@pathname)
+    end
+
     def updated
       Date.parse(@facts['modify'].to_s)
     end

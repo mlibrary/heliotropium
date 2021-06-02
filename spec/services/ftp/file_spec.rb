@@ -8,7 +8,8 @@ RSpec.describe Ftp::File do
   let(:service) { instance_double(Ftp::Service, 'service', host: 'host', user: 'user', password: 'password') }
   let(:pathname) { File.join(dirname, filename) }
   let(:dirname) { 'dir' }
-  let(:filename) { 'file' }
+  let(:extension) { 'ext' }
+  let(:filename) { 'file' + '.' + extension }
   let(:facts) { { 'type' => 'file', 'modify' => Time.now.to_s } }
 
   describe '#null_file' do
@@ -23,6 +24,12 @@ RSpec.describe Ftp::File do
     subject { file.name }
 
     it { is_expected.to eq(filename) }
+  end
+
+  describe '#extension' do
+    subject { file.extension }
+
+    it { is_expected.to eq('.' + extension) }
   end
 
   describe '#updated' do
