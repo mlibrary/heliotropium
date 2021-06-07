@@ -1,0 +1,12 @@
+name: deploy-branch-to-testing
+
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: GITHUB_SHA
+        run: echo "GITHUB_SHA ${{ env.GITHUB_SHA }}"
+      - name: GITHUB_REF
+        run: echo "GITHUB_REF ${{ env.GITHUB_REF }}"
