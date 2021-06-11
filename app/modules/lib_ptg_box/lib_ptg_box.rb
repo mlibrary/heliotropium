@@ -93,7 +93,7 @@ module LibPtgBox
       log
     end
 
-    def synchronize_kbart_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity
+    def synchronize_kbart_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
       log = []
 
       # Previous KBART records list

@@ -20,7 +20,7 @@ module LibPtgBox
       nil
     end
 
-    def marcs # rubocop:disable  Metrics/MethodLength, Metrics/AbcSize
+    def marcs # rubocop:disable  Metrics/MethodLength
       @marcs ||= begin
         marcs = []
         MarcRecord.where(folder: @collection.key).each do |marc_record|

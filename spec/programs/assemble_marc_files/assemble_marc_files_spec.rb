@@ -130,7 +130,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     subject(:create_selection_marc_delta_files) { program.create_selection_marc_delta_files(selection) }
 
     let(:today) { Time.now }
-    let(:filename) { selection.name + '_update_' + format("%04d-%02d-%02d", today.year, today.month, 15) }
+    let(:filename) { "#{selection.name}_update_#{format('%04d-%02d-%02d', today.year, today.month, 15)}" }
     let(:writer) { instance_double(MARC::Writer, 'writer') }
     let(:xml_writer) { instance_double(MARC::XMLWriter, 'xml_writer') }
 
@@ -237,12 +237,12 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         [
           '.',
           '..',
-          selection.name + '.mrc',
-          selection.name + '.xml',
-          selection.name + format("-%02d", month) + '.mrc',
-          selection.name + format("-%02d", month) + '.xml',
-          collection.name + '_Complete.mrc',
-          collection.name + '_Complete.xml'
+          "#{selection.name}.mrc",
+          "#{selection.name}.xml",
+          "#{selection.name}#{format('-%02d', month)}.mrc",
+          "#{selection.name}#{format('-%02d', month)}.xml",
+          "#{collection.name}_Complete.mrc",
+          "#{collection.name}_Complete.xml"
         ]
       end
 
@@ -254,12 +254,12 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         expect(upload_marc_files).to match_array ["#{selection_name}.xml", "#{selection_name}.mrc", "#{selection_name}-#{month_string}.xml", "#{selection_name}-#{month_string}.mrc", "#{collection.name}_Complete.xml", "#{collection.name}_Complete.mrc"]
         expect(collection).not_to have_received(:upload_marc_file).with('.')
         expect(collection).not_to have_received(:upload_marc_file).with('..')
-        expect(collection).to have_received(:upload_marc_file).with(selection.name + '.mrc')
-        expect(collection).to have_received(:upload_marc_file).with(selection.name + '.xml')
-        expect(collection).to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.mrc')
-        expect(collection).to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.xml')
-        expect(collection).to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
-        expect(collection).to have_received(:upload_marc_file).with(collection.name + '_Complete.xml')
+        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.mrc")
+        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.xml")
+        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.mrc")
+        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.xml")
+        expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.mrc")
+        expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.xml")
         expect(program.errors).to be_empty
       end
 
@@ -274,32 +274,32 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
           expect(upload_marc_files).to be_empty
           expect(collection).not_to have_received(:upload_marc_file).with('.')
           expect(collection).not_to have_received(:upload_marc_file).with('..')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + '.mrc')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + '.xml')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.mrc')
-          expect(collection).not_to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.xml')
-          expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
-          expect(collection).not_to have_received(:upload_marc_file).with(collection.name + '_Complete.xml')
+          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}.mrc")
+          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}.xml")
+          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.mrc")
+          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.xml")
+          expect(collection).not_to have_received(:upload_marc_file).with("#{collection.name}_Complete.mrc")
+          expect(collection).not_to have_received(:upload_marc_file).with("#{collection.name}_Complete.xml")
           expect(program.errors).to be_empty
         end
       end
 
       context 'when upload error' do
         before do
-          allow(collection).to receive(:upload_marc_file).with(collection.name + '_Complete.mrc').and_raise(StandardError)
+          allow(collection).to receive(:upload_marc_file).with("#{collection.name}_Complete.mrc").and_raise(StandardError)
         end
 
         it do
           expect(upload_marc_files).to match_array ["#{selection_name}.xml", "#{selection_name}.mrc", "#{selection_name}-#{month_string}.xml", "#{selection_name}-#{month_string}.mrc", "#{collection.name}_Complete.xml"]
           expect(collection).not_to have_received(:upload_marc_file).with('.')
           expect(collection).not_to have_received(:upload_marc_file).with('..')
-          expect(collection).to have_received(:upload_marc_file).with(selection.name + '.mrc')
-          expect(collection).to have_received(:upload_marc_file).with(selection.name + '.xml')
-          expect(collection).to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.mrc')
-          expect(collection).to have_received(:upload_marc_file).with(selection.name + format("-%02d", month) + '.xml')
-          expect(collection).to have_received(:upload_marc_file).with(collection.name + '_Complete.mrc')
-          expect(collection).to have_received(:upload_marc_file).with(collection.name + '_Complete.xml')
-          expect(program.errors).to contain_exactly("ERROR Uploading #{collection.name + '_Complete.mrc'} StandardError")
+          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.mrc")
+          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.xml")
+          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.mrc")
+          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.xml")
+          expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.mrc")
+          expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.xml")
+          expect(program.errors).to contain_exactly("ERROR Uploading #{"#{collection.name}_Complete.mrc"} StandardError")
         end
       end
     end

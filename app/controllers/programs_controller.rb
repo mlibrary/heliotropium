@@ -7,7 +7,7 @@ class ProgramsController < ApplicationController
 
   def show; end
 
-  def run # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize, Metrics/PerceivedComplexity
+  def run # rubocop:disable Metrics/MethodLength, Metrics/CyclomaticComplexity, Metrics/AbcSize
     case params[:id]
     when 'assemble_marc_files'
       options = {}

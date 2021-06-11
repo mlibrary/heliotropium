@@ -26,7 +26,7 @@ class Resource
   end
 
   def resource_token
-    @resource_token ||= resource_type.to_s + ':' + resource_id.to_s
+    @resource_token ||= "#{resource_type}:#{resource_id}"
   end
 
   protected
@@ -44,10 +44,4 @@ end
 
 class NullResource < Resource
   private_class_method :new
-
-  private
-
-    def initialize(uuid)
-      super(uuid)
-    end
 end

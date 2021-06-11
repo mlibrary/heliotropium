@@ -87,7 +87,6 @@ gem 'jquery-rails', '~> 4.3'
 # Moku freeze
 gem 'nio4r', '= 2.5.1'
 gem 'puma', '4.3.8'
-gem 'rake'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
