@@ -44,7 +44,7 @@ class Uuid < ApplicationRecord
       uuid_unpack(uuid_generator_packed)
     end
 
-    def uuid_pack(unpacked) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def uuid_pack(unpacked) # rubocop:disable Metrics/MethodLength
       text = unpacked.dup
       text.delete!('-')
       return uuid_null_packed unless text.length == 32
@@ -52,20 +52,20 @@ class Uuid < ApplicationRecord
       bytes = []
       16.times do |i|
         n = 2 * i
-        bytes.push(('0x' + text[n] + text[n + 1]).to_i(16))
+        bytes.push(("0x#{text[n]}#{text[n + 1]}").to_i(16))
       end
       bytes.pack('C*').force_encoding('ascii-8bit')
     rescue StandardError => _e
       uuid_null_packed
     end
 
-    def uuid_unpack(packed) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+    def uuid_unpack(packed) # rubocop:disable Metrics/MethodLength
       return uuid_null_unpacked unless packed.length == 16
 
       unpacked = []
       16.times do |i|
         byte = packed[i].bytes[0].to_s(16)
-        unpacked.push(byte.length == 1 ? '0' + byte : byte)
+        unpacked.push(byte.length == 1 ? "0#{byte}" : byte)
       end
       unpacked = unpacked.join
       unpacked.insert(8, '-')
@@ -105,7 +105,7 @@ class Uuid < ApplicationRecord
   end
 
   def resource_token
-    @resource_token ||= resource_type.to_s + ':' + resource_id.to_s
+    @resource_token ||= "#{resource_type}:#{resource_id}"
   end
 
   protected

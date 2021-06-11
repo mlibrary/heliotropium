@@ -9,7 +9,7 @@ RSpec.describe Ftp::File do
   let(:pathname) { File.join(dirname, filename) }
   let(:dirname) { 'dir' }
   let(:extension) { 'ext' }
-  let(:filename) { 'file' + '.' + extension }
+  let(:filename) { "file.#{extension}" }
   let(:facts) { { 'type' => 'file', 'modify' => Time.now.to_s } }
 
   describe '#null_file' do
@@ -29,7 +29,7 @@ RSpec.describe Ftp::File do
   describe '#extension' do
     subject { file.extension }
 
-    it { is_expected.to eq('.' + extension) }
+    it { is_expected.to eq(".#{extension}") }
   end
 
   describe '#updated' do

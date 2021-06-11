@@ -31,7 +31,7 @@ class Identifier < ApplicationRecord
   end
 
   def resource_token
-    @resource_token ||= resource_type.to_s + ':' + resource_id.to_s
+    @resource_token ||= "#{resource_type}:#{resource_id}"
   end
 
   protected

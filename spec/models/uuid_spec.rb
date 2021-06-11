@@ -129,7 +129,7 @@ RSpec.describe Uuid, type: :model do
     it 'is a checkpoint resource' do
       expect(uuid.resource_type).to eq(:Uuid)
       expect(uuid.resource_id).to eq(uuid.id)
-      expect(uuid.resource_token).to eq(uuid.resource_type.to_s + ':' + uuid.resource_id.to_s)
+      expect(uuid.resource_token).to eq("#{uuid.resource_type}:#{uuid.resource_id}")
     end
   end
 
@@ -161,7 +161,7 @@ RSpec.describe Uuid, type: :model do
         expect(UuidIdentifier.count).to eq(index + 1)
       end
 
-      identifiers.each_with_index do |identifier, index|
+      identifiers.each_with_index do |identifier, index| # rubocop:disable Style/CombinableLoops
         expect(uuid.update?).to be false
         expect(uuid.destroy?).to be false
         expect(uuid.identifiers.count).to eq(n - index)

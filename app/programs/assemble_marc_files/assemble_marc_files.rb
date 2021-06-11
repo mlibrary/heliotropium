@@ -76,8 +76,8 @@ module AssembleMarcFiles
       # The "solution", I guess, is to write the XML file out first,
       # but I'd document the @^%& out of it.
 
-      xml_writer = MARC::XMLWriter.new(filename + '.xml')
-      writer = MARC::Writer.new(filename + '.mrc')
+      xml_writer = MARC::XMLWriter.new("#{filename}.xml")
+      writer = MARC::Writer.new("#{filename}.mrc")
       selection_works.keys.sort.each do |key|
         work = selection_works[key]
         xml_writer.write(work.marc.entry)
@@ -93,7 +93,7 @@ module AssembleMarcFiles
       this_delta = Time.now
       this_delta_date = Date.new(this_delta.year, this_delta.month, 15)
 
-      filename = selection.name + '_update_' + format("%04d-%02d-%02d", this_delta_date.year, this_delta_date.month, this_delta_date.day)
+      filename = "#{selection.name}_update_#{format('%04d-%02d-%02d', this_delta_date.year, this_delta_date.month, this_delta_date.day)}"
 
       selection_works = {}
       selection.works.each do |work|
@@ -116,8 +116,8 @@ module AssembleMarcFiles
       # The "solution", I guess, is to write the XML file out first,
       # but I'd document the @^%& out of it.
 
-      xml_writer = MARC::XMLWriter.new(filename + '.xml')
-      writer = MARC::Writer.new(filename + '.mrc')
+      xml_writer = MARC::XMLWriter.new("#{filename}.xml")
+      writer = MARC::Writer.new("#{filename}.mrc")
       selection_works.keys.sort.each do |key|
         work = selection_works[key]
         xml_writer.write(work.marc.entry)
@@ -128,7 +128,7 @@ module AssembleMarcFiles
     end
 
     def recreate_collection_marc_files(collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
-      filename = collection.name + '_Complete'
+      filename = "#{collection.name}_Complete"
 
       collection_works = {}
       collection.selections.each do |selection|
@@ -152,8 +152,8 @@ module AssembleMarcFiles
       # The "solution", I guess, is to write the XML file out first,
       # but I'd document the @^%& out of it.
 
-      xml_writer = MARC::XMLWriter.new(filename + '.xml')
-      writer = MARC::Writer.new(filename + '.mrc')
+      xml_writer = MARC::XMLWriter.new("#{filename}.xml")
+      writer = MARC::Writer.new("#{filename}.mrc")
       collection_works.keys.sort.each do |key|
         work = collection_works[key]
         xml_writer.write(work.marc.entry)

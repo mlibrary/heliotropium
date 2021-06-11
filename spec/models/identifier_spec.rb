@@ -8,7 +8,7 @@ RSpec.describe Identifier, type: :model do
   it 'is a checkpoint resource' do
     expect(identifier.resource_type).to eq(:Identifier)
     expect(identifier.resource_id).to eq(identifier.id)
-    expect(identifier.resource_token).to eq(identifier.resource_type.to_s + ':' + identifier.resource_id.to_s)
+    expect(identifier.resource_token).to eq("#{identifier.resource_type}:#{identifier.resource_id}")
   end
 
   it do

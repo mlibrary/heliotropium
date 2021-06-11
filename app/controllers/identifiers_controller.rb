@@ -53,7 +53,7 @@ class IdentifiersController < ApplicationController
     end
   end
 
-  def update # rubocop:disable Metrics/PerceivedComplexity, Metrics/MethodLength, Metrics/AbcSize
+  def update # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
     update_identifier_params = identifier_params
     update_identifier_params[:uuid] = if update_identifier_params[:uuid].present?
                                         Identifier.find(update_identifier_params[:uuid]).uuid
