@@ -91,7 +91,7 @@ module AssembleMarcFiles
       prev_delta = 1.month.ago
       prev_delta_date = Date.new(prev_delta.year, prev_delta.month, 15)
       this_delta = Time.now
-      this_delta_date = Date.new(this_delta.year, this_delta.month, 15)
+      this_delta_date = Date.new(this_delta.year, this_delta.month, 16)
 
       filename = "#{selection.name}_update_#{format('%04d-%02d-%02d', this_delta_date.year, this_delta_date.month, this_delta_date.day)}"
 
