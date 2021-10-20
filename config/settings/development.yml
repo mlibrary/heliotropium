@@ -5,8 +5,13 @@ rails:
     database: heliotropium_development
   secret_key_base: 27fc74bd05cadc898d8dd37f4ecd39390db036f8cbe96a7f9f2e79fc05bb4eb0a7f687d388e7c18692833cfee6e129043dfd13ce41ca42e3416823ca5a46949e
 
-lib_ptg_box:
-  ftp: <%= ENV['LIB_PTG_BOX_FTP'] || 'ftp.box.com' %>
-  user: <%= ENV['LIB_PTG_BOX_USER'] || 'user@umich.edu' %>
-  password: <%= ENV['LIB_PTG_BOX_PASSWORD'] || 'password' %>
-  root: <%= ENV['LIB_PTG_BOX_ROOT'] || 'Library PTG Box' %>
+ftp_fulcrum_org:
+  host: <%= ENV['FTP_FULCRUM_ORG_HOST'] || 'ftp.fulcrum.org' %>
+  port: <%= ENV['FTP_FULCRUM_ORG_PORT'] || 22 %>
+  user: <%= ENV['FTP_FULCRUM_ORG_USER'] || 'user' %>
+  password: <%= ENV['FTP_FULCRUM_ORG_PASSWORD'] || 'password' %>
+  home: <%= ENV['FTP_FULCRUM_ORG_HOME'] || '/home/fulcrum_ftp/heliotropium' %>
+  cat: <%= ENV['FTP_FULCRUM_ORG_CAT'] || 'cataloging' %>
+  pub: <%= ENV['FTP_FULCRUM_ORG_PUB'] || 'publishing' %>
+  kbart: <%= ENV['FTP_FULCRUM_ORG_KBART'] || 'KBART' %>
+  marc: <%= ENV['FTP_FULCRUM_ORG_MARC'] || 'MARC' %>

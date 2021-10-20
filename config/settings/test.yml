@@ -8,3 +8,51 @@ rails:
     database: heliotropium_test
     timeout: 10000
   secret_key_base: 7ecce1a2e07ee661ba71a5737cdf4a024aec8ef3d21d8cf5b23c2270d2a09487a7227179c5ac7185890fb2b00e14e97db756636498c5e8e5062e16f42f178df2
+
+# Keys used by application mailers
+mailers:
+  administrators:
+    - admin@testing.com
+  no_reply: no-reply@testing.com
+
+# Keys used by FtpFulcrumOrg module
+ftp_fulcrum_org:
+  host: <host>
+  port: 22
+  user: <user>
+  password: <password>
+  home: '/home/testing'
+  cat: cataloging
+  pub: publishing
+  kbart: KBART
+  marc: MARC
+  publishers:
+    - key: testing
+      name: testing
+      cat: TESTING
+      pub: TESTING
+      mailers:
+        encoding_error:
+          to:
+            - to_encoding_error@testing.com
+          from:
+            - from_encoding_error@testing.com
+          bcc:
+            - bcc_encoding_error@testing.com
+          subject: TESTING MARC record encoding errors
+        missing_record:
+          to:
+            - to_missing_record@testing.com
+          from:
+            - from_missing_record@testing.com
+          bcc:
+            - bcc_missing_record@testing.com
+          subject: TESTING missing MARC records
+        marc_file_updates:
+          to:
+            - to_marc_file_updates@testing.com
+          from:
+            - from_marc_file_updates@testing.com
+          bcc:
+            - bcc_marc_file_updates@testing.com
+          subject: TESTING MARC file updates

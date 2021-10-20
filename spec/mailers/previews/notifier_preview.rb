@@ -7,60 +7,60 @@ class NotifierPreview < ActionMailer::Preview
   end
 
   def amherst_press_encoding_error
-    NotifierMailer.encoding_error(collection('amherst'), "Hello World!!!")
+    NotifierMailer.encoding_error(publisher('amherst'), "Hello World!!!")
   end
 
   def amherst_press_missing_record
-    NotifierMailer.missing_record(collection('amherst'), "Hello World!!!")
+    NotifierMailer.missing_record(publisher('amherst'), "Hello World!!!")
   end
 
   def amherst_press_marc_file_updates
-    NotifierMailer.marc_file_updates(collection('amherst'), "Hello World!!!")
+    NotifierMailer.marc_file_updates(publisher('amherst'), "Hello World!!!")
   end
 
   def bar_encoding_error
-    NotifierMailer.encoding_error(collection('bar'), "Hello World!!!")
+    NotifierMailer.encoding_error(publisher('bar'), "Hello World!!!")
   end
 
   def bar_missing_record
-    NotifierMailer.missing_record(collection('bar'), "Hello World!!!")
+    NotifierMailer.missing_record(publisher('bar'), "Hello World!!!")
   end
 
   def bar_marc_file_updates
-    NotifierMailer.marc_file_updates(collection('bar'), "Hello World!!!")
+    NotifierMailer.marc_file_updates(publisher('bar'), "Hello World!!!")
   end
 
   def lever_press_encoding_error
-    NotifierMailer.encoding_error(collection('leverpress'), "Hello World!!!")
+    NotifierMailer.encoding_error(publisher('leverpress'), "Hello World!!!")
   end
 
   def lever_press_missing_record
-    NotifierMailer.missing_record(collection('leverpress'), "Hello World!!!")
+    NotifierMailer.missing_record(publisher('leverpress'), "Hello World!!!")
   end
 
   def lever_press_marc_file_updates
-    NotifierMailer.marc_file_updates(collection('leverpress'), "Hello World!!!")
+    NotifierMailer.marc_file_updates(publisher('leverpress'), "Hello World!!!")
   end
 
   def umpebc_encoding_error
-    NotifierMailer.encoding_error(collection('umpebc'), "Hello World!!!")
+    NotifierMailer.encoding_error(publisher('umpebc'), "Hello World!!!")
   end
 
   def umpebc_missing_record
-    NotifierMailer.missing_record(collection('umpebc'), "Hello World!!!")
+    NotifierMailer.missing_record(publisher('umpebc'), "Hello World!!!")
   end
 
   def umpebc_marc_file_updates
-    NotifierMailer.marc_file_updates(collection('umpebc'), "Hello World!!!")
+    NotifierMailer.marc_file_updates(publisher('umpebc'), "Hello World!!!")
   end
 
   private
 
-    def collection(key)
-      Settings.lib_ptg_box.collections.each do |collection|
-        next unless collection.key == key
+    def publisher(key)
+      Settings.ftp_fulcrum_org.publishers.each do |publisher|
+        next unless publisher.key == key
 
-        return collection
+        return publisher
       end
     end
 end
