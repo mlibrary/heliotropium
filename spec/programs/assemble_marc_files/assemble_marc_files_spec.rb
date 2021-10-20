@@ -3,42 +3,41 @@
 require 'rails_helper'
 
 RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
-  subject(:program) { described_class.new(lib_ptg_box) }
+  subject(:program) { described_class.new(ftp_fulcrum_org) }
 
-  let(:lib_ptg_box) { instance_double(LibPtgBox::LibPtgBox, 'lib_ptg_box', collections: [collection]) }
-  let(:collection) { instance_double(LibPtgBox::Collection, 'collection', key: collection_key, name: collection_name, selections: [selection], catalog: catalog) }
-  let(:collection_key) { 'collection' }
-  let(:collection_name) { 'Collection' }
-  let(:selection) { instance_double(LibPtgBox::Selection, 'selection', name: selection_name, updated: selection_updated, works: [work]) }
-  let(:selection_name) { "Selection_#{selection_year}" }
-  let(:selection_year) { Date.today.year }
-  let(:selection_updated) { Date.today }
-  let(:work) { instance_double(LibPtgBox::Work, 'work', doi: work_doi, url: work_url, title: 'title', date: 'date', print: 'print', online: 'online', name: work_name, marc?: work_marc, marc: marc) }
+  let(:ftp_fulcrum_org) { instance_double(FtpFulcrumOrg::FtpFulcrumOrg, 'ftp_fulcrum_org', publishers: [publisher]) }
+  let(:publisher) { instance_double(FtpFulcrumOrg::Publisher, 'publisher', key: publisher_key, name: publisher_name, collections: [collection], catalog: catalog) }
+  let(:publisher_key) { 'publisher' }
+  let(:publisher_name) { 'Publisher' }
+  let(:collection) { instance_double(FtpFulcrumOrg::Collection, 'collection', name: collection_name, updated: collection_updated, works: [work]) }
+  let(:collection_name) { "Selection_#{collection_year}" }
+  let(:collection_year) { Date.today.year }
+  let(:collection_updated) { Date.today }
+  let(:work) { instance_double(FtpFulcrumOrg::Work, 'work', doi: work_doi, url: work_url, title: 'title', date: 'date', print: 'print', online: 'online', name: work_name, marc?: work_marc, marc: marc) }
   let(:work_doi) { '10.3998/mpub.123456789' }
   let(:work_url) { "https://doi.org/#{work_doi}" }
   let(:work_name) { 'Star Wars' }
   let(:work_marc) { false }
-  let(:marc) { instance_double(LibPtgBox::Unmarshaller::Marc, 'marc', entry: entry, doi: work_doi, to_mrc: 'to_mrc') }
+  let(:marc) { instance_double(FtpFulcrumOrg::Marc, 'marc', entry: entry, doi: work_doi, to_mrc: 'to_mrc') }
   let(:entry) { instance_double(MARC::Record, 'entry') }
-  let(:catalog) { instance_double(LibPtgBox::Catalog, 'catalog') }
-  let(:umpebc) { 'UMPEBC' }
+  let(:catalog) { instance_double(FtpFulcrumOrg::Catalog, 'catalog') }
 
   before do
-    LibPtgBox.chdir_lib_ptg_box_dir
+    FtpFulcrumOrg.chdir_ftp_fulcrum_org_dir
     program
-    allow(LibPtgBox::LibPtgBox).to receive(:new).and_return(lib_ptg_box)
-    allow(selection).to receive(:collection).and_return(collection)
+    allow(FtpFulcrumOrg::FtpFulcrumOrg).to receive(:new).and_return(ftp_fulcrum_org)
+    allow(collection).to receive(:publisher).and_return(publisher)
   end
 
   describe '#assemble_marc_files' do
-    subject(:assemble_marc_files) { program.assemble_marc_files(collection, false) }
+    subject(:assemble_marc_files) { program.assemble_marc_files(publisher, false) }
 
     let(:record) { instance_double(KbartFile, 'record', id: 'id', updated: record_updated, verified: true) }
-    let(:record_updated) { selection_updated }
+    let(:record_updated) { collection_updated }
 
     before do
-      allow(KbartFile).to receive(:find_by).with(folder: collection.key, name: selection.name).and_return(record)
-      allow(program).to receive(:upload_marc_files).with(collection).and_return("upload\n")
+      allow(KbartFile).to receive(:find_by).with(folder: publisher.key, name: collection.name).and_return(record)
+      allow(program).to receive(:upload_marc_files).with(publisher).and_return("upload\n")
     end
 
     it do
@@ -46,16 +45,16 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       expect(program.errors).to be_empty
     end
 
-    context 'when selection updated' do
+    context 'when collection updated' do
       let(:month) { Date.today.month }
       let(:record_updated) { Date.yesterday }
       let(:updated) { 'updated' }
 
       before do
         allow(record).to receive(:verified=).with(true)
-        allow(program).to receive(:recreate_selection_marc_files).with(record, selection).and_return("select\n")
-        allow(program).to receive(:recreate_collection_marc_files).with(collection).and_return("collect\n")
-        allow(record).to receive(:updated=).with(selection_updated)
+        allow(program).to receive(:recreate_collection_marc_files).with(record, collection).and_return("select\n")
+        allow(program).to receive(:recreate_publisher_marc_files).with(publisher).and_return("collect\n")
+        allow(record).to receive(:updated=).with(collection_updated)
         allow(record).to receive(:save!).with(no_args)
       end
 
@@ -64,8 +63,8 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         expect(program.errors).to be_empty
       end
 
-      context 'when selection year updated' do
-        let(:selection_year) { Date.today.year }
+      context 'when collection year updated' do
+        let(:collection_year) { Date.today.year }
 
         it do
           assemble_marc_files
@@ -75,11 +74,11 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
   end
 
-  describe '#recreate_selection_marc_files' do
-    subject(:recreate_selection_marc_files) { program.recreate_selection_marc_files(record, selection) }
+  describe '#recreate_collection_marc_files' do
+    subject(:recreate_collection_marc_files) { program.recreate_collection_marc_files(record, collection) }
 
     let(:record) { instance_double(KbartFile, 'record') }
-    let(:filename) { selection.name }
+    let(:filename) { collection.name }
     let(:mrc_file) { instance_double(File, 'mrc_file') }
     let(:xml_file) { instance_double(File, 'xml_file') }
 
@@ -88,7 +87,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
 
     it do
-      recreate_selection_marc_files
+      recreate_collection_marc_files
       expect(program.errors).to contain_exactly("", "#{filename} MISSING MARC Record", "https://doi.org/10.3998/mpub.123456789", "online (online)", "print (print)", "title (date)")
     end
 
@@ -100,37 +99,37 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       let(:kbart_marc) { instance_double(KbartMarc, 'kbart_marc', updated: Date.parse('1970-01-01')) }
 
       before do
-        allow(MARC::Writer).to receive(:new).with("#{selection_name}.mrc").and_return(writer)
+        allow(MARC::Writer).to receive(:new).with("#{collection_name}.mrc").and_return(writer)
         allow(writer).to receive(:write).with(entry)
         allow(writer).to receive(:close)
-        allow(MARC::XMLWriter).to receive(:new).with("#{selection_name}.xml").and_return(xml_writer)
+        allow(MARC::XMLWriter).to receive(:new).with("#{collection_name}.xml").and_return(xml_writer)
         allow(xml_writer).to receive(:write).with(entry)
         allow(xml_writer).to receive(:close)
-        allow(KbartMarc).to receive(:find_or_create_by!).with(folder: collection_key, file: selection_name, doi: work.doi).and_return(kbart_marc)
+        allow(KbartMarc).to receive(:find_or_create_by!).with(folder: publisher_key, file: collection_name, doi: work.doi).and_return(kbart_marc)
         allow(kbart_marc).to receive(:save!)
       end
 
       it do
-        recreate_selection_marc_files
-        expect(MARC::Writer).to have_received(:new).with("#{selection_name}.mrc")
+        recreate_collection_marc_files
+        expect(MARC::Writer).to have_received(:new).with("#{collection_name}.mrc")
         expect(writer).to have_received(:write).with(entry)
         expect(writer).to have_received(:close)
-        expect(MARC::XMLWriter).to have_received(:new).with("#{selection_name}.xml")
+        expect(MARC::XMLWriter).to have_received(:new).with("#{collection_name}.xml")
         expect(xml_writer).to have_received(:write).with(entry)
         expect(xml_writer).to have_received(:close)
-        expect(KbartMarc).to have_received(:find_or_create_by!).with(folder: collection_key, file: selection_name, doi: work.doi)
-        expect(kbart_marc).not_to have_received(:updated).with(selection_updated)
+        expect(KbartMarc).to have_received(:find_or_create_by!).with(folder: publisher_key, file: collection_name, doi: work.doi)
+        expect(kbart_marc).not_to have_received(:updated).with(collection_updated)
         expect(kbart_marc).not_to have_received(:save!)
         expect(program.errors).to be_empty
       end
     end
   end
 
-  describe '#create_selection_marc_delta_files' do
-    subject(:create_selection_marc_delta_files) { program.create_selection_marc_delta_files(selection) }
+  describe '#create_collection_marc_delta_files' do
+    subject(:create_collection_marc_delta_files) { program.create_collection_marc_delta_files(collection) }
 
     let(:today) { Time.now }
-    let(:filename) { "#{selection.name}_update_#{format('%04d-%02d-%02d', today.year, today.month, 15)}" }
+    let(:filename) { "#{collection.name}_update_#{format('%04d-%02d-%02d', today.year, today.month, 15)}" }
     let(:writer) { instance_double(MARC::Writer, 'writer') }
     let(:xml_writer) { instance_double(MARC::XMLWriter, 'xml_writer') }
 
@@ -144,7 +143,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
 
     it do
-      create_selection_marc_delta_files
+      create_collection_marc_delta_files
       expect(MARC::Writer).not_to have_received(:new).with("#{filename}.mrc")
       expect(writer).not_to have_received(:write).with(entry)
       expect(writer).not_to have_received(:close)
@@ -160,12 +159,12 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       let(:updated) { Date.new(today.year, today.month, 1) } # Greater than previous delta and less than or equal this delta
 
       before do
-        allow(KbartMarc).to receive(:find_by!).with(folder: collection_key, file: selection_name, doi: work.doi).and_return(kbart_marc)
+        allow(KbartMarc).to receive(:find_by!).with(folder: publisher_key, file: collection_name, doi: work.doi).and_return(kbart_marc)
         allow(kbart_marc).to receive(:updated).and_return(updated)
       end
 
       it do
-        create_selection_marc_delta_files
+        create_collection_marc_delta_files
         expect(MARC::Writer).to have_received(:new).with("#{filename}.mrc")
         expect(writer).to have_received(:write).with(entry)
         expect(writer).to have_received(:close)
@@ -177,17 +176,17 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
     end
   end
 
-  describe '#recreate_collection_marc_files' do
-    subject(:recreate_collection_marc_files) { program.recreate_collection_marc_files(collection) }
+  describe '#recreate_publisher_marc_files' do
+    subject(:recreate_publisher_marc_files) { program.recreate_publisher_marc_files(publisher) }
 
     it do
-      recreate_collection_marc_files
+      recreate_publisher_marc_files
       expect(program.errors).to be_empty
     end
 
     context 'when catalog marc record' do
       let(:work_marc) { true }
-      let(:complete_name) { "#{collection_name}_Complete" }
+      let(:complete_name) { "#{publisher_name}_Complete" }
       let(:writer) { instance_double(MARC::Writer, 'writer') }
       let(:xml_writer) { instance_double(MARC::XMLWriter, 'xml_writer') }
 
@@ -201,7 +200,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       end
 
       it do
-        recreate_collection_marc_files
+        recreate_publisher_marc_files
         expect(MARC::Writer).to have_received(:new).with("#{complete_name}.mrc")
         expect(writer).to have_received(:write).with(entry)
         expect(writer).to have_received(:close)
@@ -214,18 +213,18 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   end
 
   describe '#upload_marc_files' do
-    subject(:upload_marc_files) { program.upload_marc_files(collection) }
+    subject(:upload_marc_files) { program.upload_marc_files(publisher) }
 
     let(:entries) { ['.', '..'] }
 
     before do
       allow(Dir).to receive(:entries).with(Dir.pwd).and_return(entries)
-      allow(collection).to receive(:upload_marc_file)
+      allow(publisher).to receive(:upload_marc_file)
     end
 
     it do
       expect(upload_marc_files).to be_empty
-      expect(collection).not_to have_received(:upload_marc_file)
+      expect(publisher).not_to have_received(:upload_marc_file)
       expect(program.errors).to be_empty
     end
 
@@ -237,12 +236,12 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
         [
           '.',
           '..',
-          "#{selection.name}.mrc",
-          "#{selection.name}.xml",
-          "#{selection.name}#{format('-%02d', month)}.mrc",
-          "#{selection.name}#{format('-%02d', month)}.xml",
-          "#{collection.name}_Complete.mrc",
-          "#{collection.name}_Complete.xml"
+          "#{collection.name}.mrc",
+          "#{collection.name}.xml",
+          "#{collection.name}#{format('-%02d', month)}.mrc",
+          "#{collection.name}#{format('-%02d', month)}.xml",
+          "#{publisher.name}_Complete.mrc",
+          "#{publisher.name}_Complete.xml"
         ]
       end
 
@@ -251,15 +250,15 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       end
 
       it do
-        expect(upload_marc_files).to match_array ["#{selection_name}.xml", "#{selection_name}.mrc", "#{selection_name}-#{month_string}.xml", "#{selection_name}-#{month_string}.mrc", "#{collection.name}_Complete.xml", "#{collection.name}_Complete.mrc"]
-        expect(collection).not_to have_received(:upload_marc_file).with('.')
-        expect(collection).not_to have_received(:upload_marc_file).with('..')
-        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.mrc")
-        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.xml")
-        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.mrc")
-        expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.xml")
-        expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.mrc")
-        expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.xml")
+        expect(upload_marc_files).to match_array ["#{collection_name}.xml", "#{collection_name}.mrc", "#{collection_name}-#{month_string}.xml", "#{collection_name}-#{month_string}.mrc", "#{publisher.name}_Complete.xml", "#{publisher.name}_Complete.mrc"]
+        expect(publisher).not_to have_received(:upload_marc_file).with('.')
+        expect(publisher).not_to have_received(:upload_marc_file).with('..')
+        expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}.mrc")
+        expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}.xml")
+        expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}#{format('-%02d', month)}.mrc")
+        expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}#{format('-%02d', month)}.xml")
+        expect(publisher).to have_received(:upload_marc_file).with("#{publisher.name}_Complete.mrc")
+        expect(publisher).to have_received(:upload_marc_file).with("#{publisher.name}_Complete.xml")
         expect(program.errors).to be_empty
       end
 
@@ -272,34 +271,34 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
 
         it do
           expect(upload_marc_files).to be_empty
-          expect(collection).not_to have_received(:upload_marc_file).with('.')
-          expect(collection).not_to have_received(:upload_marc_file).with('..')
-          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}.mrc")
-          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}.xml")
-          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.mrc")
-          expect(collection).not_to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.xml")
-          expect(collection).not_to have_received(:upload_marc_file).with("#{collection.name}_Complete.mrc")
-          expect(collection).not_to have_received(:upload_marc_file).with("#{collection.name}_Complete.xml")
+          expect(publisher).not_to have_received(:upload_marc_file).with('.')
+          expect(publisher).not_to have_received(:upload_marc_file).with('..')
+          expect(publisher).not_to have_received(:upload_marc_file).with("#{collection.name}.mrc")
+          expect(publisher).not_to have_received(:upload_marc_file).with("#{collection.name}.xml")
+          expect(publisher).not_to have_received(:upload_marc_file).with("#{collection.name}#{format('-%02d', month)}.mrc")
+          expect(publisher).not_to have_received(:upload_marc_file).with("#{collection.name}#{format('-%02d', month)}.xml")
+          expect(publisher).not_to have_received(:upload_marc_file).with("#{publisher.name}_Complete.mrc")
+          expect(publisher).not_to have_received(:upload_marc_file).with("#{publisher.name}_Complete.xml")
           expect(program.errors).to be_empty
         end
       end
 
       context 'when upload error' do
         before do
-          allow(collection).to receive(:upload_marc_file).with("#{collection.name}_Complete.mrc").and_raise(StandardError)
+          allow(publisher).to receive(:upload_marc_file).with("#{publisher.name}_Complete.mrc").and_raise(StandardError)
         end
 
         it do
-          expect(upload_marc_files).to match_array ["#{selection_name}.xml", "#{selection_name}.mrc", "#{selection_name}-#{month_string}.xml", "#{selection_name}-#{month_string}.mrc", "#{collection.name}_Complete.xml"]
-          expect(collection).not_to have_received(:upload_marc_file).with('.')
-          expect(collection).not_to have_received(:upload_marc_file).with('..')
-          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.mrc")
-          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}.xml")
-          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.mrc")
-          expect(collection).to have_received(:upload_marc_file).with("#{selection.name}#{format('-%02d', month)}.xml")
-          expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.mrc")
-          expect(collection).to have_received(:upload_marc_file).with("#{collection.name}_Complete.xml")
-          expect(program.errors).to contain_exactly("ERROR Uploading #{"#{collection.name}_Complete.mrc"} StandardError")
+          expect(upload_marc_files).to match_array ["#{collection_name}.xml", "#{collection_name}.mrc", "#{collection_name}-#{month_string}.xml", "#{collection_name}-#{month_string}.mrc", "#{publisher.name}_Complete.xml"]
+          expect(publisher).not_to have_received(:upload_marc_file).with('.')
+          expect(publisher).not_to have_received(:upload_marc_file).with('..')
+          expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}.mrc")
+          expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}.xml")
+          expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}#{format('-%02d', month)}.mrc")
+          expect(publisher).to have_received(:upload_marc_file).with("#{collection.name}#{format('-%02d', month)}.xml")
+          expect(publisher).to have_received(:upload_marc_file).with("#{publisher.name}_Complete.mrc")
+          expect(publisher).to have_received(:upload_marc_file).with("#{publisher.name}_Complete.xml")
+          expect(program.errors).to contain_exactly("ERROR Uploading #{"#{publisher.name}_Complete.mrc"} StandardError")
         end
       end
     end

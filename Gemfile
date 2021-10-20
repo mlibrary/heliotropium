@@ -61,10 +61,6 @@ gem 'ettin', '~> 1.2'
 # https://github.com/jmettraux/rufus-scheduler
 gem 'rufus-scheduler', '~> 3.6'
 
-# Wrapper around Box REST API
-# https://github.com/cburnette/boxr
-gem 'boxr', '~> 1.4'
-
 # A Ruby library to parse, create and manage MARC records
 # https://github.com/ruby-marc/ruby-marc
 gem 'marc', '~>1.0'
@@ -87,6 +83,9 @@ gem 'jquery-rails', '~> 4.3'
 # Moku freeze
 gem 'nio4r', '= 2.5.1'
 gem 'puma', '4.3.9'
+
+# Needed to connect to DreamHost FTP Server
+gem 'net-sftp', '~> 2.1', '>= 2.1.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

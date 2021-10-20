@@ -5,7 +5,7 @@
 # along a whole hash or array.
 
 # Application hostname, used for link, asset, and email generation.
-# More specific defaults are included in each enviroment.
+# More specific defaults are included in each environment.
 # The APP_HOSTNAME environment variable can override this.
 hostname: localhost
 
@@ -46,16 +46,22 @@ mailers:
     - admin@heliotropium.com
   no_reply: no-reply@heliotropium.com
 
-# Keys used by LibPtgBox module
-lib_ptg_box:
-  ftp: <host>
+# Keys used by FtpFulcrumOrg module
+ftp_fulcrum_org:
+  host: <host>
+  port: 22
   user: <user>
   password: <password>
-  root: <folder>
-  upload: MARC
-  collections:
+  home: '/home/fulcrum_ftp'
+  cat: MARC_from_Cataloging
+  pub: ftp.fulcrum.org
+  kbart: KBART
+  marc: MARC
+  publishers:
     - key: umpebc
-      folder: UMPEBC Metadata
+      name: UMPEBC
+      cat: UMPEBC
+      pub: UMPEBC
       mailers:
         encoding_error:
           to:
@@ -82,7 +88,9 @@ lib_ptg_box:
             - bcc_marc_file_updates@umpebc.com
           subject: UMPEBC MARC file updates
     - key: bar
-      folder: BAR Metadata
+      name: bar
+      cat: BAR
+      public: BAR
       mailers:
         encoding_error:
           to:
@@ -109,7 +117,9 @@ lib_ptg_box:
             # - bcc_marc_file_updates@bar.com
           subject: BAR MARC file updates
     - key: leverpress
-      folder: Lever Press Metadata
+      name: leverpress
+      cat: leverpress
+      pub: Lever_Press
       mailers:
         encoding_error:
           to:
@@ -136,7 +146,9 @@ lib_ptg_box:
           # - bcc_marc_file_updates@leverpress.com
           subject: Lever Press MARC file updates
     - key: amherst
-      folder: Amherst College Press Metadata
+      name: amherst
+      cat: amherst
+      pub: Amherst_College_Press
       mailers:
         encoding_error:
           to:

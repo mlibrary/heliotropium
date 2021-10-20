@@ -7,30 +7,30 @@ class NotifierMailer < ApplicationMailer
          subject: subject)
   end
 
-  def marc_file_updates(collection, text)
-    @collection = collection
+  def marc_file_updates(publisher, text)
+    @publisher = publisher
     @text = text
-    mail(to: collection.mailers.marc_file_updates.to,
-         from: collection.mailers.marc_file_updates.from,
-         bcc: collection.mailers.marc_file_updates.bcc,
-         subject: collection.mailers.marc_file_updates.subject)
+    mail(to: publisher.mailers.marc_file_updates.to,
+         from: publisher.mailers.marc_file_updates.from,
+         bcc: publisher.mailers.marc_file_updates.bcc,
+         subject: publisher.mailers.marc_file_updates.subject)
   end
 
-  def encoding_error(collection, text)
-    @collection = collection
+  def encoding_error(publisher, text)
+    @publisher = publisher
     @text = text
-    mail(to: collection.mailers.encoding_error.to,
-         from: collection.mailers.encoding_error.from,
-         bcc: collection.mailers.encoding_error.bcc,
-         subject: collection.mailers.encoding_error.subject)
+    mail(to: publisher.mailers.encoding_error.to,
+         from: publisher.mailers.encoding_error.from,
+         bcc: publisher.mailers.encoding_error.bcc,
+         subject: publisher.mailers.encoding_error.subject)
   end
 
-  def missing_record(collection, text)
-    @collection = collection
+  def missing_record(publisher, text)
+    @publisher = publisher
     @text = text
-    mail(to: collection.mailers.missing_record.to,
-         from: collection.mailers.missing_record.from,
-         bcc: collection.mailers.missing_record.bcc,
-         subject: collection.mailers.missing_record.subject)
+    mail(to: publisher.mailers.missing_record.to,
+         from: publisher.mailers.missing_record.from,
+         bcc: publisher.mailers.missing_record.bcc,
+         subject: publisher.mailers.missing_record.subject)
   end
 end
