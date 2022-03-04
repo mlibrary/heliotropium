@@ -140,6 +140,7 @@ GEM
     matrix (0.4.2)
     method_source (1.0.0)
     mini_mime (1.1.2)
+    mini_portile2 (2.8.0)
     minitest (5.14.4)
     msgpack (1.4.2)
     mysql2 (0.4.10)
@@ -147,6 +148,9 @@ GEM
       net-ssh (>= 2.6.5)
     net-ssh (6.1.0)
     nio4r (2.5.1)
+    nokogiri (1.13.3)
+      mini_portile2 (~> 2.8.0)
+      racc (~> 1.4)
     nokogiri (1.13.3-x86_64-darwin)
       racc (~> 1.4)
     nokogiri (1.13.3-x86_64-linux)
@@ -308,6 +312,7 @@ GEM
     yard (0.9.26)
 
 PLATFORMS
+  ruby
   x86_64-darwin-19
   x86_64-linux
 
