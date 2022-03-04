@@ -12,14 +12,7 @@
 
 ActiveRecord::Schema.define(version: 2020_06_25_191317) do
 
-  create_table "identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["name"], name: "index_identifiers_on_name"
-  end
-
-  create_table "kbart_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "kbart_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.date "updated", default: "1970-01-01", null: false
     t.datetime "created_at", null: false
@@ -29,7 +22,7 @@ ActiveRecord::Schema.define(version: 2020_06_25_191317) do
     t.index ["name"], name: "index_kbart_files_on_name", unique: true
   end
 
-  create_table "kbart_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "kbart_marcs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "doi", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -38,7 +31,7 @@ ActiveRecord::Schema.define(version: 2020_06_25_191317) do
     t.date "updated"
   end
 
-  create_table "marc_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "marc_files", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.string "checksum"
     t.datetime "created_at", null: false
@@ -46,7 +39,7 @@ ActiveRecord::Schema.define(version: 2020_06_25_191317) do
     t.string "folder", null: false
   end
 
-  create_table "marc_records", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
+  create_table "marc_records", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb3", force: :cascade do |t|
     t.string "folder", null: false
     t.string "file", null: false
     t.string "doi"
@@ -61,25 +54,4 @@ ActiveRecord::Schema.define(version: 2020_06_25_191317) do
     t.index ["folder", "file"], name: "index_marc_records_on_folder_and_file", unique: true
   end
 
-  create_table "uuid_identifiers", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.bigint "uuid_id"
-    t.bigint "identifier_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["identifier_id"], name: "index_uuid_identifiers_on_identifier_id"
-    t.index ["uuid_id", "identifier_id"], name: "index_uuid_identifiers_on_uuid_id_and_identifier_id", unique: true
-    t.index ["uuid_id"], name: "index_uuid_identifiers_on_uuid_id"
-  end
-
-  create_table "uuids", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8", force: :cascade do |t|
-    t.binary "packed", limit: 16, null: false
-    t.string "unpacked", limit: 36, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["packed"], name: "index_uuids_on_packed"
-    t.index ["unpacked"], name: "index_uuids_on_unpacked"
-  end
-
-  add_foreign_key "uuid_identifiers", "identifiers"
-  add_foreign_key "uuid_identifiers", "uuids"
 end

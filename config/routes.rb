@@ -11,8 +11,4 @@ Rails.application.routes.draw do
   resources :kbart_files
   resources :kbart_marcs
   resources :marc_files
-
-  resources :identifiers
-  resources :uuid_identifiers
-  resources :uuids
 end
