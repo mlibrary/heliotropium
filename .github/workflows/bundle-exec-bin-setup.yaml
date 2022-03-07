@@ -1,0 +1,21 @@
+name: bundle-exec-bin-setup
+
+on: workflow_dispatch
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      #      - name: Create .env file
+      #        run: cat .env-example .env-dev-values > .env
+      #      - name: Load .env file
+      #        uses: xom9ikk/dotenv@v1.0.2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7.4
+          bundler-cache: true
+      - name: Run setup
+        run: bundle exec ./bin/setup

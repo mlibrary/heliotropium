@@ -1,4 +1,4 @@
-name: testing-delete-all-svc-deploy-po
+name: testing-delete-all-deploy-svc-po
 
 on: workflow_dispatch
 

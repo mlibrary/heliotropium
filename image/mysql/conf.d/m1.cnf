@@ -1,0 +1,8 @@
+[mysqld]
+# https://stackoverflow.com/questions/40109596/docker-mariadb-mysql-startup-fails-on-windows-host
+
+# https://github.com/docker-library/mariadb/issues/95
+innodb_flush_method = fsync
+
+# https://dev.mysql.com/doc/refman/8.0/en/innodb-linux-native-aio.html
+innodb_use_native_aio = 0

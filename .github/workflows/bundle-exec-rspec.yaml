@@ -12,10 +12,10 @@ jobs:
 #        run: cat .env-example .env-dev-values > .env
 #      - name: Load .env file
 #        uses: xom9ikk/dotenv@v1.0.2
-      - name: Set up Ruby 2.6.6
+      - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6.6
+          ruby-version: 2.7.4
           bundler-cache: true
-      - name: Run tests
+      - name: Run specs
         run: bundle exec rubocop

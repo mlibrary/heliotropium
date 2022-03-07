@@ -6,11 +6,11 @@ metadata:
   name: nginx-deployment     # Unique name of deployment object within namespace.
   namespace: nginx-demo      # Unique name of namespace of deployment object.
 spec:                        # Desired state of deployment.
-  replicas: 1                # Number of desired pods.
-  selector:                  # Label selector for pods.
-    matchLabels:             # Existing ReplicaSets whose pods are selected by this will be the ones affected by this deployment.
+  replicas: 1                # Number of desired po.
+  selector:                  # Label selector for po.
+    matchLabels:             # Existing ReplicaSets whose po are selected by this will be the ones affected by this deployment.
       app: nginx             # It must match the pod template's labels.
-  template:                  # Template describes the pods that will be created.
+  template:                  # Template describes the po that will be created.
     metadata:
       annotations:
         imageregistry: "https://hub.docker.com/"

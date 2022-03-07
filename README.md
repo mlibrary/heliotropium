@@ -12,5 +12,12 @@ A [Heliotrope](https://github.com/mlibrary/heliotrope) support application.
 * [Architecture](https://heliotropium.readthedocs.io/en/latest/?badge=latest)
 * [Implementation](https://www.rubydoc.info/github/mlibrary/heliotropium)
 
+## Docker Desktop Kubernetes
 
-## 
+./k8s
+
+## Hatcher-umich Kubernetes 
+
+./.github/manifest
+
+./.github/workflows
