@@ -1,0 +1,32 @@
+<p id="notice"><%= notice %></p>
+<div id="maincontent">
+  <div class="container">
+    <div class="row">
+      <h1>Delete MARC XML Records</h1>
+    </div>
+    <div class="row">&nbsp;</div>
+    <% @marc_records.each do |marc_record| %>
+      <div class="row">
+        <div class="col-3"><%= marc_record.folder %></div>
+        <div class="col-4"><%= marc_record.file %></div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-1"><%= marc_record.parsed ? 'P' : '' %>&nbsp;</div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-1"><%= marc_record.count %>&nbsp;</div>
+        <div class="col-1"><%= link_to 'Show', marc_record %></div>
+      </div>
+      <div class="row">
+        <div class="col-3"><%= link_to marc_record.doi, "https://doi.org/#{marc_record.doi}", target: :_blank %></div>
+        <div class="col-4"><%= marc_record.updated %></div>
+        <div class="col-1">&nbsp;</div>
+        <div class="col-1"><%= marc_record.selected ? 'S' : '' %>&nbsp;</div>
+        <div class="col-2">&nbsp;</div>
+        <div class="col-1"><%= link_to 'Destroy', marc_record, method: :delete, data: { confirm: 'Are you sure?' } %></div>
+      </div>
+      <div class="row">&nbsp;</div>
+    <% end %>
+    <div class="row">
+      <div class="col">&nbsp<%= paginate @marc_records %></div>
+    </div>
+  </div>
+</div>

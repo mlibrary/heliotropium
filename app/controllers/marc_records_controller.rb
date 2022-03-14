@@ -3,6 +3,15 @@
 class MarcRecordsController < ApplicationController
   before_action :set_marc_record, only: %i[show edit update destroy]
 
+  def delete_xml_records
+    @marc_mrc_records = MarcRecord.where("file like ?", "%mrc%")
+    @marc_mrc_records.each do |record|
+      xml_record = MarcRecord.find_by(file: record.file.sub("mrc", "xml"))
+      xml_record&.delete
+    end
+    @marc_records = MarcRecord.order(folder: :asc).page(params[:page])
+  end
+
   def index
     @marc_records = MarcRecord.filter(filtering_params(params)).order(folder: :asc).page(params[:page])
   end
