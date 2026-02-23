@@ -24,9 +24,9 @@ rails:
     encoding: utf8
     pool: 5
     #timeout: 5000
-    username: root
-    #password:
-    #shost: localhost
+    username: heliotropium
+    password: heliotropium_password
+    host: mariadb
     #port: 3306
   # This value is nil here, to be set per environment and read in secrets.yml.
   # The SECRET_KEY_BASE environment variable will always override this setting.
