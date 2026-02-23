@@ -18,6 +18,13 @@ module Heliotropium
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
 
+    # I'm going to set the timezone now, way too late, 2024-01-11 because
+    # rufus-scheduler is supposed to be kicking off at midnight but that could be 8:00PM local time
+    # which is annoying. It's been fine, but now we need to coordinate with automatic
+    # kbart generation on fulcrum so time matters. See HELIO-4531.
+    # Hopefully this will fix when the scheduler actually runs AssembleMarcFiles.run
+    config.time_zone = 'Eastern Time (US & Canada)'
+
     config.generators do |g|
       g.stylesheets         false
       g.assets              false

@@ -32,7 +32,13 @@ module FtpFulcrumOrg
     end
 
     def date
-      @date ||= @row[3]
+      # @date ||= @row[3]
+      # new kbarts use a different row, (date_monograph_published_online)
+      @date ||= if @row[18].present?
+                  @row[18]
+                else
+                  @row[3]
+                end
     end
 
     def title

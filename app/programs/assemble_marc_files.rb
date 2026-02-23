@@ -56,6 +56,7 @@ module AssembleMarcFiles
         msg = <<~MSG
           AssembleMarcFiles run error #{e.message} (#{e.backtrace})
         MSG
+        Rails.logger.debug(msg)
         NotifierMailer.administrators("StandardError", msg).deliver_now
       end
     end

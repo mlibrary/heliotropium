@@ -28,7 +28,7 @@ scheduler = Rufus::Scheduler.singleton
 
 # Daily - do something every day
 # (see "man 5 crontab" in your terminal)
-scheduler.cron '0 0 * * *' do
+scheduler.cron '0 23 * * *' do
   # Rails.logger.info "Daily #{Time.now}"
   # Rails.logger.flush
   # NotifierMailer.administrators("Daily").deliver_now
