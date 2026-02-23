@@ -1,0 +1,36 @@
+---
+services:
+  app:
+    depends_on:
+      - db
+    image: heliotropium
+    build:
+      dockerfile: Dockerfile
+      context: .
+    ports:
+      - "3000:3000" # Rails
+      - "1234:1234" # RubyMine
+      - "26162:26162" # RubyMine
+    environment:
+      - HELIOTROPIUM=true
+    volumes:
+      - .:/app
+      - data:/data
+      - gems:/gems
+  db:
+    image: mariadb:12.2
+    environment:
+      MYSQL_ROOT_PASSWORD: root-password
+      MYSQL_USER: heliotropium
+      MYSQL_PASSWORD: heliotropium-password
+      MYSQL_DATABASE: heliotropium-development
+    expose:
+      - '3306'
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+volumes:
+  data:
+  gems:
+  db-data:
