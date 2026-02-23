@@ -5,6 +5,7 @@ module FtpFulcrumOrg
     attr_reader :publisher
     attr_reader :name
     attr_reader :updated
+    attr_reader :pathname
 
     def initialize(publisher, sftp, pathname)
       @publisher = publisher
