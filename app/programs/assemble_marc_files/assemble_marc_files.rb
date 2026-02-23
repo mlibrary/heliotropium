@@ -43,6 +43,8 @@ module AssembleMarcFiles
     def recreate_collection_marc_files(record, collection) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       filename = collection.name
 
+      Rails.logger.info("AssembleMarcFiles::AssembleMarcFiles.recreate_collection_marc_files(#{record.name}, #{collection.name})")
+
       collection_works = {}
       collection.works.each do |work|
         if work.marc?
@@ -95,11 +97,23 @@ module AssembleMarcFiles
 
       filename = "#{collection.name}_update_#{format('%04d-%02d-%02d', this_delta_date.year, this_delta_date.month, this_delta_date.day)}"
 
+      Rails.logger.info("AssembleMarcFiles::AssembleMarcFiles.create_collection_delta_files(#{collection.name}) pathname: #{collection.pathname}")
+
       collection_works = {}
       collection.works.each do |work|
         next unless work.marc?
 
-        kbart_marc = KbartMarc.find_by!(folder: collection.publisher.key, file: collection.name, doi: work.marc.doi)
+        kbart_marc = KbartMarc.find_by(folder: collection.publisher.key, file: collection.name, doi: work.marc.doi)
+        if kbart_marc.nil?
+          Rails.logger.error("Can't find KbarcMarc(folder: #{collection.publisher.key}, file: #{collection.name}, doi: #{work.marc.doi})")
+          # Below causes an exception that gets eaten in the main AssembleMarcFiles.run (StandardError yikes) and then gets emailed to admistrators. 
+          # And is causes the whole delta making process to crash without making any deltas.
+          # We'll make do with the production.log here.
+          # KbartMarc.find_by!(folder: collection.publisher.key, file: collection.name, doi: work.marc.doi)
+        end
+
+        next if kbart_marc.nil?
+
         collection_works[work.doi.to_s] = work if kbart_marc.updated > prev_delta_date && kbart_marc.updated <= this_delta_date
       end
 
@@ -129,6 +143,13 @@ module AssembleMarcFiles
 
     def recreate_publisher_marc_files(publisher) # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
       filename = "#{publisher.name}_Complete"
+
+      Rails.logger.info("AssembleMarcFiles::AssembleMarcFiles.recreate_publisher_marc_files(#{publisher.name}) file: #{filename}")
+
+      if filename == "UMPEBC_Complete"
+        Rails.logger.info("AssembleMarcFiles::AssembleMarcFiles.recreate_publisher_marc_files: SKIP CREATING #{filename})")
+        return
+      end
 
       publisher_works = {}
       publisher.collections.each do |collection|

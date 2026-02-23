@@ -1,1 +1,0 @@
---output-dir=./docs/_yard lib/**/*.rb app/**/*.rb config/**/*.rb

@@ -1,5 +1,5 @@
-#Start with Ruby 2.7.2 Image
-FROM ruby:2.7.2
+#Start with Ruby 2.7.8 Image (Debian bullseye)
+FROM ruby:2.7.8
 
 #Set up variables for creating a user to run the app in the container
 ARG UNAME=app
@@ -11,7 +11,7 @@ RUN apt-get update -yqq && apt-get install -yqq --no-install-recommends \
   apt-transport-https
 
 #Download node at the preferred version; Download Yarn
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_18.x | bash -
 RUN curl https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
@@ -40,7 +40,7 @@ RUN mkdir -p /gems && chown ${UID}:${GID} /gems
 USER $UNAME
 
 #Tell bundler to use the /gems directory
-ENV BUNDLE_PATH /gems
+ENV BUNDLE_PATH=/gems
 
 #Copy the Gemfile and Gemfile.lock from the Host machine into the /app directory; 
 COPY --chown=${UID}:${GID} Gemfile* /app/
