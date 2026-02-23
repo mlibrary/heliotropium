@@ -11,4 +11,6 @@ Rails.application.routes.draw do
   resources :kbart_files
   resources :kbart_marcs
   resources :marc_files
+
+  get 'delete_xml_records', controller: :marc_records, action: :delete_xml_records
 end
