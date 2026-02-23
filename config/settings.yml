@@ -174,3 +174,34 @@ ftp_fulcrum_org:
           bcc:
           # - bcc_marc_file_updates@amherst.com
           subject: Amhrest College Press MARC file updates
+    - key: heb
+      name: heb
+      cat: HEB
+      pub: HEB
+      mailers:
+        encoding_error:
+          to:
+            - jgmorse@umich.edu
+            - sethajoh@umich.edu
+          from:
+            - from_encoding_error@amherst.com
+          bcc:
+          # - bcc_encoding_error@amherst.com
+          subject: ACLS Humanities Ebook MARC record encoding errors
+        missing_record:
+          to:
+            - mpub-access@umich.edu
+          from:
+            - mpub-access@umich.edu
+          bcc:
+            - sethajoh@umich.edu
+          subject: ACLS Humanities Ebook Missing MARC records
+        marc_file_updates:
+          to:
+            - jgmorse@umich.edu
+            - sethajoh@umich.edu
+          from:
+            - fulcrum-info@umich.edu
+          bcc:
+          # - sethajoh@umich.edu
+          subject: ACLS Humanities Ebook MARC file updates

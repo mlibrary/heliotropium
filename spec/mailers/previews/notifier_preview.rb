@@ -30,6 +30,18 @@ class NotifierPreview < ActionMailer::Preview
     NotifierMailer.marc_file_updates(publisher('bar'), "Hello World!!!")
   end
 
+  def bar_encoding_error
+    NotifierMailer.encoding_error(publisher('heb'), "Hello World!!!")
+  end
+
+  def bar_missing_record
+    NotifierMailer.missing_record(publisher('heb'), "Hello World!!!")
+  end
+
+  def bar_marc_file_updates
+    NotifierMailer.marc_file_updates(publisher('heb'), "Hello World!!!")
+  end
+
   def lever_press_encoding_error
     NotifierMailer.encoding_error(publisher('leverpress'), "Hello World!!!")
   end
