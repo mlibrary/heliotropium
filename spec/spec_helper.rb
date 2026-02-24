@@ -15,8 +15,8 @@
 # it.
 
 # Start code coverage. This must be before your application code is required.
-require "coveralls"
-Coveralls.wear!('rails')
+# require "coveralls"
+# Coveralls.wear!('rails')
 
 # Require any test helpers we've created in spec/support
 Dir[File.expand_path(File.join(File.dirname(__FILE__), "support", "**", "*.rb"))]

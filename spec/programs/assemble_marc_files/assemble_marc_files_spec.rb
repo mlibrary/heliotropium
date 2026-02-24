@@ -9,7 +9,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   let(:publisher) { instance_double(FtpFulcrumOrg::Publisher, 'publisher', key: publisher_key, name: publisher_name, collections: [collection], catalog: catalog) }
   let(:publisher_key) { 'publisher' }
   let(:publisher_name) { 'Publisher' }
-  let(:collection) { instance_double(FtpFulcrumOrg::Collection, 'collection', name: collection_name, updated: collection_updated, works: [work]) }
+  let(:collection) { instance_double(FtpFulcrumOrg::Collection, 'collection', name: collection_name, updated: collection_updated, pathname: "/somewhere/", works: [work]) }
   let(:collection_name) { "Selection_#{collection_year}" }
   let(:collection_year) { Date.today.year }
   let(:collection_updated) { Date.today }
@@ -77,7 +77,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
   describe '#recreate_collection_marc_files' do
     subject(:recreate_collection_marc_files) { program.recreate_collection_marc_files(record, collection) }
 
-    let(:record) { instance_double(KbartFile, 'record') }
+    let(:record) { instance_double(KbartFile, 'record', name: collection.name) }
     let(:filename) { collection.name }
     let(:mrc_file) { instance_double(File, 'mrc_file') }
     let(:xml_file) { instance_double(File, 'xml_file') }
@@ -159,7 +159,7 @@ RSpec.describe AssembleMarcFiles::AssembleMarcFiles do
       let(:updated) { Date.new(today.year, today.month, 1) } # Greater than previous delta and less than or equal this delta
 
       before do
-        allow(KbartMarc).to receive(:find_by!).with(folder: publisher_key, file: collection_name, doi: work.doi).and_return(kbart_marc)
+        allow(KbartMarc).to receive(:find_by).with(folder: publisher_key, file: collection_name, doi: work.doi).and_return(kbart_marc)
         allow(kbart_marc).to receive(:updated).and_return(updated)
       end
 
