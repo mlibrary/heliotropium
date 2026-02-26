@@ -85,7 +85,7 @@ gem 'jquery-rails', '~> 4.3'
 
 # Moku freeze
 gem 'nio4r', '= 2.5.1'
-gem 'puma', '4.3.12'
+gem 'puma', '5.6.9'
 
 # Needed to connect to DreamHost FTP Server
 gem 'net-sftp', '~> 2.1', '>= 2.1.2'
