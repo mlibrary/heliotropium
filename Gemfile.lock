@@ -371,7 +371,7 @@ GEM
     websocket-extensions (0.1.5)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    yard (0.9.38)
+    yard (0.9.42)
     zeitwerk (2.7.5)
 
 PLATFORMS
@@ -416,7 +416,7 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
   webdrivers (~> 3.9)
-  yard (~> 0.9.20)
+  yard (~> 0.9.42)
 
 BUNDLED WITH
    2.5.22
